@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class CustomAnimatedBottomBar extends StatelessWidget {
-  CustomAnimatedBottomBar({
+class DepositBar extends StatelessWidget {
+  const DepositBar({
     Key? key,
-    this.rute,
     this.selectedIndex = 0,
     this.showElevation = true,
     this.iconSize = 24,
     this.backgroundColor,
     this.itemCornerRadius = 50,
-    this.containerHeight = 56,
+    this.containerHeight = 80,
     this.animationDuration = const Duration(milliseconds: 0),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
     required this.items,
@@ -18,13 +16,13 @@ class CustomAnimatedBottomBar extends StatelessWidget {
     this.curve = Curves.linear,
   })  : assert(items.length >= 2 && items.length <= 5),
         super(key: key);
-  final String? rute;
+
   final int selectedIndex;
   final double iconSize;
   final Color? backgroundColor;
   final bool showElevation;
   final Duration animationDuration;
-  final List<BottomNavyBarItem> items;
+  final List<AboveBarItem> items;
   final ValueChanged<int> onItemSelected;
   final MainAxisAlignment mainAxisAlignment;
   final double itemCornerRadius;
@@ -35,35 +33,41 @@ class CustomAnimatedBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bgColor = backgroundColor ?? Theme.of(context).bottomAppBarColor;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: bgColor,
-        boxShadow: [
-          if (showElevation)
-            const BoxShadow(
-              color: Colors.black12,
-              blurRadius: 2,
-            ),
-        ],
-      ),
-      child: SafeArea(
-        child: TextButton(
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed(rute!);
-          },
+    return Padding(
+      padding: const EdgeInsets.only(left: 12,right: 12),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(40),
+          ),
+          border: Border.all(
+            width: 3,
+            color: Colors.black12,
+            style: BorderStyle.solid,
+          ),
+          color: Colors.white,
+          boxShadow: [
+            if (showElevation)
+              const BoxShadow(
+                color: Colors.black12,
+                blurRadius: 2,
+              ),
+          ],
+        ),
+        child: SafeArea(
           child: Container(
             width: double.infinity,
             height: containerHeight,
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 9),
             child: Row(
               mainAxisAlignment: mainAxisAlignment,
               children: items.map((item) {
                 var index = items.indexOf(item);
                 return GestureDetector(
                   onTap: () => onItemSelected(index),
-                  child: _ItemWidget(
+                  child: _ItemWidgets(
                     item: item,
-                    iconSize: iconSize,
+                    alphaSize: iconSize,
                     isSelected: index == selectedIndex,
                     backgroundColor: bgColor,
                     itemCornerRadius: itemCornerRadius,
@@ -80,23 +84,23 @@ class CustomAnimatedBottomBar extends StatelessWidget {
   }
 }
 
-class _ItemWidget extends StatelessWidget {
-  final double iconSize;
+class _ItemWidgets extends StatelessWidget {
+  final double alphaSize;
   final bool isSelected;
-  final BottomNavyBarItem item;
+  final AboveBarItem item;
   final Color backgroundColor;
   final double itemCornerRadius;
   final Duration animationDuration;
   final Curve curve;
 
-  const _ItemWidget({
+  const _ItemWidgets({
     Key? key,
     required this.item,
     required this.isSelected,
     required this.backgroundColor,
     required this.animationDuration,
     required this.itemCornerRadius,
-    required this.iconSize,
+    required this.alphaSize,
     this.curve = Curves.linear,
   }) : super(key: key);
 
@@ -106,7 +110,7 @@ class _ItemWidget extends StatelessWidget {
       container: true,
       selected: isSelected,
       child: AnimatedContainer(
-        width: 70,
+        width: 100,
         height: double.maxFinite,
         duration: animationDuration,
         curve: curve,
@@ -115,35 +119,26 @@ class _ItemWidget extends StatelessWidget {
               isSelected ? item.activeColor.withOpacity(0.2) : backgroundColor,
           borderRadius: BorderRadius.circular(itemCornerRadius),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: NeverScrollableScrollPhysics(),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pushNamed('${item.route}');
-            },
-            child: Container(
-              width: 70,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  IconTheme(
-                    data: IconThemeData(
-                      size: iconSize,
-                      color: isSelected
-                          ? item.activeColor.withOpacity(1)
-                          : item.inactiveColor == null
-                              ? item.activeColor
-                              : item.inactiveColor,
-                    ),
-                    child: item.icon,
-                  ),
-                ],
+        child: Container(
+          width: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              IconTheme(
+                data: IconThemeData(
+                  size: alphaSize,
+                  color: isSelected
+                      ? item.activeColor.withOpacity(1)
+                      : item.inactiveColor == null
+                          ? item.activeColor
+                          : item.inactiveColor,
+                ),
+                child: Text(item.alpha),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -151,15 +146,14 @@ class _ItemWidget extends StatelessWidget {
   }
 }
 
-class BottomNavyBarItem {
-  BottomNavyBarItem({
-    required this.route,
-    required this.icon,
-    this.activeColor = Colors.blue,
+class AboveBarItem {
+  AboveBarItem({
+    required this.alpha,
+    this.activeColor = Colors.white,
     this.inactiveColor,
   });
-  final String route;
-  final Widget icon;
+
+  final String alpha;
   final Color activeColor;
   final Color? inactiveColor;
 }

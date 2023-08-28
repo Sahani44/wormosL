@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
@@ -7,9 +9,10 @@ import 'package:internship2/models/User_Tile/place_tile.dart';
 import 'package:internship2/Screens/Menu.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/models/User_Tile/collection_tile.dart';
+import 'package:internship2/widgets/customnavbar.dart';
 
 class collection extends StatefulWidget {
-  collection(this.screen);
+  collection(this.screen, {super.key});
   static const id = '/collection';
   int screen = 1;
   @override
@@ -27,7 +30,7 @@ class _collectionState extends State<collection> {
   var _isloading = false;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = Color(0xff71757A);
+  final _inactiveColor = const Color(0xff71757A);
   void strm(String Name) {
     StreamBuilder(
         stream: _firestone
@@ -41,6 +44,13 @@ class _collectionState extends State<collection> {
           Count = snapshot.data!.docs.length;
           for (var tile in tiles) {
             Amount += int.parse(tile.get('Amount_Remaining'));
+          }
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.lightBlueAccent,
+              ),
+            );
           }
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -63,15 +73,15 @@ class _collectionState extends State<collection> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const menu()),
+              MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Place',
           style: TextStyle(
             color: Colors.black54,
@@ -90,7 +100,7 @@ class _collectionState extends State<collection> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -103,7 +113,7 @@ class _collectionState extends State<collection> {
                   Memberlist.add(collection_tile(Name, screen));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
@@ -119,7 +129,6 @@ class _collectionState extends State<collection> {
               })
         ]),
       ),
-      bottomNavigationBar: buildBottomBar(),
     );
   }
 }
@@ -197,6 +206,6 @@ class _collectionState extends State<collection> {
 //             })
 //       ]),
 //     ),
-//     bottomNavigationBar: buildBottomBar(),
+//     
 //   );
 // }

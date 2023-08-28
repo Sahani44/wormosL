@@ -1,26 +1,27 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:internship2/models/User_Tile/deposit_tile.dart';
 import 'package:internship2/models/User_Tile/place_tile.dart';
 import 'package:internship2/Screens/Menu.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/models/User_Tile/collection_tile.dart';
-import 'package:internship2/models/User_Tile/acc_tile.dart';
+import 'package:internship2/models/User_Tile/due_tile.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 
-class acc_screen extends StatefulWidget {
-  acc_screen(this.screen);
-  static const id = '/acc_master1';
-  int screen = 0;
+class deposit_screen extends StatefulWidget {
+  static const id = '/due_master1';
+
+  const deposit_screen({super.key});
   @override
-  State<acc_screen> createState() => _acc_screenState(screen);
+  State<deposit_screen> createState() => _deposit_screenState();
 }
 
-class _acc_screenState extends State<acc_screen> {
-  _acc_screenState(this.screen);
-  int screen = 0;
+class _deposit_screenState extends State<deposit_screen> {
   late int Count = 0;
   late int Amount = 0;
   final _firestone = FirebaseFirestore.instance;
@@ -29,7 +30,7 @@ class _acc_screenState extends State<acc_screen> {
   var _isloading = false;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = Color(0xff71757A);
+  final _inactiveColor = const Color(0xff71757A);
   void strm(String Name) {
     StreamBuilder(
         stream: _firestone
@@ -68,12 +69,12 @@ class _acc_screenState extends State<acc_screen> {
               MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Place',
           style: TextStyle(
             color: Colors.black54,
@@ -92,7 +93,7 @@ class _acc_screenState extends State<acc_screen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -102,10 +103,10 @@ class _acc_screenState extends State<acc_screen> {
                 List<Widget> Memberlist = [];
                 for (var tile in tiles) {
                   Name = tile.get('Name');
-                  Memberlist.add(acc_tile(Name, screen));
+                  Memberlist.add(deposit_tile(Name));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(

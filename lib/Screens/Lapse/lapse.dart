@@ -1,8 +1,11 @@
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/month_selector.dart';
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
+import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/maturity_display.dart';
 import 'package:internship2/Screens/Menu.dart';
 import '../../models/views/due_display.dart';
@@ -27,8 +30,10 @@ class _lapseState extends State<lapse> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp payment_date;
   late String mode;
-  late int installment;
+  late int paid_installment;
+  late int total_installment;
   late String status;
   late int Amount_Collected;
   late int Amount_Remaining;
@@ -39,7 +44,7 @@ class _lapseState extends State<lapse> {
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   int _currentIndex2 = 0;
-  final _inactiveColor = Color(0xffEBEBEB);
+  final _inactiveColor = const Color(0xffEBEBEB);
   void addData(List<Widget> Memberlist, size) {
     Memberlist.add(
       due_data(
@@ -50,12 +55,15 @@ class _lapseState extends State<lapse> {
         date_mature: date_mature,
         date_open: date_open,
         mode: mode,
-        installment: installment,
+        paid_installment: paid_installment,
+        total_installment: total_installment,
         status: status,
         Location: Location,
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly,
+        Type: Type,
+        payment_date: payment_date,
       ),
     );
   }
@@ -74,10 +82,10 @@ class _lapseState extends State<lapse> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const menu()),
+              MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
@@ -89,11 +97,11 @@ class _lapseState extends State<lapse> {
               width: size.width * 0.60,
               height: size.height * 0.05,
               decoration: BoxDecoration(
-                  color: Color(0XFFEBEBEB),
+                  color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
                     ),
@@ -114,7 +122,7 @@ class _lapseState extends State<lapse> {
             padding: const EdgeInsets.all(8.0),
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
+                borderRadius: const BorderRadius.all(
                   Radius.circular(40),
                 ),
                 border: Border.all(
@@ -135,7 +143,7 @@ class _lapseState extends State<lapse> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -151,8 +159,10 @@ class _lapseState extends State<lapse> {
                   date_mature = tile.get('Date_of_Maturity');
                   Type = tile.get('Type');
                   mode = tile.get('mode');
+                  payment_date = tile.get('payment_date');
                   status = tile.get('status');
-                  installment = tile.get('installment');
+                  paid_installment = tile.get('paid_installment');
+                  total_installment = tile.get('total_installment');
                   Amount_Remaining = tile.get('Amount_Remaining');
                   Amount_Collected = tile.get('Amount_Collected');
                   Monthly = tile.get('monthly');
@@ -176,17 +186,20 @@ class _lapseState extends State<lapse> {
                     value = -1;
                   }
                   print("value $value");
-                  if (value == 00 && _currentIndex == 0)
+                  if (value == 00 && _currentIndex == 0) {
                     addData(Memberlist, size);
-                  else if ((value == 01) && _currentIndex == 1)
+                  } else if ((value == 01) && _currentIndex == 1){
                     addData(Memberlist, size);
-                  else if ((value <= 03 && value > 01) && _currentIndex == 2)
+                  }
+                  else if ((value <= 03 && value > 01) && _currentIndex == 2){
                     addData(Memberlist, size);
-                  else if ((value <= 06 && value > 03) && _currentIndex == 3)
+                  }
+                  else if ((value <= 06 && value > 03) && _currentIndex == 3){
                     addData(Memberlist, size);
+                  }
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : SingleChildScrollView(
@@ -204,7 +217,6 @@ class _lapseState extends State<lapse> {
               }),
         ],
       ),
-      bottomNavigationBar: buildBottomBar(),
     );
   }
 

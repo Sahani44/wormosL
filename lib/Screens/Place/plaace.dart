@@ -4,6 +4,9 @@ import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/models/User_Tile/place_tile.dart';
 import 'package:internship2/Screens/Menu.dart';
+import 'package:internship2/widgets/customnavbar.dart';
+
+import 'newmember.dart';
 
 class place extends StatefulWidget {
   const place({Key? key}) : super(key: key);
@@ -58,7 +61,7 @@ class _placeState extends State<place> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const menu()),
+              MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
           icon: Icon(
@@ -121,11 +124,14 @@ class _placeState extends State<place> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const placeedit()),
+              MaterialPageRoute(builder: (context) => placeedit()),
             );
           },
           child: Text(
             'Create Place',
+            style: TextStyle(
+              color: Colors.white,
+            ),
           ),
           backgroundColor: Color(0xff29756F),
           shape: RoundedRectangleBorder(
@@ -133,7 +139,6 @@ class _placeState extends State<place> {
           ),
         ),
       ),
-      bottomNavigationBar: buildBottomBar(),
     );
   }
 }

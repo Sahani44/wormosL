@@ -1,27 +1,29 @@
-// ignore_for_file: camel_case_types, non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:internship2/Providers/depositfilter.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
+import 'package:internship2/models/views/deposit_display.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/due_display.dart';
 import 'package:internship2/Screens/Menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/Providers/getstatus.dart';
 
-class due extends StatefulWidget {
-  static const id = '/due';
-  due(
+class deposit extends StatefulWidget {
+  static const id = '/deposit';
+  deposit(
     this.Location,
   );
   String Location;
   @override
-  State<due> createState() => _dueState(Location);
+  State<deposit> createState() => _depositState(Location);
 }
 
-class _dueState extends State<due> {
-  _dueState(
+class _depositState extends State<deposit> {
+  _depositState(
     this.Location,
   );
   String Location;
@@ -30,23 +32,24 @@ class _dueState extends State<due> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp payment_date;
   late String mode;
   late int paid_installment;
   late int total_installment;
+  late bool deposit_field;
   late String status;
-  late String Type;
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
   var _isloading = false;
-  late Timestamp payment_date;
   late final _firestone = FirebaseFirestore.instance;
-  int _currentIndex = 1;
+
   int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
   void addData(List<Widget> Memberlist, size) {
     Memberlist.add(
-      due_data(
+      deposit_data(
+        deposit_field: deposit_field,
         size: size,
         Member_Name: Member_Name,
         Plan: Plan,
@@ -55,13 +58,12 @@ class _dueState extends State<due> {
         date_open: date_open,
         mode: mode,
         paid_installment: paid_installment,
+        total_installment: total_installment,
         status: status,
         Location: Location,
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
-        Monthly: Monthly, 
-        total_installment: total_installment, 
-        Type: Type,
+        Monthly: Monthly,
         payment_date: payment_date,
       ),
     );
@@ -180,23 +182,19 @@ class _dueState extends State<due> {
                     date_open = tile.get('Date_of_Opening');
                     date_mature = tile.get('Date_of_Maturity');
                     mode = tile.get('mode');
-                    Type = tile.get('Type');
                     status = tile.get('status');
                     payment_date = tile.get('payment_date');
                     paid_installment = tile.get('paid_installment');
                     total_installment = tile.get('total_installment');
                     Amount_Remaining = tile.get('Amount_Remaining');
                     Amount_Collected = tile.get('Amount_Collected');
+                    deposit_field = tile.get("deposit_field");
                     Monthly = tile.get('monthly');
                     str(Account_No);
                     if (_currentIndex2 == 0) {
-                      if (status == 'Paid') {
-                        condition(Memberlist, size, Plan, _currentIndex);
-                      }
+                      if (deposit_field == true) addData(Memberlist, size);
                     } else if (_currentIndex2 == 1) {
-                      if (status != 'Paid') {
-                        condition(Memberlist, size, Plan, _currentIndex);
-                      }
+                      if (deposit_field == false) addData(Memberlist, size);
                     }
                   }
                   return _isloading
@@ -219,54 +217,27 @@ class _dueState extends State<due> {
     );
   }
 
-/*   Widget _buildAboveBar() {
-    Size size = MediaQuery.of(context).size;
-    return CustomAnimatedAboveBar(
-      containerHeight: size.height * 0.07,
-      backgroundColor: Colors.white,
-      selectedIndex: _currentIndex,
-      showElevation: true,
-      itemCornerRadius: 24,
-      curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex = index),
-      items: <AboveNavyBarItem>[
-        AboveNavyBarItem(
-          alpha: 'All',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-        AboveNavyBarItem(
-          alpha: 'A',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-        AboveNavyBarItem(
-          alpha: 'B',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-      ],
-    );
-  } */
-
   Widget _buildAboveBar2() {
     Size size = MediaQuery.of(context).size;
-    return CustomAnimatedAboveBar(
+    return DepositBar(
       containerHeight: size.height * 0.07,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex2,
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex2 = index),
-      items: <AboveNavyBarItem>[
-        AboveNavyBarItem(
-          alpha: 'Paid',
+      onItemSelected: (index) {
+        print(_currentIndex2);
+        setState(() => _currentIndex2 = index);
+      },
+      items: <AboveBarItem>[
+        AboveBarItem(
+          alpha: 'Paid Members',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),
-        AboveNavyBarItem(
-          alpha: 'Due',
+        AboveBarItem(
+          alpha: 'Deposited',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),

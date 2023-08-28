@@ -42,7 +42,7 @@ class _place_tileState extends State<place_tile> {
               sel == true;
               setState(() {});
             }
-            Navigator.of(context).pushNamed(Location);
+            // Navigator.of(context).pushNamed(Location);(commented by dev)
           },
           selected: false,
           focusColor: Color(0xffA9C8C5),

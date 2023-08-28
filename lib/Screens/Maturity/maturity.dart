@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:internship2/Providers/month_selector.dart';
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
+import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/maturity_display.dart';
 import 'package:internship2/Screens/Menu.dart';
 import '../../models/views/due_display.dart';
@@ -27,8 +28,10 @@ class _maturityState extends State<maturity> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp payment_date;
   late String mode;
-  late int installment;
+  late int paid_installment;
+  late int total_installment;
   late String status;
   late int Amount_Collected;
   late int Amount_Remaining;
@@ -46,11 +49,14 @@ class _maturityState extends State<maturity> {
         size: size,
         Member_Name: Member_Name,
         Plan: Plan,
+        Type: Type,
         Account_No: Account_No,
         date_mature: date_mature,
         date_open: date_open,
+        payment_date: payment_date,
         mode: mode,
-        installment: installment,
+        paid_installment: paid_installment,
+        total_installment: total_installment,
         status: status,
         Location: Location,
         Amount_Collected: Amount_Collected,
@@ -74,7 +80,7 @@ class _maturityState extends State<maturity> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const menu()),
+              MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
           icon: Icon(
@@ -152,7 +158,9 @@ class _maturityState extends State<maturity> {
                   Type = tile.get('Type');
                   mode = tile.get('mode');
                   status = tile.get('status');
-                  installment = tile.get('installment');
+                  payment_date = tile.get('payment_date');
+                  paid_installment = tile.get('paid_installment');
+                  total_installment = tile.get('total_installment');
                   Amount_Remaining = tile.get('Amount_Remaining');
                   Amount_Collected = tile.get('Amount_Collected');
                   Monthly = tile.get('monthly');
@@ -204,7 +212,6 @@ class _maturityState extends State<maturity> {
               }),
         ],
       ),
-      bottomNavigationBar: buildBottomBar(),
     );
   }
 

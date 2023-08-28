@@ -102,7 +102,7 @@ class _userState extends State<user> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => newmem(Place)),
+              MaterialPageRoute(builder: (context) => newmem(place: Place,)),
             );
           },
           child: Text(

@@ -1,25 +1,15 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
-import 'package:internship2/Screens/Account/Account_Master.dart';
+import 'package:internship2/Screens/Due/due.dart';
+import 'package:internship2/Screens/deposit/deposit.dart';
 
-class collection_tile extends StatelessWidget {
-  late int Count = 0;
-  late int Amount = 0;
-  final _firestone = FirebaseFirestore.instance;
-  collection_tile(this.Name, this.screen,);
+class deposit_tile extends StatelessWidget {
+  deposit_tile(this.Name, {super.key});
   late String Name;
-  int screen = 1;
-  late Widget path;
   @override
   Widget build(BuildContext context) {
-    if (screen == 0) {
-      path = acc_master(Name);
-    } else if (screen == 1) {
-      path = collection2(Name);
-    }
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -30,7 +20,7 @@ class collection_tile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => path),
+              MaterialPageRoute(builder: (context) => deposit(Name)),
             );
           },
           selected: false,
@@ -41,17 +31,9 @@ class collection_tile extends StatelessWidget {
           title: Text(
             Name,
             style: const TextStyle(
-            color: Colors.black,
+              color: Colors.black,
             ),
           ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Clients:$Count'),
-              Text('Amount Collected:$Amount')
-            ],
-          )
         ),
       ],
     );
