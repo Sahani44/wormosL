@@ -1,13 +1,7 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types
+// ignore_for_file: non_constant_identifier_names, camel_case_types, no_logic_in_create_state
 
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:internship2/Screens/Place/place_edit.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:internship2/models/User_Tile/place_tile.dart';
-import 'package:internship2/Screens/Menu.dart';
-import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/models/User_Tile/collection_tile.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 

@@ -26,7 +26,7 @@ class _AccountSummaryState extends State<AccountSummary> {
           child: Center(
         child: Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 68,
             ),
             Container(
@@ -34,11 +34,11 @@ class _AccountSummaryState extends State<AccountSummary> {
               height: 140,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: Color(0xFF205955),
+                color: const Color(0xFF205955),
               ),
-              child: Center(
+              child: const Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(30.0),
+                  padding: EdgeInsets.all(30.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -89,9 +89,9 @@ class _AccountSummaryState extends State<AccountSummary> {
                 ),
               ),
             ),
-            SizedBox(height: 85),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const SizedBox(height: 85),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -106,10 +106,10 @@ class _AccountSummaryState extends State<AccountSummary> {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 70,
             ),
-            Container(
+            SizedBox(
               width: 300,
               height: 300,
               child: Stack(
@@ -123,15 +123,15 @@ class _AccountSummaryState extends State<AccountSummary> {
                       centerSpaceRadius: 80,
                       sections: [
                         PieChartSectionData(
-                            value: 35, color: Color(0xffF8BBD0), radius: 100),
+                            value: 35, color: const Color(0xffF8BBD0), radius: 100),
                         PieChartSectionData(
-                            value: 40, color: Color(0xffFF8A65), radius: 100),
+                            value: 40, color: const Color(0xffFF8A65), radius: 100),
                         PieChartSectionData(
-                            value: 55, color: Color(0xff73C2DB), radius: 100),
+                            value: 55, color: const Color(0xff73C2DB), radius: 100),
                       ],
                     ),
                   ),
-                  Positioned(
+                  const Positioned(
                     top: 130,
                     left: 80,
                     child: Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Collection/collection_landing.dart';
 // import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Lapse/lapsescreen.dart';
 import 'package:internship2/Screens/Place/plaace.dart';
@@ -43,9 +44,9 @@ class MyApp extends StatelessWidget {
                   mature_screen.id: (ctx) => mature_screen(),
                   lapse_screen.id: (ctx) => lapse_screen(),
                   due_screen.id: (ctx) => due_screen(),
+                  CollectionLanding.id: (ctx)=> const CollectionLanding(),
                   collection2.id: (ctx) => collection2(''),
                   collection.id: (ctx) => collection(1),
-
                   maturity.id: (ctx) => maturity(''),
                   lapse.id: (ctx) => lapse(''),
                   due.id: (ctx) => due(''),

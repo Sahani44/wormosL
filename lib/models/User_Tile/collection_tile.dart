@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/Screens/Account/Account_Master.dart';
@@ -8,8 +7,8 @@ import 'package:internship2/Screens/Account/Account_Master.dart';
 class collection_tile extends StatelessWidget {
   late int Count = 0;
   late int Amount = 0;
-  final _firestone = FirebaseFirestore.instance;
-  collection_tile(this.Name, this.screen,);
+  // final _firestone = FirebaseFirestore.instance;
+  collection_tile(this.Name, this.screen, {super.key});
   late String Name;
   int screen = 1;
   late Widget path;

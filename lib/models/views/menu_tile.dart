@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 
 class menu_tile extends StatelessWidget {
@@ -5,21 +7,24 @@ class menu_tile extends StatelessWidget {
     super.key,
     required this.tle,
     required this.logo,
-    required this.route,
+    required this.path,
   });
 
   final String tle;
   final Image logo;
-  final String route;
+  final Widget path;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return TextButton(
       onPressed: () {
-        Navigator.pushNamed(context, route);
+        Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => path),
+            );
       },
-      child: Container(
+      child: SizedBox(
         width: size.width * 0.4,
         height: size.width * 0.5,
         child: Row(
@@ -32,7 +37,7 @@ class menu_tile extends StatelessWidget {
               height: size.width * 0.42,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                color: Color(0xff32b9ae),
+                color: const Color(0xff32b9ae),
               ),
               child: Stack(
                 children: [
@@ -54,7 +59,7 @@ class menu_tile extends StatelessWidget {
                     child: Text(
                       tle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Color(0xff4a5568),
                         fontSize: 15.5,
                         fontWeight: FontWeight.w700,

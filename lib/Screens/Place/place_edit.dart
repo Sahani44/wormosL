@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:internship2/Screens/Place/newmember.dart';
 import 'package:internship2/models/User_Tile/place_edit_tile.dart';
+import 'package:internship2/widgets/customnavbar.dart';
 
 class placeedit extends StatefulWidget {
   const placeedit({Key? key}) : super(key: key);
@@ -25,9 +27,12 @@ class _placeeditState extends State<placeedit> {
           backgroundColor: Colors.white,
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CustomNavBar()),
+            );
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios_new_outlined,
               color: Color(0xff144743),
             ),
@@ -35,7 +40,7 @@ class _placeeditState extends State<placeedit> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
+              const Text(
                 'Place',
                 style: TextStyle(
                   color: Colors.black54,
@@ -48,7 +53,6 @@ class _placeeditState extends State<placeedit> {
                         isScrollControlled: true,
                         context: context,
                         builder: (context) {
-                          padding:
                           EdgeInsets.only(
                               bottom: MediaQuery.of(context).viewInsets.bottom);
                           return Padding(
@@ -57,28 +61,28 @@ class _placeeditState extends State<placeedit> {
                                     MediaQuery.of(context).viewInsets.bottom),
                             child: SingleChildScrollView(
                               child: Container(
-                                color: Color(0xffBBF5F1),
+                                color: const Color(0xffBBF5F1),
                                 child: Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Row(children: [
-                                        SizedBox(height: 16.0),
+                                        const SizedBox(height: 16.0),
                                         Image.asset(
                                           'assets/Line 8.png',
                                         ),
-                                        SizedBox(width: 16.0),
-                                        Text(
+                                        const SizedBox(width: 16.0),
+                                        const Text(
                                           'New Place',
                                           style: TextStyle(
                                               color: Color(0xff205955)),
                                         ),
                                       ]),
-                                      SizedBox(height: 16.0),
+                                      const SizedBox(height: 16.0),
                                       TextField(
                                           autofocus: true,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.black87,
                                           ),
                                           textAlign: TextAlign.left,
@@ -86,18 +90,18 @@ class _placeeditState extends State<placeedit> {
                                             place_posted = value;
                                             setState(() {});
                                           },
-                                          decoration: InputDecoration(
+                                          decoration: const InputDecoration(
                                               hintText: 'Place Name')),
-                                      SizedBox(height: 16.0),
+                                      const SizedBox(height: 16.0),
                                       ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           primary:
-                                              Color(0xff29756F), // Text color
-                                          shape: RoundedRectangleBorder(
+                                              const Color(0xff29756F), // Text color
+                                          shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(15.0)),
                                           ),
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 16.0,
                                               vertical: 8.0), // Button padding
                                         ),
@@ -113,7 +117,7 @@ class _placeeditState extends State<placeedit> {
                                           // Perform actions here
                                           // Close the bottom sheet
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           'Save',
                                           style: TextStyle(
                                             color: Colors.black87,
@@ -146,7 +150,7 @@ class _placeeditState extends State<placeedit> {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(
                         backgroundColor: Colors.lightBlueAccent,
                       ),
@@ -159,7 +163,7 @@ class _placeeditState extends State<placeedit> {
                     Memberlist.add(place_edit_tile(place_name));
                   }
                   return _isloading
-                      ? Center(
+                      ? const Center(
                           child: CircularProgressIndicator(),
                         )
                       : Column(
@@ -175,6 +179,27 @@ class _placeeditState extends State<placeedit> {
                 })
           ]),
         ),
+        floatingActionButton: SizedBox(
+        width: size.width * 0.45,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const newmem(place: '',)),
+            );
+          },
+          backgroundColor: const Color(0xffA0205E),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+          child: const Text(
+            'Add Member',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+        )
       ),
     );
   }

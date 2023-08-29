@@ -1,9 +1,9 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types, no_logic_in_create_state, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/displayed_data.dart';
-import 'package:internship2/Screens/Menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class acc_master extends StatefulWidget {
@@ -52,7 +52,7 @@ class _acc_masterState extends State<acc_master> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );

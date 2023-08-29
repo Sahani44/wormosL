@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
@@ -25,16 +27,17 @@ class _newmemState extends State<newmem> {
   int installment = 0;
   int money = 0;
   String status = 'Paid';
-  String Type = 'Daily';
   late int Amount;
   late String CIF_No;
-  String dropdownvalue = 'Daily';
+  String dropdownvalue1 ='5 Days';
+  String dropdownvalue2 = 'Daily';
   String placedropdownvalue = 'Basant Road';
   final _firestone = FirebaseFirestore.instance;
   bool selA = false;
   bool selB = true;
   late int monthly = 0;
-  var items = ['Monthly', 'Daily', 'Weekly'];
+  var items1 = ['5 Days' ,'Monthly'];
+  var items2 = ['Daily'];
 
   Event buildEvent({Recurrence? recurrence}) {
     return Event(
@@ -263,12 +266,13 @@ class _newmemState extends State<newmem> {
                               ),
                             ),
                           ),
-                          DropdownButton(
-                            value: dropdownvalue,
+                          widget.place == '' ?
+                           DropdownButton(
+                            value: dropdownvalue1,
 
                             icon: const Icon(Icons.keyboard_arrow_down),
 
-                            items: items.map((String items) {
+                            items: items1.map((String items) {
                               return DropdownMenuItem(
                                 value: items,
                                 child: Text(items),
@@ -278,8 +282,27 @@ class _newmemState extends State<newmem> {
                             // change button value to selected value
                             onChanged: (String? newValue) {
                               setState(() {
-                                dropdownvalue = newValue!;
-                                Type = dropdownvalue;
+                                dropdownvalue1 = newValue!;
+                              });
+                            },
+                          )
+                          :
+                          DropdownButton(
+                            value: dropdownvalue2,
+
+                            icon: const Icon(Icons.keyboard_arrow_down),
+
+                            items: items2.map((String items) {
+                              return DropdownMenuItem(
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            // After selecting the desired option,it will
+                            // change button value to selected value
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownvalue2 = newValue!;
                               });
                             },
                           ),
@@ -573,10 +596,9 @@ class _newmemState extends State<newmem> {
                             // monthly = (int.parse(Amount) / monthly).floor();
                             int total_installment = 60;
                             int totalAmountCollected = Amount_Collected+Amount_Remaining;
-                            _firestone
+                            widget.place == '' 
+                            ?  _firestone
                                 .collection('new_account')
-                                .doc(widget.place)
-                                .collection(widget.place)
                                 .doc(Account_No)
                                 .set({
                               'Member_Name': Member_Name,
@@ -586,7 +608,7 @@ class _newmemState extends State<newmem> {
                               'Amount_Collected': totalAmountCollected,
                               'Amount_Remaining': Amount_Remaining,
                               'Phone_No': Phone_No,
-                              'Type': Type,
+                              'Type': dropdownvalue1,
                               'Date_of_Maturity': date_mature,
                               'Date_of_Opening': date_open,
                               'CIF_No': CIF_No,
@@ -597,6 +619,30 @@ class _newmemState extends State<newmem> {
                               'status': status,
                               'deposit_field': true,
                               'payment_date': payment_date,
+                            })
+                            :  _firestone
+                                .collection('new_account_d')
+                                .doc(Account_No)
+                                .set({
+                              'Member_Name': Member_Name,
+                              'Plan': Plan,
+                              'Account_No': Account_No,
+                              'Address': Address,
+                              'Amount_Collected': totalAmountCollected,
+                              'Amount_Remaining': Amount_Remaining,
+                              'Phone_No': Phone_No,
+                              'Type': dropdownvalue2,
+                              'Date_of_Maturity': date_mature,
+                              'Date_of_Opening': date_open,
+                              'CIF_No': CIF_No,
+                              'monthly': Amount,
+                              'mode': mode,
+                              'paid_installment': (Amount_Collected/Amount).floor(),
+                              'total_installment': total_installment,
+                              'status': status,
+                              'deposit_field': true,
+                              'payment_date': payment_date,
+                              'place' : widget.place
                             });
                             setState(() {
                               Navigator.of(context).pop();

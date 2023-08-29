@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state, non_constant_identifier_names
+
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/newmember.dart';
@@ -6,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class user extends StatefulWidget {
   user(
-    this.Place,
+    this.Place, {super.key}
   );
   String Place;
   static const id = '/user';
@@ -39,10 +41,10 @@ class _userState extends State<user> {
           height: size.height * 0.05,
           decoration: BoxDecoration(
               color: Colors.grey, borderRadius: BorderRadius.circular(18)),
-          child: Center(
+          child: const Center(
             child: TextField(
               decoration: InputDecoration(
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.search,
                     color: Colors.white,
                   ),
@@ -59,14 +61,12 @@ class _userState extends State<user> {
           ),
           StreamBuilder(
               stream: _firestone
-                  .collection('new_account')
-                  .doc(Place)
-                  .collection(Place)
-                  .orderBy('Member_Name')
+                  .collection('new_account_d')
+                  .where('place', isEqualTo: Place)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -80,7 +80,7 @@ class _userState extends State<user> {
                   Memberlist.add(user_tile(Username, monthly));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
@@ -96,7 +96,7 @@ class _userState extends State<user> {
               })
         ]),
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         width: size.width * 0.45,
         child: FloatingActionButton(
           onPressed: () {
@@ -105,15 +105,15 @@ class _userState extends State<user> {
               MaterialPageRoute(builder: (context) => newmem(place: Place,)),
             );
           },
-          child: Text(
+          backgroundColor: const Color(0xffA0205E),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+          child: const Text(
             'Add Member',
             style: TextStyle(
               color: Colors.white,
             ),
-          ),
-          backgroundColor: Color(0xffA0205E),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),
       ),

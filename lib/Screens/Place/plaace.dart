@@ -25,7 +25,7 @@ class _placeState extends State<place> {
   var _isloading = false;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = Color(0xff71757A);
+  final _inactiveColor = const Color(0xff71757A);
   void strm(String Name) {
     StreamBuilder(
         stream: _firestone
@@ -40,7 +40,7 @@ class _placeState extends State<place> {
           for (var tile in tiles) {
             Amount += int.parse(tile.get('Amount_Remaining'));
           }
-          return Column(
+          return const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -64,12 +64,12 @@ class _placeState extends State<place> {
               MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Place',
           style: TextStyle(
             color: Colors.black54,
@@ -88,7 +88,7 @@ class _placeState extends State<place> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -102,7 +102,7 @@ class _placeState extends State<place> {
                   Memberlist.add(place_tile(Name, Count, Amount, ''));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
@@ -118,24 +118,24 @@ class _placeState extends State<place> {
               })
         ]),
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         width: size.width * 0.45,
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => placeedit()),
+              MaterialPageRoute(builder: (context) => const placeedit()),
             );
           },
-          child: Text(
+          backgroundColor: const Color(0xff29756F),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          ),
+          child: const Text(
             'Create Place',
             style: TextStyle(
               color: Colors.white,
             ),
-          ),
-          backgroundColor: Color(0xff29756F),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
           ),
         ),
       ),

@@ -3,8 +3,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Collection/collection.dart';
+import 'package:internship2/Screens/Collection/collection_landing.dart';
 import 'package:internship2/Screens/Menu.dart';
 import 'package:internship2/Screens/Place/plaace.dart';
+import 'package:internship2/Screens/Place/place_edit.dart';
 import 'package:internship2/Screens/deposit/deposit_screen.dart';
 
 class CustomNavBar extends StatefulWidget {
@@ -17,23 +19,23 @@ class CustomNavBar extends StatefulWidget {
 class _CustomNavBarState extends State<CustomNavBar> {
   final tabs = [
     const Center(
-      child: place(),
+      child: placeedit(),
     ),
     const Center(
       child: menu(),
     ),
-    Center(
+    const Center(
       child: AccountSummary(),
     ),
-    Center(
-      child: collection(1),
+    const Center(
+      child: CollectionLanding(),
     ),
-    Center(
+    const Center(
       child: deposit_screen(),
     ),
   ];
   var navigationBarIndex = 1;
-  Color selectedColor = Color(0xff32B9AE); // Define the selected tab color
+  Color selectedColor = const Color(0xff32B9AE); // Define the selected tab color
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
       backgroundColor: Colors.white,
       body: tabs[navigationBarIndex],
       bottomNavigationBar: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(30),
             topLeft: Radius.circular(30),
@@ -56,8 +58,8 @@ class _CustomNavBarState extends State<CustomNavBar> {
           type: BottomNavigationBarType.fixed,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          unselectedLabelStyle: TextStyle(color: Colors.black, fontSize: 15.0),
-          selectedLabelStyle: TextStyle(color: Colors.black, fontSize: 15.0),
+          unselectedLabelStyle: const TextStyle(color: Colors.black, fontSize: 15.0),
+          selectedLabelStyle: const TextStyle(color: Colors.black, fontSize: 15.0),
           currentIndex: navigationBarIndex,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(

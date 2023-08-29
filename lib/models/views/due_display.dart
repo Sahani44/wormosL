@@ -133,7 +133,7 @@ class _due_dataState extends State<due_data> {
     }
       money = (now.day>30 ? 30*(Monthly / 30).floor()-Amount_Remaining : now.day*(Monthly / 30).floor()-Amount_Remaining);
     }
-    if (Type == 'Weekly'){
+    if (Type == '5 Days'){
       if (now.day-payment_date.toDate().day >= 5) {
       status = 'Due';
       colour = const Color(0xffD83F52);

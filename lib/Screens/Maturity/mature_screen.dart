@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
@@ -25,7 +27,7 @@ class _mature_screenState extends State<mature_screen> {
   var _isloading = false;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = Color(0xff71757A);
+  final _inactiveColor = const Color(0xff71757A);
 /*   void strm(String Name) {
     StreamBuilder(
         stream: _firestone
@@ -64,12 +66,12 @@ class _mature_screenState extends State<mature_screen> {
               MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Place',
           style: TextStyle(
             color: Colors.black54,
@@ -89,7 +91,7 @@ class _mature_screenState extends State<mature_screen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -102,7 +104,7 @@ class _mature_screenState extends State<mature_screen> {
                   Memberlist.add(mature_tile(Name));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(
