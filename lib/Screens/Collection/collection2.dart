@@ -36,6 +36,8 @@ class _collection2State extends State<collection2> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
+  late int totalCollection;
+  late int totalAmountCollected;
   late Timestamp payment_date;
   String accountType = '';
   String Type = '';
@@ -52,38 +54,30 @@ class _collection2State extends State<collection2> {
   @override
   Widget build(BuildContext context) {
     List<Widget> Memberlist = [];
-    print(Memberlist);
     if(widget.Location == '5 Days'){
       Type = '5 Days';
       accountType = 'new_account';
-      print(Type);
-      print(accountType);
     }
     else if(widget.Location == 'Monthly'){
       Type = 'Monthly';
       accountType = 'new_account';
-      print(Type);
-      print(accountType);
     }
     else {
       Type = 'Daily';
       accountType = 'new_account_d';
-      print(Type);
-      print(accountType);
     }
 
     if(_currentIndex == 1){
       Plan = 'A';
-      print(Plan);
     }
     else if(_currentIndex == 2){
       Plan = 'B';
-      print(Plan);
     }
     else {
       Plan = '';
-      print(Plan);
     }
+    totalAmountCollected = 0;
+    totalCollection = 0;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -133,24 +127,11 @@ class _collection2State extends State<collection2> {
               ),
               border: Border.all(
                 width: 3,
-                color: Colors.grey,
+                color: Colors.grey.shade300,
                 style: BorderStyle.solid,
               ),
             ),
             child: _buildAboveBar(),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(40),
-              ),
-              border: Border.all(
-                width: 3,
-                color: Colors.white,
-                style: BorderStyle.solid,
-              ),
-            ),
-            // child: _buildAboveBar2(),
           ),
           StreamBuilder(
             stream: 
@@ -205,6 +186,8 @@ class _collection2State extends State<collection2> {
                 Amount_Remaining = tile.get('Amount_Remaining');
                 Amount_Collected = tile.get('Amount_Collected');
                 Monthly = tile.get('monthly');
+                totalCollection += Monthly;
+                totalAmountCollected += Amount_Remaining;
                 Memberlist.add(
                 due_data(
                   size: size,
@@ -223,26 +206,31 @@ class _collection2State extends State<collection2> {
                   Monthly: Monthly,
                   Type: Type,
                   payment_date: payment_date,
+                  accountType: accountType,
                 ),
               );
               }
-              print(Memberlist.length);
               return _isloading
                   ? const Center(
                       child: CircularProgressIndicator(),
                     )
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              height: size.height * 0.8,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              )),
-                        ],
-                    ),
-                );
+                  : Column(
+                    children: [
+                      amountdata(totalCollection , totalAmountCollected),
+                      SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                  height: size.height * 0.7,
+                                  child: ListView.builder(
+                                    itemCount: Memberlist.length,
+                                    itemBuilder: (context, i) => Memberlist[i],
+                                  )),
+                            ],
+                        ),
+                ),
+                    ],
+                  );
               }
             )
             ,
@@ -260,7 +248,7 @@ class _collection2State extends State<collection2> {
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex = index),
+      onItemSelected: (index) => setState(() {_currentIndex = index;}),
       items: <AboveNavyBarItem>[
         AboveNavyBarItem(
           alpha: 'All',
@@ -278,6 +266,92 @@ class _collection2State extends State<collection2> {
           inactiveColor: _inactiveColor,
         ),
       ],
+    );
+  }
+
+  Widget amountdata(int totalCollection1, int totalAmountCollected1) {
+    Size size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.only(top:8.0),
+      child: Container(
+        height: size.height * 0.08,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(40),
+          ),
+          border: Border.all(
+            width: 3,
+            color: Colors.grey.shade300,
+            // style: BorderStyle.solid,
+          ),
+          color: Colors.grey[300],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(30),
+                  ),
+                  border: Border.all(
+                    width: 8,
+                    color: Colors.white
+                  ),
+                  color : Colors.white,
+                ),
+                child: const Text('40')
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  border: Border.all(
+                    width: 8,
+                    color: Colors.white
+                  ),
+                  color : Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Text('Total Collection' , style: TextStyle(color: Color(0xff32B9AE) , fontWeight: FontWeight.w600),),
+                    Text('$totalCollection1')
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                    border: Border.all(
+                      width: 8,
+                      color: Colors.white
+                    ),
+                    color : Colors.white,
+                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Text('Amount Collected' , style: TextStyle(color: Color(0xff32B9AE) , fontWeight: FontWeight.w600)),
+                    Text('$totalAmountCollected1')
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 

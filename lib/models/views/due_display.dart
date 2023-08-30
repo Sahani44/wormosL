@@ -26,6 +26,7 @@ class due_data extends StatefulWidget {
     required this.Amount_Remaining,
     required this.Monthly,
     required this.payment_date,
+    required this.accountType,
   });
   final String Member_Name;
   final String Plan;
@@ -43,6 +44,7 @@ class due_data extends StatefulWidget {
   final int Amount_Collected;
   final int Amount_Remaining;
   final int Monthly;
+  final String accountType;
   @override
   State<due_data> createState() => _due_dataState(
         size: size,
@@ -176,9 +178,7 @@ class _due_dataState extends State<due_data> {
                     payment_date = Timestamp.now();
                     if (paid_installment >total_installment) paid_installment = 0;
                   _firestone
-                      .collection('new_account')
-                      .doc(Location)
-                      .collection(Location)
+                      .collection(widget.accountType)
                       .doc(Account_No)
                       .update({
                     'status': status,
@@ -191,9 +191,7 @@ class _due_dataState extends State<due_data> {
                   if(Amount_Remaining + money >= Monthly){
                     paid_installment++;
                     _firestone
-                      .collection('new_account')
-                      .doc(Location)
-                      .collection(Location)
+                      .collection(widget.accountType)
                       .doc(Account_No)
                       .update({
                         'Amount_Remaining': Amount_Remaining + money - Monthly,

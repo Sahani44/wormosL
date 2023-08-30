@@ -45,26 +45,26 @@ class _dueState extends State<due> {
   int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
   void addData(List<Widget> Memberlist, size) {
-    Memberlist.add(
-      due_data(
-        size: size,
-        Member_Name: Member_Name,
-        Plan: Plan,
-        Account_No: Account_No,
-        date_mature: date_mature,
-        date_open: date_open,
-        mode: mode,
-        paid_installment: paid_installment,
-        status: status,
-        Location: Location,
-        Amount_Collected: Amount_Collected,
-        Amount_Remaining: Amount_Remaining,
-        Monthly: Monthly, 
-        total_installment: total_installment, 
-        Type: Type,
-        payment_date: payment_date,
-      ),
-    );
+    // Memberlist.add(
+    //   due_data(
+    //     size: size,
+    //     Member_Name: Member_Name,
+    //     Plan: Plan,
+    //     Account_No: Account_No,
+    //     date_mature: date_mature,
+    //     date_open: date_open,
+    //     mode: mode,
+    //     paid_installment: paid_installment,
+    //     status: status,
+    //     Location: Location,
+    //     Amount_Collected: Amount_Collected,
+    //     Amount_Remaining: Amount_Remaining,
+    //     Monthly: Monthly, 
+    //     total_installment: total_installment, 
+    //     Type: Type,
+    //     payment_date: payment_date,
+    //   ),
+    // );
   }
 
   void condition(List<Widget> Memberlist, size, type, index) {

@@ -36,7 +36,7 @@ class CustomAnimatedAboveBar extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
+        borderRadius: const BorderRadius.all(
           Radius.circular(40),
         ),
         border: Border.all(
@@ -122,7 +122,7 @@ class _ItemWidget extends StatelessWidget {
           //physics: NeverScrollableScrollPhysics(),
           child: Container(
             width: 100,
-            padding: EdgeInsets.symmetric(horizontal: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
