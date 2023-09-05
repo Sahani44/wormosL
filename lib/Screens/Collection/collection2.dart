@@ -5,6 +5,7 @@ import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:internship2/Screens/Collection/collection.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
+import 'package:internship2/Screens/Menu.dart';
 import '../../models/views/due_display.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -38,6 +39,11 @@ class _collection2State extends State<collection2> {
   late int Monthly;
   late int totalCollection;
   late int totalAmountCollected;
+  int totalClient = 0;
+  String dropdownvalue ='Name';
+  String dropdownvalue1 = 'Member_Name';
+  var items = ['Name' ,'DOE'];
+
   late Timestamp payment_date;
   String accountType = '';
   String Type = '';
@@ -78,6 +84,7 @@ class _collection2State extends State<collection2> {
     }
     totalAmountCollected = 0;
     totalCollection = 0;
+    totalClient = 0;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,7 +103,7 @@ class _collection2State extends State<collection2> {
         title: Row(
           children: [
             Container(
-              width: size.width * 0.60,
+              width: size.width * 0.55,
               height: size.height * 0.05,
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
@@ -108,13 +115,36 @@ class _collection2State extends State<collection2> {
                       color: Color(0XFF999999),
                     ),
                     hintText: 'Search',
-                    border: InputBorder.none),
+                    border: InputBorder.none
+                  ),
               ),
             ),
-            IconButton(
-                iconSize: 45,
-                onPressed: () {},
-                icon: Image.asset('assets/Acc/trailing.png'))
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: DropdownButton(
+                value: dropdownvalue,
+                icon: Image.asset('assets/Acc/trailing.png'),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                    if(newValue == 'Name'){
+                      dropdownvalue1 = 'Member_Name';
+                    }
+                    else{
+                      dropdownvalue1 = 'Date_of_Opening';
+                    }
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -140,25 +170,25 @@ class _collection2State extends State<collection2> {
                 ? _firestone
                   .collection('new_account')
                   .where('Type',isEqualTo: widget.Location)
-                  .orderBy('Member_Name')
+                  .orderBy(dropdownvalue1)
                   .snapshots()
                 :_firestone
                   .collection('new_account')
                   .where('Type',isEqualTo: widget.Location)
                   .where('Plan', isEqualTo: Plan)
-                  .orderBy('Member_Name')
+                  .orderBy(dropdownvalue1)
                   .snapshots()
             : (Plan == '')
                 ?_firestone
                   .collection('new_account_d')
                   .where('place',isEqualTo: widget.Location)
-                  .orderBy('Member_Name')
+                  .orderBy(dropdownvalue1)
                   .snapshots()
                 : _firestone
                   .collection('new_account_d')
                   .where('place',isEqualTo: widget.Location)
                   .where('Plan', isEqualTo: Plan)
-                  .orderBy('Member_Name')
+                  .orderBy(dropdownvalue1)
                   .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
@@ -188,6 +218,7 @@ class _collection2State extends State<collection2> {
                 Monthly = tile.get('monthly');
                 totalCollection += Monthly;
                 totalAmountCollected += Amount_Remaining;
+                totalClient += 1;
                 Memberlist.add(
                 due_data(
                   size: size,
@@ -216,7 +247,7 @@ class _collection2State extends State<collection2> {
                     )
                   : Column(
                     children: [
-                      amountdata(totalCollection , totalAmountCollected),
+                      amountdata(totalCollection , totalAmountCollected , totalClient),
                       SingleChildScrollView(
                           child: Column(
                             children: [
@@ -228,12 +259,11 @@ class _collection2State extends State<collection2> {
                                   )),
                             ],
                         ),
-                ),
+                      ),
                     ],
                   );
               }
-            )
-            ,
+            ),
         ],
       ),
     );
@@ -269,7 +299,7 @@ class _collection2State extends State<collection2> {
     );
   }
 
-  Widget amountdata(int totalCollection1, int totalAmountCollected1) {
+  Widget amountdata(int totalCollection1, int totalAmountCollected1, int totalClient1) {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.only(top:8.0),
@@ -302,7 +332,7 @@ class _collection2State extends State<collection2> {
                   ),
                   color : Colors.white,
                 ),
-                child: const Text('40')
+                child: Text('$totalClient1')
               ),
             ),
             Padding(

@@ -67,6 +67,7 @@ class due_data extends StatefulWidget {
 }
 
 class _due_dataState extends State<due_data> {
+
   _due_dataState({
     required this.size,
     required this.date_open,
@@ -128,10 +129,10 @@ class _due_dataState extends State<due_data> {
     // int Daily = (Monthly / 30).floor();
     // int Weekly = (Monthly / 4).floor();
     if(Type == 'Daily') {
-      if (now.day-payment_date.toDate().day >= 1) {
+      if (now.day-payment_date.toDate().day >= 1 || now.month-payment_date.toDate().month >= 1) {
       status = 'Due';
       colour = const Color(0xffD83F52);
-      setState(() {});
+      // setState(() {});
     }
       money = (now.day>30 ? 30*(Monthly / 30).floor()-Amount_Remaining : now.day*(Monthly / 30).floor()-Amount_Remaining);
     }
@@ -139,12 +140,18 @@ class _due_dataState extends State<due_data> {
       if (now.day-payment_date.toDate().day >= 5) {
       status = 'Due';
       colour = const Color(0xffD83F52);
-      setState(() {});
+      // setState(() {});
     }
       money = (Monthly / 6).floor()*((now.day-payment_date.toDate().day)%5);
     }
     if (Type == 'Monthly'){
       money = Monthly - Amount_Remaining;
+      if(money > 0){
+        status = 'Due';
+      }
+      else {
+        status = 'Paid';
+      }
     } 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -260,7 +267,7 @@ class _due_dataState extends State<due_data> {
                       SizedBox(
                         width: widget.size.width * 0.03,
                       ),
-                      Text('$yearo/$montho/$dayo')
+                      Text('$dayo/$montho/$yearo')
                     ],
                   ),
                   Row(
@@ -277,7 +284,7 @@ class _due_dataState extends State<due_data> {
                       SizedBox(
                         width: widget.size.width * 0.03,
                       ),
-                      Text('$yearm/$monthm/$daym')
+                      Text('$daym/$monthm/$yearm')
                     ],
                   )
                 ],
@@ -385,7 +392,7 @@ class _due_dataState extends State<due_data> {
                                       color: Colors.black87,
                                     ),
                                     textAlign: TextAlign.left,
-                                    onChanged: (value) {
+                                    onSubmitted: (value) {
                                       money = int.parse(value);
                                     },
                                     decoration: InputDecoration(
@@ -472,9 +479,7 @@ class _due_dataState extends State<due_data> {
                   String phoneNo = ""; // Nullable variable
 
                   _firestone
-                      .collection('new_account')
-                      .doc(Location)
-                      .collection(Location)
+                      .collection(widget.accountType)
                       .doc(Account_No)
                       .get()
                       .then((DocumentSnapshot<Map<String, dynamic>>

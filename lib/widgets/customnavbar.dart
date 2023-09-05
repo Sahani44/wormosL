@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:internship2/Screens/Account/account_summary.dart';
-import 'package:internship2/Screens/Collection/collection.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
 import 'package:internship2/Screens/Menu.dart';
-import 'package:internship2/Screens/Place/plaace.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
 import 'package:internship2/Screens/deposit/deposit_screen.dart';
 

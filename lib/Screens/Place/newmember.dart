@@ -20,8 +20,8 @@ class _newmemState extends State<newmem> {
   String Plan = 'B';
   late String Account_No;
   late String Address;
-  late int Amount_Collected;
-  late int Amount_Remaining;
+  late int Amount_Collected = 0;
+  late int Amount_Remaining = 0;
   late String Phone_No;
   String mode = 'cash';
   int installment = 0;
@@ -38,6 +38,7 @@ class _newmemState extends State<newmem> {
   late int monthly = 0;
   var items1 = ['5 Days' ,'Monthly'];
   var items2 = ['Daily'];
+  final _formKey = GlobalKey<FormState>();
 
   Event buildEvent({Recurrence? recurrence}) {
     return Event(
@@ -78,586 +79,642 @@ class _newmemState extends State<newmem> {
                 ),
               ),
               Container(
-                color: const Color(0xff757575),
-                child: Container(
-                  padding: const EdgeInsets.all(20.0),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image.asset(
-                              'assets/Line 8.png',
-                            ),
-                            const Text(
-                              'New Member',
-                              style: TextStyle(
-                                  color: Color(0xff205955),
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              width: size.width * 0.09,
-                            ),
-                            Container(
-                              height: size.height * 0.035,
-                              width: size.width * 0.4,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(19.0, 10.0, 0.0, 0.0),
-                                child: Center(
-                                  child: TextField(
-                                    keyboardType: TextInputType.number,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                      onChanged: (value) {
-                                        Amount = int.parse(value);
-                                      },
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'Monthly Amount',
-                                      )),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
+                // color: const Color(0xff757575),
+                decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20.0),
+                        topRight: Radius.circular(20.0),
                       ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/pen.png',
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: size.height * 0.045,
-                              width: size.width * 0.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Center(
-                                  child: TextField(
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                      onChanged: (value) {
-                                        Member_Name = value;
-                                      },
-                                      decoration: const InputDecoration(
-                                          hintText: 'Member Name')),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: size.width * 0.04,
-                          ),
-                          Row(
+                    ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Form(
+                    key:_formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                width: size.width * 0.1,
-                                child: TextButton(
-                                  onPressed: () {
-                                    selA = true;
-                                    selB = false;
-                                    Plan = 'A';
-                                    setState(() {});
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor: selA
-                                        ? const MaterialStatePropertyAll<Color>(
-                                            Color(0xff42A19A))
-                                        : const MaterialStatePropertyAll<Color>(
-                                            Color(0xffD9D9D9)),
-                                  ),
-                                  child: const Text(
-                                    'A',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
+                              Image.asset(
+                                'assets/Line 8.png',
+                              ),
+                              const Text(
+                                'New Member',
+                                style: TextStyle(
+                                    color: Color(0xff205955),
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold),
                               ),
                               SizedBox(
-                                width: size.width * 0.1,
-                                child: TextButton(
-                                  onPressed: () {
-                                    selA = false;
-                                    selB = true;
-                                    Plan = 'B';
-                                    setState(() {});
-                                  },
-                                  style: ButtonStyle(
-                                    backgroundColor: selB
-                                        ? const MaterialStatePropertyAll<Color>(
-                                            Color(0xff42A19A))
-                                        : const MaterialStatePropertyAll<Color>(
-                                            Color(0xffD9D9D9)),
-                                  ),
-                                  child: const Text(
-                                    'B',
-                                    style: TextStyle(
-                                      color: Colors.grey,
+                                width: size.width * 0.09,
+                              ),
+                              Container(
+                                height: size.height * 0.065,
+                                width: size.width * 0.4,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
                                     ),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
+                                  child: Center(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                        onChanged: (value) {
+                                          Amount = int.parse(value);
+                                        },
+                                        validator: ((value) {
+                                          if(value == null || value.isEmpty || int.parse(value) > 20000) {
+                                            return 'Please enter correct value';
+                                          }
+                                          return null;
+                                        }),
+                                        decoration: const InputDecoration(
+                                          // border: InputBorder.none,
+                                          hintText: 'Monthly Amount',
+                                        )),
                                   ),
                                 ),
                               )
                             ],
                           ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/pen.png',
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: size.height * 0.045,
-                              width: size.width * 0.5,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Center(
-                                  child: TextField(
-                                    keyboardType: TextInputType.number,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                      onChanged: (value) {
-                                        Account_No = value;
-                                      },
-                                      decoration: const InputDecoration(
-                                          hintText: 'Account No')),
-                                ),
-                              ),
-                            ),
-                          ),
-                          widget.place == '' ?
-                           DropdownButton(
-                            value: dropdownvalue1,
-
-                            icon: const Icon(Icons.keyboard_arrow_down),
-
-                            items: items1.map((String items) {
-                              return DropdownMenuItem(
-                                value: items,
-                                child: Text(items),
-                              );
-                            }).toList(),
-                            // After selecting the desired option,it will
-                            // change button value to selected value
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownvalue1 = newValue!;
-                              });
-                            },
-                          )
-                          :
-                          DropdownButton(
-                            value: dropdownvalue2,
-
-                            icon: const Icon(Icons.keyboard_arrow_down),
-
-                            items: items2.map((String items) {
-                              return DropdownMenuItem(
-                                value: items,
-                                child: Text(items),
-                              );
-                            }).toList(),
-                            // After selecting the desired option,it will
-                            // change button value to selected value
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                dropdownvalue2 = newValue!;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Image.asset(
-                            'assets/pen.png',
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: size.height * 0.045,
-                              width: size.width * 0.7,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Center(
-                                  child: TextField(
-                                    keyboardType: TextInputType.number,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                      onChanged: (value) {
-                                        CIF_No = value;
-                                      },
-                                      decoration:
-                                          const InputDecoration(hintText: 'CIF No')),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month_rounded),
-                                Container(
-                                  height: size.height * 0.045,
-                                  width: size.width * 0.345,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      border: Border.all(color: Colors.grey)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Center(
-                                      child: TextButton(
-                                          onPressed: () async {
-                                            DateTime? newDateOpen =
-                                                await showDatePicker(
-                                                    context: context,
-                                                    initialDate: date_open,
-                                                    firstDate: DateTime(1990),
-                                                    lastDate: DateTime(2100));
-                                            if (newDateOpen == null) return;
-
-                                            setState(() => date_open = newDateOpen);
-                                            setState(() => date_mature = DateTime(
-                                                date_open.year + 5,
-                                                date_open.month,
-                                                date_open.day));
-                                          },
-                                          child: Text(
-                                              style: const TextStyle(
-                                                color: Colors.black87,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                              '${date_open.day}/${date_open.month}/${date_open.year}')),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month_rounded),
-                                Container(
-                                  height: size.height * 0.045,
-                                  width: size.width * 0.345,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      border: Border.all(color: Colors.grey)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Center(
-                                      child: TextButton(
-                                          onPressed: () async {
-                                            DateTime? newDateMature =
-                                                await showDatePicker(
-                                                    context: context,
-                                                    initialDate: date_mature,
-                                                    firstDate: DateTime(1990),
-                                                    lastDate: DateTime(2100));
-                                            if (newDateMature == null) return;
-
-                                            setState(() => date_mature = DateTime(
-                                                date_open.year + 5,
-                                                date_open.month,
-                                                date_open.day));
-                                            
-                                          },
-                                          child: Text(
-                                              style: const TextStyle(
-                                                color: Colors.black87,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                              '${date_mature.day}/${date_mature.month}/${date_mature.year}')),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: size.height * 0.05,
-                          width: size.width * 0.75,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              border: Border.all(color: Colors.grey)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Center(
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                  style: const TextStyle(
-                                    color: Colors.black87,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                  onChanged: (value) {
-                                    Amount_Collected = int.parse(value);
-                                  },
-                                  decoration: const InputDecoration(
-                                      hintText: 'Amount Collected')),
-                            ),
-                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: size.height * 0.05,
-                          width: size.width * 0.75,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              border: Border.all(color: Colors.grey)),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Center(
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                  style: const TextStyle(
-                                    color: Colors.black87,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                  onChanged: (value) {
-                                    Amount_Remaining = int.parse(value);
-                                  },
-                                  decoration: const InputDecoration(
-                                      hintText: 'Balance')),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
-                                  size: 30,
-                                ),
-                                Container(
-                                  height: size.height * 0.05,
-                                  width: size.width * 0.75,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                      border: Border.all(color: Colors.grey)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Center(
-                                      child: TextField(
-                                          style: const TextStyle(
-                                            color: Colors.black87,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                          onChanged: (value) {
-                                            Address = value;
-                                          },
-                                          decoration: const InputDecoration(
-                                              hintText: 'Address')),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
+                        Row(
                           children: [
-                            const Icon(
-                              Icons.call,
-                              size: 30,
+                            Image.asset(
+                              'assets/pen.png',
                             ),
-                            Container(
-                              height: size.height * 0.08,
-                              width: size.width * 0.75,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: const BorderRadius.all(
-                                    Radius.circular(10),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: size.height * 0.065,
+                                width: size.width * 0.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Center(
+                                    child: TextFormField(
+                                        textCapitalization: TextCapitalization.words,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                        onChanged: (value) {
+                                          Member_Name = value;
+                                        },
+                                        validator: ((value) {
+                                          if(value == null || value.isEmpty) {
+                                            return 'Please enter some value';
+                                          }
+                                          return null;
+                                        }),
+                                        decoration: const InputDecoration(
+                                            hintText: 'Member Name')),
                                   ),
-                                  border: Border.all(color: Colors.grey)),
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Center(
-                                  child: TextField(
-                                    keyboardType: TextInputType.number,
-                                    maxLength: 10,
-                                      style: const TextStyle(
-                                        color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: size.width * 0.04,
+                            ),
+                            Row(
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.1,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      selA = true;
+                                      selB = false;
+                                      Plan = 'A';
+                                      setState(() {});
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: selA
+                                          ? const MaterialStatePropertyAll<Color>(
+                                              Color(0xff42A19A))
+                                          : const MaterialStatePropertyAll<Color>(
+                                              Color(0xffD9D9D9)),
+                                    ),
+                                    child: const Text(
+                                      'A',
+                                      style: TextStyle(
+                                        color: Colors.grey,
                                       ),
-                                      textAlign: TextAlign.left,
-                                      onChanged: (value) {
-                                        Phone_No = value;
-                                      },
-                                      decoration:
-                                          const InputDecoration(hintText: 'Phone No')),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: size.width * 0.1,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      selA = false;
+                                      selB = true;
+                                      Plan = 'B';
+                                      setState(() {});
+                                    },
+                                    style: ButtonStyle(
+                                      backgroundColor: selB
+                                          ? const MaterialStatePropertyAll<Color>(
+                                              Color(0xff42A19A))
+                                          : const MaterialStatePropertyAll<Color>(
+                                              Color(0xffD9D9D9)),
+                                    ),
+                                    child: const Text(
+                                      'B',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Image.asset(
+                              'assets/pen.png',
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: size.height * 0.065,
+                                width: size.width * 0.5,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Center(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                        onChanged: (value) {
+                                          Account_No = value;
+                                        },
+                                        validator: ((value) {
+                                          if(value == null || value.isEmpty || value.length < 10) {
+                                            return 'Please enter correct value';
+                                          }
+                                          return null;
+                                        }),
+                                        decoration: const InputDecoration(
+                                            hintText: 'Account No')),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            widget.place == '' ?
+                             DropdownButton(
+                              value: dropdownvalue1,
+                
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                
+                              items: items1.map((String items) {
+                                return DropdownMenuItem(
+                                  value: items,
+                                  child: Text(items),
+                                );
+                              }).toList(),
+                              // After selecting the desired option,it will
+                              // change button value to selected value
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownvalue1 = newValue!;
+                                });
+                              },
+                            )
+                            :
+                            DropdownButton(
+                              value: dropdownvalue2,
+                
+                              icon: const Icon(Icons.keyboard_arrow_down),
+                
+                              items: items2.map((String items) {
+                                return DropdownMenuItem(
+                                  value: items,
+                                  child: Text(items),
+                                );
+                              }).toList(),
+                              // After selecting the desired option,it will
+                              // change button value to selected value
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownvalue2 = newValue!;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Image.asset(
+                              'assets/pen.png',
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                height: size.height * 0.065,
+                                width: size.width * 0.7,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Center(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                        onChanged: (value) {
+                                          CIF_No = value;
+                                        },
+                                        validator: ((value) {
+                                          if(value == null || value.isEmpty) {
+                                            return 'Please enter some value';
+                                          }
+                                          return null;
+                                        }),
+                                        decoration:
+                                            const InputDecoration(hintText: 'CIF No')),
+                                  ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      const Divider(
-                        height: 0.8,
-                        color: Colors.black,
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            // final dateo = DateTime.fromMillisecondsSinceEpoch(
-                            //     date_open.millisecondsSinceEpoch);
-                            // final yearo = dateo.year;
-                            // final dayo = dateo.day;
-                            // final datem = DateTime.fromMillisecondsSinceEpoch(
-                            //     date_mature.millisecondsSinceEpoch);
-                            // final yearm = datem.year;
-                            // final daym = datem.day;
-                            // int gap1 = 12 - dayo;
-                            // int gap2 = 12 - daym;
-                            // int gap3 = yearm - yearo;
-                            // monthly = gap3 * 12;
-                            // monthly = monthly - gap1 - gap2;
-                            // monthly = (int.parse(Amount) / monthly).floor();
-                            int total_installment = 60;
-                            int totalAmountCollected = Amount_Collected+Amount_Remaining;
-                            widget.place == '' 
-                            ?  _firestone
-                                .collection('new_account')
-                                .doc(Account_No)
-                                .set({
-                              'Member_Name': Member_Name,
-                              'Plan': Plan,
-                              'Account_No': Account_No,
-                              'Address': Address,
-                              'Amount_Collected': totalAmountCollected,
-                              'Amount_Remaining': Amount_Remaining,
-                              'Phone_No': Phone_No,
-                              'Type': dropdownvalue1,
-                              'Date_of_Maturity': date_mature,
-                              'Date_of_Opening': date_open,
-                              'CIF_No': CIF_No,
-                              'monthly': Amount,
-                              'mode': mode,
-                              'paid_installment': (Amount_Collected/Amount).floor(),
-                              'total_installment': total_installment,
-                              'status': status,
-                              'deposit_field': true,
-                              'payment_date': payment_date,
-                            })
-                            :  _firestone
-                                .collection('new_account_d')
-                                .doc(Account_No)
-                                .set({
-                              'Member_Name': Member_Name,
-                              'Plan': Plan,
-                              'Account_No': Account_No,
-                              'Address': Address,
-                              'Amount_Collected': totalAmountCollected,
-                              'Amount_Remaining': Amount_Remaining,
-                              'Phone_No': Phone_No,
-                              'Type': dropdownvalue2,
-                              'Date_of_Maturity': date_mature,
-                              'Date_of_Opening': date_open,
-                              'CIF_No': CIF_No,
-                              'monthly': Amount,
-                              'mode': mode,
-                              'paid_installment': (Amount_Collected/Amount).floor(),
-                              'total_installment': total_installment,
-                              'status': status,
-                              'deposit_field': true,
-                              'payment_date': payment_date,
-                              'place' : widget.place
-                            });
-                            setState(() {
-                              Navigator.of(context).pop();
-                            });
-                          },
-                          child: const Center(
-                            child: Text(
-                              'Create Member',
-                              style: TextStyle(
-                                  color: Color(0xff205955),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.calendar_month_rounded),
+                                  Container(
+                                    height: size.height * 0.045,
+                                    width: size.width * 0.345,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Center(
+                                        child: TextButton(
+                                            onPressed: () async {
+                                              DateTime? newDateOpen =
+                                                  await showDatePicker(
+                                                      context: context,
+                                                      initialDate: date_open,
+                                                      firstDate: DateTime(1990),
+                                                      lastDate: DateTime(2100));
+                                              if (newDateOpen == null) return;
+                
+                                              setState(() => date_open = newDateOpen);
+                                              setState(() => date_mature = DateTime(
+                                                  date_open.year + 5,
+                                                  date_open.month,
+                                                  date_open.day));
+                                            },
+                                            child: Text(
+                                                style: const TextStyle(
+                                                  color: Colors.black87,
+                                                ),
+                                                textAlign: TextAlign.left,
+                                                '${date_open.day}/${date_open.month}/${date_open.year}')),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          )),
-                    ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.calendar_month_rounded),
+                                  Container(
+                                    height: size.height * 0.045,
+                                    width: size.width * 0.345,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Center(
+                                        child: TextButton(
+                                            onPressed: () async {
+                                              DateTime? newDateMature =
+                                                  await showDatePicker(
+                                                      context: context,
+                                                      initialDate: date_mature,
+                                                      firstDate: DateTime(1990),
+                                                      lastDate: DateTime(2100));
+                                              if (newDateMature == null) return;
+                
+                                              setState(() => date_mature = DateTime(
+                                                  date_open.year + 5,
+                                                  date_open.month,
+                                                  date_open.day));
+                                              
+                                            },
+                                            child: Text(
+                                                style: const TextStyle(
+                                                  color: Colors.black87,
+                                                ),
+                                                textAlign: TextAlign.left,
+                                                '${date_mature.day}/${date_mature.month}/${date_mature.year}')),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.75,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                border: Border.all(color: Colors.grey)),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Center(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                    onChanged: (value) {
+                                      Amount_Collected = int.parse(value);
+                                    },
+                                    validator: ((value) {
+                                      if(value == null || value.isEmpty) {
+                                        return 'Please enter some value';
+                                      }
+                                      return null;
+                                    }),
+                                    decoration: const InputDecoration(
+                                        hintText: 'Amount Collected')),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.75,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                border: Border.all(color: Colors.grey)),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Center(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                    onChanged: (value) {
+                                      Amount_Remaining = int.parse(value);
+                                    },
+                                    validator: ((value) {
+                                      if(value == null || value.isEmpty) {
+                                        return 'Please enter some value';
+                                      }
+                                      return null;
+                                    }),
+                                    decoration: const InputDecoration(
+                                        hintText: 'Balance')),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 30,
+                                  ),
+                                  Container(
+                                    height: size.height * 0.065,
+                                    width: size.width * 0.75,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        border: Border.all(color: Colors.grey)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Center(
+                                        child: TextFormField(
+                                            style: const TextStyle(
+                                              color: Colors.black87,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                            onChanged: (value) {
+                                              Address = value;
+                                            },
+                                            validator: ((value) {
+                                            if(value == null || value.isEmpty) {
+                                              return 'Please enter the Address';
+                                            }
+                                            return null;
+                                          }),
+                                            decoration: const InputDecoration(
+                                                hintText: 'Address')),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.call,
+                                size: 30,
+                              ),
+                              Container(
+                                height: size.height * 0.065,
+                                width: size.width * 0.75,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                    border: Border.all(color: Colors.grey)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 8.0),
+                                  child: Center(
+                                    child: TextFormField(
+                                      keyboardType: TextInputType.number,
+                                        style: const TextStyle(
+                                          color: Colors.black87,
+                                        ),
+                                        textAlign: TextAlign.left,
+                                        onChanged: (value) {
+                                          Phone_No = value;
+                                        },
+                                        validator: ((value) {
+                                          if(value == null || value.isEmpty || value.length != 10) {
+                                            return 'Please enter correct value';
+                                          }
+                                          return null;
+                                        }),
+                                        decoration:
+                                            const InputDecoration(hintText: 'Phone No')),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          height: 0.8,
+                          color: Colors.black,
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              // final dateo = DateTime.fromMillisecondsSinceEpoch(
+                              //     date_open.millisecondsSinceEpoch);
+                              // final yearo = dateo.year;
+                              // final dayo = dateo.day;
+                              // final datem = DateTime.fromMillisecondsSinceEpoch(
+                              //     date_mature.millisecondsSinceEpoch);
+                              // final yearm = datem.year;
+                              // final daym = datem.day;
+                              // int gap1 = 12 - dayo;
+                              // int gap2 = 12 - daym;
+                              // int gap3 = yearm - yearo;
+                              // monthly = gap3 * 12;
+                              // monthly = monthly - gap1 - gap2;
+                              // monthly = (int.parse(Amount) / monthly).floor();
+                              if (_formKey.currentState!.validate()) {
+                                int total_installment = 60;
+                                int totalAmountCollected = Amount_Collected+Amount_Remaining;
+                                widget.place == '' 
+                                ?  _firestone
+                                    .collection('new_account')
+                                    .doc(Account_No)
+                                    .set({
+                                  'Member_Name': Member_Name,
+                                  'Plan': Plan,
+                                  'Account_No': Account_No,
+                                  'Address': Address,
+                                  'Amount_Collected': totalAmountCollected,
+                                  'Amount_Remaining': Amount_Remaining,
+                                  'Phone_No': Phone_No,
+                                  'Type': dropdownvalue1,
+                                  'Date_of_Maturity': date_mature,
+                                  'Date_of_Opening': date_open,
+                                  'CIF_No': CIF_No,
+                                  'monthly': Amount,
+                                  'mode': mode,
+                                  'paid_installment': (Amount_Collected/Amount).floor(),
+                                  'total_installment': total_installment,
+                                  'status': status,
+                                  'deposit_field': true,
+                                  'payment_date': payment_date,
+                                })
+                                :  _firestone
+                                    .collection('new_account_d')
+                                    .doc(Account_No)
+                                    .set({
+                                  'Member_Name': Member_Name,
+                                  'Plan': Plan,
+                                  'Account_No': Account_No,
+                                  'Address': Address,
+                                  'Amount_Collected': totalAmountCollected,
+                                  'Amount_Remaining': Amount_Remaining,
+                                  'Phone_No': Phone_No,
+                                  'Type': dropdownvalue2,
+                                  'Date_of_Maturity': date_mature,
+                                  'Date_of_Opening': date_open,
+                                  'CIF_No': CIF_No,
+                                  'monthly': Amount,
+                                  'mode': mode,
+                                  'paid_installment': (Amount_Collected/Amount).floor(),
+                                  'total_installment': total_installment,
+                                  'status': status,
+                                  'deposit_field': true,
+                                  'payment_date': payment_date,
+                                  'place' : widget.place
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Member Created')),
+                                );
+                                setState(() {
+                                  Navigator.of(context).pop();
+                                });
+                              }
+                            },
+                            child: const Center(
+                              child: Text(
+                                'Create Member',
+                                style: TextStyle(
+                                    color: Color(0xff205955),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            )),
+                      ],
+                    ),
                   ),
                 ),
               ),
