@@ -1,86 +1,134 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names, camel_case_types
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:internship2/widgets/bottom_circular_button.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:internship2/widgets/bottom_circular_button.dart';
 
-class displayeddata extends StatelessWidget {
-  displayeddata({
-    super.key,
-    required this.size,
-    required this.date_open,
-    required this.Location,
-    required this.date_mature,
-    required this.Account_No,
-    required this.Member_Name,
-    required this.Plan,
-  });
+class displayeddata extends StatefulWidget {
+  
   final String Member_Name;
   final String Plan;
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
   final String Location;
-  final Size size;
+  final String type;
+  final int monthly;
+  final Amount_Remaining;
+  final total_installment;
+  final paid_installment;
+  final payment_date;
+
+  const displayeddata({
+    Key? key,
+    required this.Member_Name,
+    required this.Plan,
+    required this.Account_No,
+    required this.date_open,
+    required this.date_mature,
+    required this.Location,
+    required this.monthly,
+    required this.type,
+    required this.Amount_Remaining,
+    required this.total_installment,
+    required this.paid_installment,
+    required this.payment_date
+  }) : super(key: key);
+
+  @override
+  State<displayeddata> createState() => _displayeddataState();
+}
+
+class _displayeddataState extends State<displayeddata> {
+
+    final _firestone = FirebaseFirestore.instance;
+    
+    
 
   @override
   Widget build(BuildContext context) {
+    late int? money = 0;
+    DateTime now = DateTime.now();
+
+     if(widget.type == 'Daily') {
+      money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining) as int?;
+    }
+    if (widget.type == '5 Days'){
+      money = ((widget.monthly / 6).floor()*((now.day-widget.payment_date.toDate().day)%5)) as int?;
+    }
+    if (widget.type == 'widget.monthly'){
+      money = (widget.monthly - widget.Amount_Remaining) as int?;
+    } 
+    Size size = MediaQuery.of(context).size;
     final dateo =
-        DateTime.fromMillisecondsSinceEpoch(date_open.millisecondsSinceEpoch);
+        DateTime.fromMillisecondsSinceEpoch(widget.date_open.millisecondsSinceEpoch);
     final yearo = dateo.year;
     final montho = dateo.month;
     final dayo = dateo.day;
     final datem =
-        DateTime.fromMillisecondsSinceEpoch(date_mature.millisecondsSinceEpoch);
+        DateTime.fromMillisecondsSinceEpoch(widget.date_mature.millisecondsSinceEpoch);
     final yearm = datem.year;
     final monthm = datem.month;
     final daym = datem.day;
-    DateTime now = DateTime.now();
-    final monthFormat = DateFormat.MMMM();
-    final yearFormat = DateFormat.y();
+    String monthName = DateFormat('MMMM').format(dateo);
+    final currentYear = DateFormat.y().format(dateo);
 
-    DateTime dateTime = DateTime(DateTime.now().year, monthm);
-    String monthName = DateFormat('MMMM').format(dateTime);
-
-    final currentMonth = monthFormat.format(now);
-    final currentYear = yearFormat.format(now);
+    // if (now.day-payment_date.toDate().day == 1) {
+    //   status = 'Due';
+    //   colour = const Color(0xffD83F52);
+    //   setState(() {});
+    // }
+    // int Daily = (Monthly / 30).floor();
+    // int Weekly = (Monthly / 4).floor();
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-              top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+          padding:
+              const EdgeInsets.only(top: 10, bottom: 0.0, left: 20.0, right: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                '$Member_Name',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 15,
-                ),
+              Column(
+                children: [
+                  Text(
+                    widget.Member_Name,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(
+                    widget.Account_No,
+                    style: const TextStyle(color: Color(0xffAF545F), fontSize: 13.0),
+                  ),
+                ],
               ),
-              Container(
-                width: size.width * 0.3,
-                decoration: BoxDecoration(
-                  color: Color(0xff29756F),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(40),
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: Container(
+                  width: size.width * 0.3,
+                  decoration: BoxDecoration(
+                    color: const Color(0xff29756F),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(40),
+                    ),
+                    border: Border.all(
+                      width: 2,
+                      color: const Color(0xff29756F),
+                      style: BorderStyle.solid,
+                    ),
                   ),
-                  border: Border.all(
-                    width: 2,
-                    color: Color(0xff29756F),
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Center(
-                    child: Text(
-                      '$monthName $currentYear',
-                      style: TextStyle(
-                        color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Center(
+                      child: Text(
+                        '$monthName $currentYear',
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -90,42 +138,34 @@ class displayeddata extends StatelessWidget {
           ),
         ),
         Padding(
+          padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 20.0, right: 35.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 218, 216, 216),
+                  borderRadius: BorderRadius.circular(5)
+                ),
+                alignment: Alignment.center,
+                width: size.width*0.3,
+                height: size.height*0.030,
+                child: Text('${widget.payment_date.toDate().day}/${widget.payment_date.toDate().month}/${widget.payment_date.toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+              )
+            ],
+          ),
+        ),
+        Padding(
           padding: const EdgeInsets.only(
-              top: 10, bottom: 10.0, left: 20.0, right: 20.0),
+              top: 10.0, bottom: 10.0, left: 20.0, right: 20.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 children: [
-                  Text(
-                    '$Account_No',
-                    style: TextStyle(color: Color(0xffAF545F), fontSize: 16.0),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'DAILY',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          color: Color(0xffAF545F),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(
-                        width: size.width * 0.06,
-                      ),
-                      Text('100/-')
-                    ],
-                  )
-                ],
-              ),
-              Column(
-                children: [
                   Row(
                     children: [
-                      Text(
+                      const Text(
                         'DOO',
                         style: TextStyle(
                           fontSize: 13.5,
@@ -137,12 +177,12 @@ class displayeddata extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.03,
                       ),
-                      Text('$yearo/$montho/$dayo')
+                      Text('$dayo/$montho/$yearo')
                     ],
                   ),
                   Row(
                     children: [
-                      Text(
+                      const Text(
                         'DOM',
                         style: TextStyle(
                           fontSize: 13.5,
@@ -154,82 +194,200 @@ class displayeddata extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.03,
                       ),
-                      Text('$yearm/$monthm/$daym')
+                      Text('$daym/$monthm/$yearm')
                     ],
                   )
                 ],
-              )
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Balance', style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
+                          SizedBox(width: size.width* 0.015,),
+                          Container(
+                            height: size.height * 0.035,
+                            width: size.width * 0.2,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                border: Border.all(color: Colors.grey)),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+                              child: Center(
+                                child: Text('${widget.Amount_Remaining}'),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.015,
+                          ),
+                          Container(
+                            height: size.height * 0.035,
+                            width: size.width * 0.2,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                border: Border.all(color: Colors.grey)),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(20.0, 11.0, 0.0, 0.0),
+                              child: Center(
+                                child: TextField(
+                                  keyboardType: TextInputType.number,
+                                    style: const TextStyle(
+                                      color: Colors.black87,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                    onSubmitted: (value) {
+                                      money = int.parse(value);
+                                    },
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: '$money',
+                                    )),
+                              ),
+                            ),
+                          )
+                        ],
+                  )
+                ],
+              ),
             ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+          padding: const EdgeInsets.only(
+              top: 0, bottom: 10.0, left: 20.0, right: 20.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 children: [
-                  circular_button(
-                    onpressed: () {
-                      print("hello");
-                      String phoneNo = ""; // Nullable variable
-
-                      FirebaseFirestore.instance
-                          .collection('new_account')
-                          .doc(Location)
-                          .collection(Location)
-                          .doc(Account_No)
-                          .get()
-                          .then((DocumentSnapshot<Map<String, dynamic>>
-                              documentSnapshot) {
-                        if (documentSnapshot.exists) {
-                          var data = documentSnapshot.data();
-                          if (data != null) {
-                            phoneNo = data['Phone_No'];
-                            print(phoneNo);
-
-                            if (phoneNo.isNotEmpty) {
-                              launchUrl(Uri.parse("tel:+91$phoneNo"));
-                            } else {
-                              print('Phone number is empty');
-                            }
-                          }
-                        } else {
-                          print('Document does not exist in the database');
-                        }
-                      }).catchError((error) {
-                        print('Error retrieving document: $error');
-                      });
-                    },
-                    size: 20,
-                    icon: Image.asset('assets/Acc/IC2.png'),
-                  ),
-                  // circular_button(
-                  //   size: 20,
-                  //   icon: Image.asset('assets/Acc/IC4.png'),
-                  // ),
-                  circular_button(
-                    onpressed: () {
-                      print("hello");
-
-                      FirebaseFirestore.instance
-                          .collection('new_account')
-                          .doc(Location)
-                          .collection(Location)
-                          .doc(Account_No)
-                          .delete();
-                    },
-                    size: 20,
-                    icon: Image.asset('assets/Acc/IC5.png'),
+                  Row(
+                    children: [
+                      const Text(
+                        'Monthly',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          color: Color(0xffAF545F),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.03,
+                      ),
+                      Text('${widget.monthly}/-'),
+                      SizedBox(
+                        width: size.width * 0.18,
+                      ),
+                      const SizedBox(
+                        child: Wrap(
+                          children: [
+                            Text(
+                              'Installments',
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                color: Color(0xffAF545F),
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.left,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.01,
+                      ),
+                      Text(
+                        '${widget.paid_installment}/${widget.total_installment}',
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
-        Divider(
-          thickness: 0.7,
-          height: 0.02,
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              circular_button(
+                onpressed: () {
+                  print("hello");
+                  String phoneNo = ""; // Nullable variable
+
+                  _firestone
+                      .collection('accountType')
+                      .doc(widget.Account_No)
+                      .get()
+                      .then((DocumentSnapshot<Map<String, dynamic>>
+                          documentSnapshot) {
+                    if (documentSnapshot.exists) {
+                      var data = documentSnapshot.data();
+                      if (data != null) {
+                        phoneNo = data['Phone_No'];
+                        print(phoneNo);
+
+                        if (phoneNo.isNotEmpty) {
+                          launchUrl(Uri.parse("tel:+91$phoneNo"));
+                        } else {
+                          print('Phone number is empty');
+                        }
+                      }
+                    } else {
+                      print('Document does not exist in the database');
+                    }
+                  }).catchError((error) {
+                    print('Error retrieving document: $error');
+                  });
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC2.png'),
+              ),
+              // circular_button(
+              //   size: 20,
+              //   icon: Image.asset('assets/Acc/IC4.png'),
+              // ),
+              circular_button(
+                onpressed: () {
+                  print("hello");
+                  setState(() {
+                    _firestone
+                        .collection('accountType')
+                        .doc(widget.Account_No)
+                        .delete();
+                  });
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC5.png'),
+              ),
+            ],
+          ),
+        ),
+        // ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 0.0),
+          child: Divider(
+            thickness: 0.7,
+            height: 0.02,
+            color: Colors.black,
+          ),
         )
       ],
     );

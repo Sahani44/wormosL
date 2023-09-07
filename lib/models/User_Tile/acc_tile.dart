@@ -10,9 +10,10 @@ class acc_tile extends StatelessWidget {
   late Widget path;
   @override
   Widget build(BuildContext context) {
-    if (screen == 0)
+    if (screen == 0) {
       path = acc_master(Name);
-    else if (screen == 1) path = collection2(Name);
+    } else if (screen == 1){ 
+      path = collection2(Name);}
     Size size = MediaQuery.of(context).size;
     return Column(
       children: [
@@ -27,15 +28,13 @@ class acc_tile extends StatelessWidget {
             );
           },
           selected: false,
-          focusColor: Color(0xffA9C8C5),
+          focusColor: const Color(0xffA9C8C5),
           tileColor: Colors.white,
-          selectedTileColor: Color(0xffA9C8C5),
-          leading: Container(
-            child: Image.asset('assets/place_edit/h3.png'),
-          ),
+          selectedTileColor: const Color(0xffA9C8C5),
+          leading: Image.asset('assets/place_edit/h3.png'),
           title: Text(
-            '$Name',
-            style: TextStyle(
+            Name,
+            style: const TextStyle(
               color: Colors.black,
             ),
           ),

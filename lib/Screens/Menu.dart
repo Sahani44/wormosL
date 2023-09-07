@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Account/Account_Master.dart';
 import 'package:internship2/Screens/Account/acc_screen.dart';
 import 'package:internship2/Screens/Due/due_screen.dart';
 import 'package:internship2/Screens/Lapse/lapsescreen.dart';
@@ -24,7 +25,7 @@ class menu extends StatelessWidget {
                 tle: 'Account '
                     'Master',
                 logo: Image.asset('assets/menu/acc_master.png'),
-                path: acc_screen(0),
+                path: acc_master(''),
               ),
               menu_tile(
                 tle: 'Due '

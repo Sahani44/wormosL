@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 class due_data extends StatefulWidget {
   const due_data({
     super.key,
-    required this.size,
     required this.date_open,
     required this.date_mature,
     required this.Account_No,
@@ -34,7 +33,6 @@ class due_data extends StatefulWidget {
   final Timestamp date_open;
   final Timestamp date_mature;
   final Timestamp payment_date;
-  final Size size;
   final String mode;
   final int paid_installment;
   final int total_installment;
@@ -47,7 +45,6 @@ class due_data extends StatefulWidget {
   final String accountType;
   @override
   State<due_data> createState() => _due_dataState(
-        size: size,
         Member_Name: Member_Name,
         Plan: Plan,
         Account_No: Account_No,
@@ -69,7 +66,6 @@ class due_data extends StatefulWidget {
 class _due_dataState extends State<due_data> {
 
   _due_dataState({
-    required this.size,
     required this.date_open,
     required this.date_mature,
     required this.Account_No,
@@ -94,7 +90,6 @@ class _due_dataState extends State<due_data> {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  final Size size;
   Timestamp payment_date;
   final int Amount_Collected;
   int Amount_Remaining;
@@ -218,7 +213,7 @@ class _due_dataState extends State<due_data> {
                   else {}
                 },
                 child: button(
-                    size: widget.size.width * 0.3,
+                    size: size.width * 0.3,
                     text: status == 'Due' ? status : '$status/Undo',
                     color: status == 'Paid'
                         ? const Color(0xff29756F)
@@ -238,8 +233,8 @@ class _due_dataState extends State<due_data> {
                   borderRadius: BorderRadius.circular(5)
                 ),
                 alignment: Alignment.center,
-                width: widget.size.width*0.3,
-                height: widget.size.height*0.030,
+                width: size.width*0.3,
+                height: size.height*0.030,
                 child: Text('${payment_date.toDate().day}/${payment_date.toDate().month}/${payment_date.toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
@@ -265,7 +260,7 @@ class _due_dataState extends State<due_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width: size.width * 0.03,
                       ),
                       Text('$dayo/$montho/$yearo')
                     ],
@@ -282,7 +277,7 @@ class _due_dataState extends State<due_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width: size.width * 0.03,
                       ),
                       Text('$daym/$monthm/$yearm')
                     ],
@@ -429,11 +424,11 @@ class _due_dataState extends State<due_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width: size.width * 0.03,
                       ),
                       Text('$Monthly/-'),
                       SizedBox(
-                        width: widget.size.width * 0.18,
+                        width: size.width * 0.18,
                       ),
                       const SizedBox(
                         child: Wrap(
@@ -451,7 +446,7 @@ class _due_dataState extends State<due_data> {
                         ),
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.01,
+                        width: size.width * 0.01,
                       ),
                       Text(
                         '$paid_installment/$total_installment',

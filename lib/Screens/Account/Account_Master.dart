@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/widgets/customnavbar.dart';
+// import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/displayed_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -19,43 +19,94 @@ class _acc_masterState extends State<acc_master> {
     this.Location,
   );
   String Location;
-  int _currentIndex = 1;
-  final int _currentscheme = 0;
+  int _currentIndex = 0;
   late String Member_Name;
   late String Plan;
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  final _isloading = false;
+  late int monthly;
+  bool _isloading = true;
+  late String type;
+  List<Widget> Memberlist = [];
+  late int total_installment;
+  late int Amount_Remaining;
+  late Timestamp  payment_date;
+  late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
   final _inactiveColor = const Color(0xffEBEBEB);
-  void addData(List<Widget> Memberlist, size) {
+  String dropdownvalue ='Name';
+  String dropdownvalue1 = 'Member_Name';
+  var items = ['Name' ,'DOE'];
+  var tiles =[];
+  
+  void addData(List<Widget> Memberlist) {
     Memberlist.add(
       displayeddata(
         Location: Location,
-        size: size,
         Member_Name: Member_Name,
         Plan: Plan,
         Account_No: Account_No,
         date_mature: date_mature,
-        date_open: date_open,
+        date_open: date_open, 
+        monthly: monthly,
+        type: type, 
+        payment_date: payment_date, 
+        Amount_Remaining: Amount_Remaining, 
+        total_installment: total_installment, 
+        paid_installment: paid_installment,
       ),
     );
+  }
+
+  Future<bool> getDocs (Memberlist) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
+    tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
+    for (var tile in tiles) {
+      Member_Name = tile.get('Member_Name');
+      Plan = tile.get('Plan');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      payment_date = tile.get('payment_date');
+      type = tile.get('Type');
+      monthly = tile.get('monthly');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      addData(Memberlist);
+    }
+    return false;
+  
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    // tiles.sort((a, b) {
+    //   if(dropdownvalue1 == 'Member_Name') {
+    //    return a.get('Member_Name').compareTo(b.get('Member_Name'));
+    //   }
+    //   else {
+    //    return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+    //   }
+    // },);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const CustomNavBar()),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -66,7 +117,7 @@ class _acc_masterState extends State<acc_master> {
         title: Row(
           children: [
             Container(
-              width: size.width * 0.60,
+              width: size.width * 0.55,
               height: size.height * 0.05,
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
@@ -81,12 +132,32 @@ class _acc_masterState extends State<acc_master> {
                     border: InputBorder.none),
               ),
             ),
-            IconButton(
-                iconSize: 50,
-                onPressed: () {},
-                // height: size.height * 0.09,
-                // width: size.width * 0.09,
-                icon: Image.asset('assets/Acc/trailing.png'))
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: DropdownButton(
+                value: dropdownvalue,
+                icon: Image.asset('assets/Acc/trailing.png'),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                    if(newValue == 'Name'){
+                      dropdownvalue1 = 'Member_Name';
+                    }
+                    else{
+                      dropdownvalue1 = 'Date_of_Opening';
+                    }
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -108,68 +179,34 @@ class _acc_masterState extends State<acc_master> {
               child: _buildAboveBar(),
             ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 12.0),
-          //   child: Row(
-          //     children: [
-          //       Text(
-          //         'Chiran Road',
-          //         style: TextStyle(
-          //           fontSize: 13.5,
-          //           color: Color(0xff205955),
-          //           fontWeight: FontWeight.w500,
-          //         ),
-          //         textAlign: TextAlign.left,
-          //       ),
-          //     ],
-          //   ),
-          // ),
-          StreamBuilder(
-              stream: _firestone
-                  .collection('new_account')
-                  .doc(Location)
-                  .collection(Location)
-                  .orderBy('Member_Name')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.lightBlueAccent,
-                    ),
-                  );
-                }
-                final tiles = snapshot.data!.docs;
-                List<Widget> Memberlist = [];
-                for (var tile in tiles) {
-                  Member_Name = tile.get('Member_Name');
-                  Plan = tile.get('Plan');
-                  Account_No = tile.get('Account_No').toString();
-                  date_open = tile.get('Date_of_Opening');
-                  date_mature = tile.get('Date_of_Maturity');
-                  if (_currentIndex == 1) {
-                    if (Plan == 'A') addData(Memberlist, size);
-                  } else if (_currentIndex == 2) {
-                    if (Plan == 'B') addData(Memberlist, size);
-                  } else {
-                    addData(Memberlist, size);
-                  }
-                }
-                return _isloading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: size.height * 0.68,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              )),
-                        ],
-                      );
-              })
+          _isloading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+            children: [
+              SizedBox(
+                  height: size.height * 0.68,
+                  child: ListView.builder(
+                    itemCount: Memberlist.length,
+                    itemBuilder: (context, i) {
+                      var type = tiles[i].get('Type');
+                      Widget widget = const SizedBox(height: 0,);
+                      if (_currentIndex == 1 && type == '5 Days') {
+                          widget =  Memberlist[i];
+                      } 
+                      if (_currentIndex == 2 && type == 'Monthly') {
+                          widget =  Memberlist[i];
+                      }
+                      if( _currentIndex == 0 && type == 'Daily') {
+                        widget =  Memberlist[i];
+                      }
+                      return widget;
+                    },
+                  )
+                ),
+            ],
+          )
         ],
       ),
     );
@@ -187,17 +224,17 @@ class _acc_masterState extends State<acc_master> {
       onItemSelected: (index) => setState(() => _currentIndex = index),
       items: <AboveNavyBarItem>[
         AboveNavyBarItem(
-          alpha: 'All',
+          alpha: 'Daily',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),
         AboveNavyBarItem(
-          alpha: 'A',
+          alpha: '5 Days',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),
         AboveNavyBarItem(
-          alpha: 'B',
+          alpha: 'Monthly',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),

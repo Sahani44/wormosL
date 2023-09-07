@@ -1,9 +1,11 @@
+// ignore_for_file: non_constant_identifier_names, must_be_immutable, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/Screens/Due/due.dart';
 
 class due_tile extends StatelessWidget {
-  due_tile(this.Name);
+  due_tile(this.Name, {super.key});
   late String Name;
   @override
   Widget build(BuildContext context) {
@@ -21,15 +23,13 @@ class due_tile extends StatelessWidget {
             );
           },
           selected: false,
-          focusColor: Color(0xffA9C8C5),
+          focusColor: const Color(0xffA9C8C5),
           tileColor: Colors.white,
-          selectedTileColor: Color(0xffA9C8C5),
-          leading: Container(
-            child: Image.asset('assets/place_edit/h3.png'),
-          ),
+          selectedTileColor: const Color(0xffA9C8C5),
+          leading: Image.asset('assets/place_edit/h3.png'),
           title: Text(
-            '$Name',
-            style: TextStyle(
+            Name,
+            style: const TextStyle(
               color: Colors.black,
             ),
           ),

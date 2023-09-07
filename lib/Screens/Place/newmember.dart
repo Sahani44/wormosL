@@ -1,6 +1,5 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -65,7 +64,7 @@ class _newmemState extends State<newmem> {
   DateTime payment_date = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         body: SingleChildScrollView(
@@ -671,6 +670,7 @@ class _newmemState extends State<newmem> {
                                   'status': status,
                                   'deposit_field': true,
                                   'payment_date': payment_date,
+                                  'place': ''
                                 })
                                 :  _firestone
                                     .collection('new_account_d')

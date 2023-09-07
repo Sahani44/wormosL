@@ -2,10 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
-import 'package:internship2/Screens/Collection/collection.dart';
-import 'package:internship2/Screens/Collection/collection_landing.dart';
-import 'package:internship2/Screens/Menu.dart';
 import '../../models/views/due_display.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -37,29 +33,82 @@ class _collection2State extends State<collection2> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
-  late int totalCollection;
-  late int totalAmountCollected;
+  late int totalCollection = 0;
+  late int totalAmountCollected = 0;
+  late String place;
   int totalClient = 0;
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-
   late Timestamp payment_date;
   String accountType = '';
   String Type = '';
   var _isloading = false;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
-  // int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
-  // void addData(List<Widget> Memberlist, size) {
-  //   print(Member_Name);
-    
-  // }
+  var tiles =[];
+  List<Widget> Memberlist = [];
+  
+  void addData(List<Widget> Memberlist) {
+    Memberlist.add(
+      due_data(
+        Location: Location,
+        Member_Name: Member_Name,
+        Plan: Plan,
+        Account_No: Account_No,
+        date_mature: date_mature,
+        date_open: date_open, 
+        Monthly: Monthly,
+        Type: Type, 
+        payment_date: payment_date, 
+        Amount_Remaining: Amount_Remaining, 
+        total_installment: total_installment, 
+        paid_installment: paid_installment, 
+        mode: mode, 
+        status: status, 
+        Amount_Collected: Amount_Collected,
+        accountType: accountType,
+      ),
+    );
+  }
+
+  Future<bool> getDocs (Memberlist) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
+    tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
+    for (var tile in tiles) {
+      Member_Name = tile.get('Member_Name');
+      Phone = tile.get("Phone_No");
+      Plan = tile.get('Plan');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      mode = tile.get('mode');
+      status = tile.get('status');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      payment_date = tile.get('payment_date');
+      Type = tile.get('Type');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      Amount_Collected = tile.get('Amount_Collected');
+      Monthly = tile.get('monthly');
+      place = tile.get('place');
+      addData(Memberlist);
+    }
+    return false;
+  
+  }
 
   @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
+  @override
   Widget build(BuildContext context) {
-    List<Widget> Memberlist = [];
     if(widget.Location == '5 Days'){
       Type = '5 Days';
       accountType = 'new_account';
@@ -165,30 +214,26 @@ class _collection2State extends State<collection2> {
           ),
           StreamBuilder(
             stream: 
-            (widget.Location == '5 Days' || widget.Location == 'Monthly') 
+            (Location == '5 Days' || Location == 'Monthly') 
             ? (Plan == '')
                 ? _firestone
                   .collection('new_account')
                   .where('Type',isEqualTo: widget.Location)
-                  .orderBy(dropdownvalue1)
                   .snapshots()
                 :_firestone
                   .collection('new_account')
                   .where('Type',isEqualTo: widget.Location)
                   .where('Plan', isEqualTo: Plan)
-                  .orderBy(dropdownvalue1)
                   .snapshots()
             : (Plan == '')
                 ?_firestone
                   .collection('new_account_d')
                   .where('place',isEqualTo: widget.Location)
-                  .orderBy(dropdownvalue1)
                   .snapshots()
                 : _firestone
                   .collection('new_account_d')
                   .where('place',isEqualTo: widget.Location)
                   .where('Plan', isEqualTo: Plan)
-                  .orderBy(dropdownvalue1)
                   .snapshots(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
@@ -198,72 +243,64 @@ class _collection2State extends State<collection2> {
                   ),
                 );
               }
-              Iterable tiles = {};
-              tiles = snapshot.data!.docs;
-              for (var tile in tiles) {
-                Member_Name = tile.get('Member_Name');
-                Phone = tile.get("Phone_No");
-                Plan = tile.get('Plan');
-                Account_No = tile.get('Account_No').toString();
-                date_open = tile.get('Date_of_Opening');
-                date_mature = tile.get('Date_of_Maturity');
-                mode = tile.get('mode');
-                status = tile.get('status');
-                paid_installment = tile.get('paid_installment');
-                total_installment = tile.get('total_installment');
-                payment_date = tile.get('payment_date');
-                Type = tile.get('Type');
-                Amount_Remaining = tile.get('Amount_Remaining');
-                Amount_Collected = tile.get('Amount_Collected');
-                Monthly = tile.get('monthly');
-                totalCollection += Monthly;
-                totalAmountCollected += Amount_Remaining;
+              Iterable tiles1 = {};
+              tiles1 = snapshot.data!.docs;
+              for (var tile in tiles1) {
+                totalCollection += tile.get('monthly')! as int;
+                totalAmountCollected += tile.get('Amount_Remaining')! as int;
                 totalClient += 1;
-                Memberlist.add(
-                due_data(
-                  size: size,
-                  Member_Name: Member_Name,
-                  Plan: Plan,
-                  Account_No: Account_No,
-                  date_mature: date_mature,
-                  date_open: date_open,
-                  mode: mode,
-                  paid_installment: paid_installment,
-                  total_installment: total_installment,
-                  status: status,
-                  Location: Location,
-                  Amount_Collected: Amount_Collected,
-                  Amount_Remaining: Amount_Remaining,
-                  Monthly: Monthly,
-                  Type: Type,
-                  payment_date: payment_date,
-                  accountType: accountType,
-                ),
-              );
               }
               return _isloading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Column(
-                    children: [
-                      amountdata(totalCollection , totalAmountCollected , totalClient),
-                      SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                  height: size.height * 0.7,
-                                  child: ListView.builder(
-                                    itemCount: Memberlist.length,
-                                    itemBuilder: (context, i) => Memberlist[i],
-                                  )),
-                            ],
-                        ),
-                      ),
-                    ],
-                  );
-              }
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : amountdata(totalCollection, totalAmountCollected, totalClient);
+            }
             ),
+           _isloading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+            children: [
+              SizedBox(
+                  height: size.height * 0.68,
+                  child: ListView.builder(
+                    itemCount: Memberlist.length,
+                    itemBuilder: (context, i) {
+                      var plan = tiles[i].get('Plan');
+                      var type = tiles[i].get('Type');
+                      var loc = tiles[i].get('place');
+                      Widget widget = const SizedBox(height: 0,);
+                
+                      if (Location == type) {
+                        if (_currentIndex == 1 && plan == 'A') {
+                          widget =  Memberlist[i] ;
+                        } 
+                        if (_currentIndex == 2 && plan == 'B') {
+                            widget =  Memberlist[i];
+                        }
+                        if( _currentIndex == 0) {
+                          widget =  Memberlist[i];
+                        }
+                      }
+                      else {
+                        if (_currentIndex == 1 && plan == 'A' && Location == loc) {
+                          widget =  Memberlist[i] ;
+                        } 
+                        if (_currentIndex == 2 && plan == 'B' && Location == loc) {
+                            widget =  Memberlist[i];
+                        }
+                        if( _currentIndex == 0 && Location == loc) {
+                          widget =  Memberlist[i];
+                        }
+                      }
+                      return widget;
+                    },
+                  )
+                ),
+            ],
+          )
         ],
       ),
     );
@@ -384,39 +421,4 @@ class _collection2State extends State<collection2> {
       ),
     );
   }
-
-//   Widget _buildAboveBar2() {
-//     Size size = MediaQuery.of(context).size;
-//     return CustomAnimatedAboveBar(
-//       containerHeight: size.height * 0.07,
-//       backgroundColor: Colors.white,
-//       selectedIndex: _currentIndex2,
-//       showElevation: true,
-//       itemCornerRadius: 24,
-//       curve: Curves.easeIn,
-//       onItemSelected: (index) => setState(() => _currentIndex2 = index),
-//       items: <AboveNavyBarItem>[
-//         AboveNavyBarItem(
-//           alpha: 'Daily',
-//           activeColor: Colors.grey,
-//           inactiveColor: _inactiveColor,
-//         ),
-//         AboveNavyBarItem(
-//           alpha: 'Weekly',
-//           activeColor: Colors.grey,
-//           inactiveColor: _inactiveColor,
-//         ),
-//         AboveNavyBarItem(
-//           alpha: 'Monthly',
-//           activeColor: Colors.grey,
-//           inactiveColor: _inactiveColor,
-//         ),
-//         // AboveNavyBarItem(
-//         //   alpha: 'Quarterly',
-//         //   activeColor: Colors.grey,
-//         //   inactiveColor: _inactiveColor,
-//         // ),
-//       ],
-//     );
-//   }
 }
