@@ -1,30 +1,19 @@
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields, camel_case_types
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:internship2/Providers/month_selector.dart';
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
+import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/widgets/customnavbar.dart';
-import '../../models/views/maturity_display.dart';
-import 'package:internship2/Screens/Menu.dart';
-import '../../models/views/due_display.dart';
 
 class lapse extends StatefulWidget {
   static const id = '/lapse';
-  lapse(
-    this.Location,
-  );
-  String Location;
+  const lapse({super.key});
   @override
-  State<lapse> createState() => _lapseState(Location);
+  State<lapse> createState() => _lapseState();
 }
 
 class _lapseState extends State<lapse> {
-  _lapseState(
-    this.Location,
-  );
-  String Location;
+  
   late String Member_Name;
   late String Plan;
   late String Account_No;
@@ -43,8 +32,19 @@ class _lapseState extends State<lapse> {
   var _isloading = false;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
-  int _currentIndex2 = 0;
+  int _currentIndex1 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
+  String dropdownvalue ='Name';
+  String dropdownvalue1 = 'Member_Name';
+  var items = ['Name' ,'DOE'];
+  var tiles =[];
+  List<Widget> Memberlist = [];
+  List<Widget> newMemberList =[];
+  var totalClient = 0;
+  var totalAmount = 0;
+  var totalBalance = 0;
+
+
   void addData(List<Widget> Memberlist, size) {
     // Memberlist.add(
       // due_data(
@@ -94,7 +94,7 @@ class _lapseState extends State<lapse> {
         title: Row(
           children: [
             Container(
-              width: size.width * 0.60,
+              width: size.width * 0.55,
               height: size.height * 0.05,
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
@@ -109,10 +109,32 @@ class _lapseState extends State<lapse> {
                     border: InputBorder.none),
               ),
             ),
-            IconButton(
-                iconSize: 50,
-                onPressed: () {},
-                icon: Image.asset('assets/Acc/trailing.png'))
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: DropdownButton(
+                value: dropdownvalue,
+                icon: Image.asset('assets/Acc/trailing.png'),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                    if(newValue == 'Name'){
+                      dropdownvalue1 = 'Member_Name';
+                    }
+                    else{
+                      dropdownvalue1 = 'Date_of_Opening';
+                    }
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -131,14 +153,179 @@ class _lapseState extends State<lapse> {
                   style: BorderStyle.solid,
                 ),
               ),
-              child: buildAboveBar(),
+              child: _buildAboveBar(),
             ),
           ),
-          StreamBuilder(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                localAmountdata(totalClient, totalAmount),
+                _buildAboveBar1()
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+    Widget _buildAboveBar() {
+    Size size = MediaQuery.of(context).size;
+    return CustomAnimatedAboveBar(
+      containerHeight: size.height * 0.07,
+      boxWidth: 45,
+      backgroundColor: Colors.white,
+      selectedIndex: _currentIndex,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      onItemSelected: (index) => setState(() => _currentIndex = index),
+      items: <AboveNavyBarItem>[
+        AboveNavyBarItem(
+          alpha: 'All',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '1',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '2',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '3',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '4',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '5',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: '6',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAboveBar1() {
+    Size size = MediaQuery.of(context).size;
+    return CustomAnimatedAboveBar(
+      containerHeight: size.height * 0.07,
+      containerWidth: size.width * 0.40,
+      boxWidth: 70,
+      backgroundColor: Colors.white,
+      selectedIndex: _currentIndex1,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      onItemSelected: (index) => setState(() => _currentIndex1 = index),
+      items: <AboveNavyBarItem>[
+        // AboveNavyBarItem(
+        //   alpha: 'All',
+        //   activeColor: Colors.grey,
+        //   inactiveColor: _inactiveColor,
+        // ),
+        AboveNavyBarItem(
+          alpha: 'A',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: 'B',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+      ],
+    );
+  }
+
+  Widget localAmountdata(int totalClient, int totalAmount) {
+    Size size = MediaQuery.of(context).size;
+    return Padding(
+      padding: const EdgeInsets.only(top:8.0),
+      child: Container(
+        height: size.height * 0.08,
+        width: size.width * 0.54,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(
+            Radius.circular(40),
+          ),
+          border: Border.all(
+            width: 3,
+            color: Colors.grey.shade300,
+            // style: BorderStyle.solid,
+          ),
+          color: Colors.grey[300],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(30),
+                  ),
+                  border: Border.all(
+                    width: 8,
+                    color: Colors.white
+                  ),
+                  color : Colors.white,
+                ),
+                child: Text('$totalClient')
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
+              child: Container(
+                width: 125,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  border: Border.all(
+                    width: 8,
+                    color: Colors.white
+                  ),
+                  color : Colors.white,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const Text('Amount' , style: TextStyle(color: Color(0xff32B9AE) , fontWeight: FontWeight.w600),),
+                    Text('$totalAmount')
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+}
+
+
+/*
+            StreamBuilder(
               stream: _firestone
                   .collection('new_account')
-                  .doc(Location)
-                  .collection(Location)
                   .orderBy('Member_Name')
                   .snapshots(),
               builder: (context, snapshot) {
@@ -215,38 +402,4 @@ class _lapseState extends State<lapse> {
                         ),
                       );
               }),
-        ],
-      ),
-    );
-  }
-
-  Widget buildAboveBar() {
-    Size size = MediaQuery.of(context).size;
-    return CustomAnimatedAboveBar(
-      containerHeight: size.height * 0.07,
-      backgroundColor: Colors.white,
-      selectedIndex: _currentIndex,
-      showElevation: true,
-      itemCornerRadius: 24,
-      curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex = index),
-      items: <AboveNavyBarItem>[
-        AboveNavyBarItem(
-          alpha: '3 Months',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-        AboveNavyBarItem(
-          alpha: '6 Months',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-        AboveNavyBarItem(
-          alpha: '1 year',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-      ],
-    );
-  }
-}
+*/

@@ -1,8 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:internship2/Screens/Collection/collection2.dart';
-import 'package:internship2/Screens/Due/due.dart';
 import 'package:internship2/Screens/deposit/deposit.dart';
 
 class deposit_tile extends StatelessWidget {
@@ -20,7 +18,7 @@ class deposit_tile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => deposit(Name)),
+              MaterialPageRoute(builder: (context) => const deposit()),
             );
           },
           selected: false,

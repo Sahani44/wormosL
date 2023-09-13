@@ -5,6 +5,8 @@ import 'package:internship2/Providers/scheme_selector.dart';
 import '../../models/views/due_display.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../widgets/amountdata.dart';
+
 class collection2 extends StatefulWidget {
   collection2(
     this.Location, {super.key}
@@ -33,14 +35,11 @@ class _collection2State extends State<collection2> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
-  late int totalCollection = 0;
-  late int totalAmountCollected = 0;
   late String place;
-  int totalClient = 0;
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-  late Timestamp payment_date;
+  late List<Timestamp> payment_dates;
   String accountType = '';
   String Type = '';
   var _isloading = false;
@@ -49,6 +48,10 @@ class _collection2State extends State<collection2> {
   final _inactiveColor = const Color(0xffEBEBEB);
   var tiles =[];
   List<Widget> Memberlist = [];
+  List<Widget> newMemberList =[];
+  var totalClient = 0;
+  var totalAmount = 0;
+  var totalBalance = 0;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -61,7 +64,7 @@ class _collection2State extends State<collection2> {
         date_open: date_open, 
         Monthly: Monthly,
         Type: Type, 
-        payment_date: payment_date, 
+        payment_dates: payment_dates, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment, 
@@ -69,6 +72,7 @@ class _collection2State extends State<collection2> {
         status: status, 
         Amount_Collected: Amount_Collected,
         accountType: accountType,
+        callBack: callBack,
       ),
     );
   }
@@ -88,12 +92,21 @@ class _collection2State extends State<collection2> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      payment_date = tile.get('payment_date');
+      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');
       place = tile.get('place');
+      if(widget.Location == '5 Days'){
+        accountType = 'new_account';
+      }
+      else if(widget.Location == 'Monthly'){
+        accountType = 'new_account';
+      }
+      else {
+        accountType = 'new_account_d';
+      }
       addData(Memberlist);
     }
     return false;
@@ -107,34 +120,68 @@ class _collection2State extends State<collection2> {
       _isloading = value;
     }));
   }
+
+
+  void getNewMemberList (int currentIndex) {
+    for (int i=0; i<tiles.length; i++) {
+      String plan = tiles[i].get('Plan');
+      String type = tiles[i].get('Type');
+      String loc = tiles[i].get('place');
+        if( _currentIndex == 0 && Location == type) {
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        }
+        else if (_currentIndex == 1 && plan == "A" && Location == type) {
+          newMemberList.add(Memberlist[i]) ;
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        } 
+        else if (_currentIndex == 2 && plan == "B" && Location == type) {
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        }
+        else if( _currentIndex == 0 && Location == loc) {
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        }
+        else if (_currentIndex == 1 && plan == "A" && Location == loc) {
+          newMemberList.add(Memberlist[i]) ;
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        } 
+        else if (_currentIndex == 2 && plan == "B" && Location == loc) {
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += Amount_Collected;
+          totalBalance += Amount_Remaining;
+        }
+    }
+  }
+
+
+  callBack(int money) {
+    return setState(() {
+      totalBalance = totalBalance+money;
+      totalAmount = totalAmount+money; 
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if(widget.Location == '5 Days'){
-      Type = '5 Days';
-      accountType = 'new_account';
-    }
-    else if(widget.Location == 'Monthly'){
-      Type = 'Monthly';
-      accountType = 'new_account';
-    }
-    else {
-      Type = 'Daily';
-      accountType = 'new_account_d';
-    }
-
-    if(_currentIndex == 1){
-      Plan = 'A';
-    }
-    else if(_currentIndex == 2){
-      Plan = 'B';
-    }
-    else {
-      Plan = '';
-    }
-    totalAmountCollected = 0;
-    totalCollection = 0;
-    totalClient = 0;
     Size size = MediaQuery.of(context).size;
+    newMemberList = [];
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    getNewMemberList(_currentIndex);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -212,51 +259,7 @@ class _collection2State extends State<collection2> {
             ),
             child: _buildAboveBar(),
           ),
-          StreamBuilder(
-            stream: 
-            (Location == '5 Days' || Location == 'Monthly') 
-            ? (Plan == '')
-                ? _firestone
-                  .collection('new_account')
-                  .where('Type',isEqualTo: widget.Location)
-                  .snapshots()
-                :_firestone
-                  .collection('new_account')
-                  .where('Type',isEqualTo: widget.Location)
-                  .where('Plan', isEqualTo: Plan)
-                  .snapshots()
-            : (Plan == '')
-                ?_firestone
-                  .collection('new_account_d')
-                  .where('place',isEqualTo: widget.Location)
-                  .snapshots()
-                : _firestone
-                  .collection('new_account_d')
-                  .where('place',isEqualTo: widget.Location)
-                  .where('Plan', isEqualTo: Plan)
-                  .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.lightBlueAccent,
-                  ),
-                );
-              }
-              Iterable tiles1 = {};
-              tiles1 = snapshot.data!.docs;
-              for (var tile in tiles1) {
-                totalCollection += tile.get('monthly')! as int;
-                totalAmountCollected += tile.get('Amount_Remaining')! as int;
-                totalClient += 1;
-              }
-              return _isloading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : amountdata(totalCollection, totalAmountCollected, totalClient);
-            }
-            ),
+          amountdata(totalClient, totalAmount,  totalBalance, context),
            _isloading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -266,36 +269,9 @@ class _collection2State extends State<collection2> {
               SizedBox(
                   height: size.height * 0.68,
                   child: ListView.builder(
-                    itemCount: Memberlist.length,
+                    itemCount: newMemberList.length,
                     itemBuilder: (context, i) {
-                      var plan = tiles[i].get('Plan');
-                      var type = tiles[i].get('Type');
-                      var loc = tiles[i].get('place');
-                      Widget widget = const SizedBox(height: 0,);
-                
-                      if (Location == type) {
-                        if (_currentIndex == 1 && plan == 'A') {
-                          widget =  Memberlist[i] ;
-                        } 
-                        if (_currentIndex == 2 && plan == 'B') {
-                            widget =  Memberlist[i];
-                        }
-                        if( _currentIndex == 0) {
-                          widget =  Memberlist[i];
-                        }
-                      }
-                      else {
-                        if (_currentIndex == 1 && plan == 'A' && Location == loc) {
-                          widget =  Memberlist[i] ;
-                        } 
-                        if (_currentIndex == 2 && plan == 'B' && Location == loc) {
-                            widget =  Memberlist[i];
-                        }
-                        if( _currentIndex == 0 && Location == loc) {
-                          widget =  Memberlist[i];
-                        }
-                      }
-                      return widget;
+                      return newMemberList[i];
                     },
                   )
                 ),
@@ -315,6 +291,7 @@ class _collection2State extends State<collection2> {
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
+      boxWidth: 100,
       onItemSelected: (index) => setState(() {_currentIndex = index;}),
       items: <AboveNavyBarItem>[
         AboveNavyBarItem(
@@ -336,89 +313,4 @@ class _collection2State extends State<collection2> {
     );
   }
 
-  Widget amountdata(int totalCollection1, int totalAmountCollected1, int totalClient1) {
-    Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.only(top:8.0),
-      child: Container(
-        height: size.height * 0.08,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(40),
-          ),
-          border: Border.all(
-            width: 3,
-            color: Colors.grey.shade300,
-            // style: BorderStyle.solid,
-          ),
-          color: Colors.grey[300],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(30),
-                  ),
-                  border: Border.all(
-                    width: 8,
-                    color: Colors.white
-                  ),
-                  color : Colors.white,
-                ),
-                child: Text('$totalClient1')
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40),
-                  ),
-                  border: Border.all(
-                    width: 8,
-                    color: Colors.white
-                  ),
-                  color : Colors.white,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Text('Total Collection' , style: TextStyle(color: Color(0xff32B9AE) , fontWeight: FontWeight.w600),),
-                    Text('$totalCollection1')
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top :5.0, bottom: 5.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(40),
-                    ),
-                    border: Border.all(
-                      width: 8,
-                      color: Colors.white
-                    ),
-                    color : Colors.white,
-                  ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const Text('Amount Collected' , style: TextStyle(color: Color(0xff32B9AE) , fontWeight: FontWeight.w600)),
-                    Text('$totalAmountCollected1')
-                  ],
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
 }

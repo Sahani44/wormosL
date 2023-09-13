@@ -19,19 +19,17 @@ class mature_tile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => maturity(Name)),
+              MaterialPageRoute(builder: (context) => maturity()),
             );
           },
           selected: false,
-          focusColor: Color(0xffA9C8C5),
+          focusColor: const Color(0xffA9C8C5),
           tileColor: Colors.white,
-          selectedTileColor: Color(0xffA9C8C5),
-          leading: Container(
-            child: Image.asset('assets/place_edit/h3.png'),
-          ),
+          selectedTileColor: const Color(0xffA9C8C5),
+          leading: Image.asset('assets/place_edit/h3.png'),
           title: Text(
-            '$Name',
-            style: TextStyle(
+            Name,
+            style: const TextStyle(
               color: Colors.black,
             ),
           ),

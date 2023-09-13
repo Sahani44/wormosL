@@ -18,10 +18,10 @@ class lapse_title extends StatelessWidget {
         ),
         ListTile(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => lapse(Name)),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => const lapse()),
+            // );
           },
           selected: false,
           focusColor: Color(0xffA9C8C5),

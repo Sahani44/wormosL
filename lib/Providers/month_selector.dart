@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomAnimatedAboveBar extends StatelessWidget {
   const CustomAnimatedAboveBar({
@@ -15,7 +14,7 @@ class CustomAnimatedAboveBar extends StatelessWidget {
     required this.items,
     required this.onItemSelected,
     this.curve = Curves.linear,
-  })  : assert(items.length >= 2 && items.length <= 5),
+  })  : assert(items.length >= 2 && items.length <= 7),
         super(key: key);
 
   final int selectedIndex;

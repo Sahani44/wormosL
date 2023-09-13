@@ -1,14 +1,16 @@
-// ignore_for_file: camel_case_types, non_constant_identifier_names, no_logic_in_create_state
+// ignore_for_file: camel_case_types, non_constant_identifier_names, no_logic_in_create_state, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Account/client_dtbase.dart';
 import 'package:internship2/widgets/button.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class due_data extends StatefulWidget {
-  const due_data({
+
+  due_data({
     super.key,
     required this.date_open,
     required this.date_mature,
@@ -24,15 +26,16 @@ class due_data extends StatefulWidget {
     required this.Amount_Collected,
     required this.Amount_Remaining,
     required this.Monthly,
-    required this.payment_date,
+    required this.payment_dates,
     required this.accountType,
+    required this.callBack,
   });
   final String Member_Name;
   final String Plan;
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  final Timestamp payment_date;
+  final List<Timestamp> payment_dates;
   final String mode;
   final int paid_installment;
   final int total_installment;
@@ -43,6 +46,8 @@ class due_data extends StatefulWidget {
   final int Amount_Remaining;
   final int Monthly;
   final String accountType;
+  var callBack;
+
   @override
   State<due_data> createState() => _due_dataState(
         Member_Name: Member_Name,
@@ -59,7 +64,7 @@ class due_data extends StatefulWidget {
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly,
-        payment_date: payment_date,
+        payment_dates: payment_dates,
       );
 }
 
@@ -72,7 +77,7 @@ class _due_dataState extends State<due_data> {
     required this.Member_Name,
     required this.Plan,
     required this.mode,
-    required this.payment_date,
+    required this.payment_dates,
     required this.Type,
     required this.paid_installment,
     required this.total_installment,
@@ -90,7 +95,7 @@ class _due_dataState extends State<due_data> {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  Timestamp payment_date;
+  List<Timestamp> payment_dates;
   final int Amount_Collected;
   int Amount_Remaining;
   int Monthly;
@@ -124,7 +129,7 @@ class _due_dataState extends State<due_data> {
     // int Daily = (Monthly / 30).floor();
     // int Weekly = (Monthly / 4).floor();
     if(Type == 'Daily') {
-      if (now.day-payment_date.toDate().day >= 1 || now.month-payment_date.toDate().month >= 1) {
+      if (now.day-payment_dates[payment_dates.length-1].toDate().day >= 1 || now.month-payment_dates[payment_dates.length-1].toDate().month >= 1) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
@@ -132,12 +137,12 @@ class _due_dataState extends State<due_data> {
       money = (now.day>30 ? 30*(Monthly / 30).floor()-Amount_Remaining : now.day*(Monthly / 30).floor()-Amount_Remaining);
     }
     if (Type == '5 Days'){
-      if (now.day-payment_date.toDate().day >= 5) {
+      if (now.day-payment_dates[payment_dates.length-1].toDate().day >= 5) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
     }
-      money = (Monthly / 6).floor()*((now.day-payment_date.toDate().day)%5);
+      money = (Monthly / 6).floor()*((now.day-payment_dates[payment_dates.length-1].toDate().day)%5);
     }
     if (Type == 'Monthly'){
       money = Monthly - Amount_Remaining;
@@ -177,7 +182,7 @@ class _due_dataState extends State<due_data> {
                 onPressed: () {
                   if(status == 'Due'){
                     status = 'Paid';
-                    payment_date = Timestamp.now();
+                    payment_dates.add(Timestamp.now());
                     if (paid_installment >total_installment) paid_installment = 0;
                   _firestone
                       .collection(widget.accountType)
@@ -185,7 +190,7 @@ class _due_dataState extends State<due_data> {
                       .update({
                     'status': status,
                     'mode': mode,
-                    'payment_date': now,
+                    'payment_dates': payment_dates,
                     'Amount_Collected': Amount_Collected + money,
                     'Amount_Remaining': Amount_Remaining + money,
                   });
@@ -200,14 +205,15 @@ class _due_dataState extends State<due_data> {
                         'paid_installment': paid_installment,
                       });
                   }
+                  widget.callBack(money);
                   setState(() {
                     colour = const Color(0xff29756F);
-                    if(Amount_Remaining + money >= Monthly){
-                      Amount_Remaining = Amount_Remaining + money - Monthly;
-                    }
-                    else{
-                      Amount_Remaining += money;
-                    }
+                    // if(Amount_Remaining + money >= Monthly){
+                    //   Amount_Remaining = Amount_Remaining + money - Monthly;
+                    // }
+                    // else{
+                    //   Amount_Remaining += money;
+                    // }
                   });
                   }
                   else {}
@@ -235,7 +241,7 @@ class _due_dataState extends State<due_data> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${payment_date.toDate().day}/${payment_date.toDate().month}/${payment_date.toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${payment_dates[payment_dates.length-1].toDate().day}/${payment_dates[payment_dates.length-1].toDate().month}/${payment_dates[payment_dates.length-1].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),
@@ -501,20 +507,44 @@ class _due_dataState extends State<due_data> {
                 size: 20,
                 icon: Image.asset('assets/Acc/IC2.png'),
               ),
-              // circular_button(
-              //   size: 20,
-              //   icon: Image.asset('assets/Acc/IC4.png'),
-              // ),
+              circular_button(
+                onpressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Client_dbt()),
+                  );
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC4.png'),
+              ),
               circular_button(
                 onpressed: () {
                   print("hello");
-                  setState(() {
-                    _firestone
-                        .collection('new_account')
-                        .doc(Location)
-                        .collection(Location)
-                        .doc(Account_No)
-                        .delete();
+                  // setState(() {
+                  //   _firestone
+                  //       .collection('new_account')
+                  //       .doc(Account_No)
+                  //       .delete();
+                  // });
+                  _firestone
+                      .collection(widget.accountType)
+                      .doc(Account_No)
+                      .get()
+                      .then((DocumentSnapshot<Map<String, dynamic>>
+                          documentSnapshot) {
+                    if (documentSnapshot.exists) {
+                      var data = documentSnapshot.data();
+                      if (data != null) {
+                         _firestone
+                          .collection('deleted_accounts')
+                          .doc(Account_No)
+                          .set(data);
+                      }
+                    } else {
+                      print('Document does not exist in the database');
+                    }
+                  }).catchError((error) {
+                    print('Error retrieving document: $error');
                   });
                 },
                 size: 20,

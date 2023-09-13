@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class CustomAnimatedAboveBar extends StatelessWidget {
   const CustomAnimatedAboveBar({
@@ -10,12 +9,15 @@ class CustomAnimatedAboveBar extends StatelessWidget {
     this.backgroundColor,
     this.itemCornerRadius = 50,
     this.containerHeight = 80,
+    this.containerWidth = double.infinity,
+    this.containerColor = Colors.white,
+    this.boxWidth = 10,
     this.animationDuration = const Duration(milliseconds: 0),
     this.mainAxisAlignment = MainAxisAlignment.spaceBetween,
     required this.items,
     required this.onItemSelected,
     this.curve = Curves.linear,
-  })  : assert(items.length >= 2 && items.length <= 5),
+  })  : assert(items.length >= 2 && items.length <= 7),
         super(key: key);
 
   final int selectedIndex;
@@ -28,7 +30,10 @@ class CustomAnimatedAboveBar extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
   final double itemCornerRadius;
   final double containerHeight;
+  final double containerWidth;
+  final double boxWidth;
   final Curve curve;
+  final Color containerColor;
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +46,10 @@ class CustomAnimatedAboveBar extends StatelessWidget {
         ),
         border: Border.all(
           width: 3,
-          color: Colors.white,
+          color: containerColor,
           // style: BorderStyle.solid,
         ),
-        color: Colors.white,
+        color: containerColor,
         // boxShadow: [
         //   if (showElevation)
         //     const BoxShadow(
@@ -55,9 +60,9 @@ class CustomAnimatedAboveBar extends StatelessWidget {
       ),
       child: SafeArea(
         child: Container(
-          width: double.infinity,
+          width: containerWidth,
           height: containerHeight,
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 9),
+          padding: const EdgeInsets.only(top: 6, bottom: 6, left: 5,right: 5),
           child: Row(
             mainAxisAlignment: mainAxisAlignment,
             children: items.map((item) {
@@ -72,6 +77,7 @@ class CustomAnimatedAboveBar extends StatelessWidget {
                   itemCornerRadius: itemCornerRadius,
                   animationDuration: animationDuration,
                   curve: curve,
+                  boxWidth: boxWidth,
                 ),
               );
             }).toList(),
@@ -90,6 +96,7 @@ class _ItemWidget extends StatelessWidget {
   final double itemCornerRadius;
   final Duration animationDuration;
   final Curve curve;
+  final double boxWidth;
 
   const _ItemWidget({
     Key? key,
@@ -100,6 +107,7 @@ class _ItemWidget extends StatelessWidget {
     required this.itemCornerRadius,
     required this.alphaSize,
     this.curve = Curves.linear,
+    required this.boxWidth,
   }) : super(key: key);
 
   @override
@@ -108,7 +116,7 @@ class _ItemWidget extends StatelessWidget {
       container: true,
       selected: isSelected,
       child: AnimatedContainer(
-        width: 100,
+        width: boxWidth,
         height: double.maxFinite,
         duration: animationDuration,
         curve: curve,
@@ -117,30 +125,23 @@ class _ItemWidget extends StatelessWidget {
               isSelected ? item.activeColor.withOpacity(0.2) : backgroundColor,
           borderRadius: BorderRadius.circular(itemCornerRadius),
         ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          //physics: NeverScrollableScrollPhysics(),
-          child: Container(
-            width: 100,
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                IconTheme(
-                  data: IconThemeData(
-                    size: alphaSize,
-                    color: isSelected
-                        ? item.activeColor.withOpacity(1)
-                        : item.inactiveColor == null
-                            ? item.activeColor
-                            : item.inactiveColor,
-                  ),
-                  child: Text(item.alpha),
+        child: SizedBox(
+          width: boxWidth,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              IconTheme(
+                data: IconThemeData(
+                  size: alphaSize,
+                  color: isSelected
+                      ? item.activeColor.withOpacity(1)
+                      : item.inactiveColor ?? item.activeColor,
                 ),
-              ],
-            ),
+                child: Text(item.alpha),
+              ),
+            ],
           ),
         ),
       ),

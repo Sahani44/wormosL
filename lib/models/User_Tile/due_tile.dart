@@ -19,7 +19,7 @@ class due_tile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => due(Name)),
+              MaterialPageRoute(builder: (context) => const due()),
             );
           },
           selected: false,

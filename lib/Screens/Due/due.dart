@@ -2,32 +2,27 @@
 
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
+import 'package:internship2/widgets/amountdata.dart';
 import 'package:internship2/widgets/customnavbar.dart';
-import '../../models/views/due_display.dart';
-import 'package:internship2/Screens/Menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/Providers/getstatus.dart';
 
+import '../../models/views/due_display.dart';
+
 class due extends StatefulWidget {
   static const id = '/due';
-  due(
-    this.Location,
-  );
-  String Location;
+  const due({super.key});
   @override
-  State<due> createState() => _dueState(Location);
+  State<due> createState() => _dueState();
 }
 
 class _dueState extends State<due> {
-  _dueState(
-    this.Location,
-  );
-  String Location;
+
+  late String Phone;
   late String Member_Name;
   late String Plan;
   late String Account_No;
+  String accountType = '';
   late Timestamp date_open;
   late Timestamp date_mature;
   late String mode;
@@ -35,46 +30,59 @@ class _dueState extends State<due> {
   late int total_installment;
   late String status;
   late String Type;
+  late String place;
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
   var _isloading = false;
-  late Timestamp payment_date;
+  late List<Timestamp> payment_dates;
   late final _firestone = FirebaseFirestore.instance;
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
-  void addData(List<Widget> Memberlist, size) {
-    // Memberlist.add(
-    //   due_data(
-    //     size: size,
-    //     Member_Name: Member_Name,
-    //     Plan: Plan,
-    //     Account_No: Account_No,
-    //     date_mature: date_mature,
-    //     date_open: date_open,
-    //     mode: mode,
-    //     paid_installment: paid_installment,
-    //     status: status,
-    //     Location: Location,
-    //     Amount_Collected: Amount_Collected,
-    //     Amount_Remaining: Amount_Remaining,
-    //     Monthly: Monthly, 
-    //     total_installment: total_installment, 
-    //     Type: Type,
-    //     payment_date: payment_date,
-    //   ),
-    // );
+  String dropdownvalue ='Name';
+  String dropdownvalue1 = 'Member_Name';
+  var items = ['Name' ,'DOE'];
+  var tiles =[];
+  List<Widget> Memberlist = [];
+  List<Widget> newMemberList =[];
+  var totalClient = 0;
+  var totalAmount = 0;
+  var totalBalance = 0;
+
+
+  void addData(List<Widget> Memberlist,) {
+    Memberlist.add(
+      due_data(
+        Member_Name: Member_Name,
+        Plan: Plan,
+        Account_No: Account_No,
+        date_mature: date_mature,
+        date_open: date_open,
+        mode: mode,
+        paid_installment: paid_installment,
+        status: status,
+        Location: '',
+        Amount_Collected: Amount_Collected,
+        Amount_Remaining: Amount_Remaining,
+        Monthly: Monthly, 
+        total_installment: total_installment, 
+        Type: Type,
+        payment_dates: payment_dates, 
+        accountType: '', 
+        callBack: null,
+      ),
+    );
   }
 
-  void condition(List<Widget> Memberlist, size, type, index) {
+  void condition(List<Widget> Memberlist, type, index) {
     if (type == 'A' && index == 1) {
-      addData(Memberlist, size);
+      addData(Memberlist, );
     } else if (type == 'B' && index == 2){
-      addData(Memberlist, size);
+      addData(Memberlist, );
     }
     else{
-      addData(Memberlist, size);
+      addData(Memberlist, );
     }
   }
 
@@ -82,19 +90,56 @@ class _dueState extends State<due> {
     status = await getFieldValue(Account, 'status');
   }
 
+  Future<bool> getDocs (Memberlist) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
+    tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
+    for (var tile in tiles) {
+      Member_Name = tile.get('Member_Name');
+      Phone = tile.get("Phone_No");
+      Plan = tile.get('Plan');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      mode = tile.get('mode');
+      status = tile.get('status');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      Type = tile.get('Type');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      Amount_Collected = tile.get('Amount_Collected');
+      Monthly = tile.get('monthly');
+      place = tile.get('place');
+      addData(Memberlist);
+    }
+    return false;
+  
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    newMemberList = [];
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    // getNewMemberList(_currentIndex, _currentIndex1);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CustomNavBar()),
-            );
+            Navigator.pop(context);
           },
           icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -105,7 +150,7 @@ class _dueState extends State<due> {
         title: Row(
           children: [
             Container(
-              width: size.width * 0.60,
+              width: size.width * 0.55,
               height: size.height * 0.05,
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
@@ -120,109 +165,55 @@ class _dueState extends State<due> {
                     border: InputBorder.none),
               ),
             ),
-            IconButton(
-                iconSize: 50,
-                onPressed: () {},
-                icon: Image.asset('assets/Acc/trailing.png'))
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: DropdownButton(
+                value: dropdownvalue,
+                icon: Image.asset('assets/Acc/trailing.png'),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                    if(newValue == 'Name'){
+                      dropdownvalue1 = 'Member_Name';
+                    }
+                    else{
+                      dropdownvalue1 = 'Date_of_Opening';
+                    }
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),
       body: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(40),
-              ),
-              border: Border.all(
-                width: 3,
-                color: Colors.white,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: _buildAboveBar2(),
+          Row(
+            children: [
+              _buildAboveBar2(),
+              _buildAboveBar(),
+            ],
           ),
-          /* Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(40),
-              ),
-              border: Border.all(
-                width: 3,
-                color: Colors.grey,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: _buildAboveBar(),
-          ), */
-          SingleChildScrollView(
-            child: StreamBuilder(
-                stream: _firestone
-                    .collection('new_account')
-                    .doc(Location)
-                    .collection(Location)
-                    .orderBy('Member_Name')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.lightBlueAccent,
-                      ),
-                    );
-                  }
-                  final tiles = snapshot.data!.docs;
-                  List<Widget> Memberlist = [];
-                  for (var tile in tiles) {
-                    Member_Name = tile.get('Member_Name');
-                    Plan = tile.get('Plan');
-                    Account_No = tile.get('Account_No').toString();
-                    date_open = tile.get('Date_of_Opening');
-                    date_mature = tile.get('Date_of_Maturity');
-                    mode = tile.get('mode');
-                    Type = tile.get('Type');
-                    status = tile.get('status');
-                    payment_date = tile.get('payment_date');
-                    paid_installment = tile.get('paid_installment');
-                    total_installment = tile.get('total_installment');
-                    Amount_Remaining = tile.get('Amount_Remaining');
-                    Amount_Collected = tile.get('Amount_Collected');
-                    Monthly = tile.get('monthly');
-                    str(Account_No);
-                    if (_currentIndex2 == 0) {
-                      if (status == 'Paid') {
-                        condition(Memberlist, size, Plan, _currentIndex);
-                      }
-                    } else if (_currentIndex2 == 1) {
-                      if (status != 'Paid') {
-                        condition(Memberlist, size, Plan, _currentIndex);
-                      }
-                    }
-                  }
-                  return _isloading
-                      ? const Center(
-                          child: CircularProgressIndicator(),
-                        )
-                      : SingleChildScrollView(
-                          child: SizedBox(
-                            height: size.height * 0.61,
-                            child: ListView.builder(
-                              itemCount: Memberlist.length,
-                              itemBuilder: (context, i) => Memberlist[i],
-                            ),
-                          ),
-                        );
-                }),
-          ),
+          amountdata(totalClient, totalAmount, totalBalance, context),
         ],
       ),
     );
   }
 
-/*   Widget _buildAboveBar() {
+   Widget _buildAboveBar() {
     Size size = MediaQuery.of(context).size;
     return CustomAnimatedAboveBar(
       containerHeight: size.height * 0.07,
+      containerWidth: size.width * 0.40,
+      boxWidth: 70,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex,
       showElevation: true,
@@ -230,11 +221,11 @@ class _dueState extends State<due> {
       curve: Curves.easeIn,
       onItemSelected: (index) => setState(() => _currentIndex = index),
       items: <AboveNavyBarItem>[
-        AboveNavyBarItem(
-          alpha: 'All',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
+        // AboveNavyBarItem(
+        //   alpha: 'All',
+        //   activeColor: Colors.grey,
+        //   inactiveColor: _inactiveColor,
+        // ),
         AboveNavyBarItem(
           alpha: 'A',
           activeColor: Colors.grey,
@@ -247,12 +238,14 @@ class _dueState extends State<due> {
         ),
       ],
     );
-  } */
+  }
 
   Widget _buildAboveBar2() {
     Size size = MediaQuery.of(context).size;
     return CustomAnimatedAboveBar(
       containerHeight: size.height * 0.07,
+      containerWidth: size.width * 0.55,
+      boxWidth: 100,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex2,
       showElevation: true,
@@ -274,3 +267,62 @@ class _dueState extends State<due> {
     );
   }
 }
+
+
+// SingleChildScrollView(
+//             child: StreamBuilder(
+          //       stream: _firestone
+          //           .collection('new_account')
+          //           .orderBy('Member_Name')
+          //           .snapshots(),
+          //       builder: (context, snapshot) {
+          //         if (!snapshot.hasData) {
+          //           return const Center(
+          //             child: CircularProgressIndicator(
+          //               backgroundColor: Colors.lightBlueAccent,
+          //             ),
+          //           );
+          //         }
+          //         final tiles = snapshot.data!.docs;
+          //         List<Widget> Memberlist = [];
+          //         for (var tile in tiles) {
+          //           Member_Name = tile.get('Member_Name');
+          //           Plan = tile.get('Plan');
+          //           Account_No = tile.get('Account_No').toString();
+          //           date_open = tile.get('Date_of_Opening');
+          //           date_mature = tile.get('Date_of_Maturity');
+          //           mode = tile.get('mode');
+          //           Type = tile.get('Type');
+          //           status = tile.get('status');
+          //           payment_dates = tile.get('payment_dates');
+          //           paid_installment = tile.get('paid_installment');
+          //           total_installment = tile.get('total_installment');
+          //           Amount_Remaining = tile.get('Amount_Remaining');
+          //           Amount_Collected = tile.get('Amount_Collected');
+          //           Monthly = tile.get('monthly');
+          //           str(Account_No);
+          //           if (_currentIndex2 == 0) {
+          //             if (status == 'Paid') {
+          //               condition(Memberlist, Plan, _currentIndex);
+          //             }
+          //           } else if (_currentIndex2 == 1) {
+          //             if (status != 'Paid') {
+          //               condition(Memberlist, Plan, _currentIndex);
+          //             }
+          //           }
+          //         }
+          //         return _isloading
+          //             ? const Center(
+          //                 child: CircularProgressIndicator(),
+          //               )
+          //             : SingleChildScrollView(
+          //                 child: SizedBox(
+          //                   height: size.height * 0.61,
+          //                   child: ListView.builder(
+          //                     itemCount: Memberlist.length,
+          //                     itemBuilder: (context, i) => Memberlist[i],
+          //                   ),
+          //                 ),
+          //               );
+          //       }),
+          // )

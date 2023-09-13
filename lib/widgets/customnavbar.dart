@@ -3,6 +3,7 @@ import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
 import 'package:internship2/Screens/Menu.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
+import 'package:internship2/Screens/deposit/deposit.dart';
 import 'package:internship2/Screens/deposit/deposit_screen.dart';
 
 class CustomNavBar extends StatefulWidget {
@@ -27,7 +28,7 @@ class _CustomNavBarState extends State<CustomNavBar> {
       child: CollectionLanding(),
     ),
     const Center(
-      child: deposit_screen(),
+      child: deposit(),
     ),
   ];
   var navigationBarIndex = 1;

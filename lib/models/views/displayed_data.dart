@@ -1,9 +1,11 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names, camel_case_types
+// ignore_for_file: public_member_api_docs, sort_constructors_first, non_constant_identifier_names, camel_case_types, avoid_print
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
+
+import '../../Screens/Account/client_dtbase.dart';
 
 class displayeddata extends StatefulWidget {
   
@@ -18,7 +20,7 @@ class displayeddata extends StatefulWidget {
   final Amount_Remaining;
   final total_installment;
   final paid_installment;
-  final payment_date;
+  final List<Timestamp> payment_dates;
 
   const displayeddata({
     Key? key,
@@ -33,7 +35,7 @@ class displayeddata extends StatefulWidget {
     required this.Amount_Remaining,
     required this.total_installment,
     required this.paid_installment,
-    required this.payment_date
+    required this.payment_dates
   }) : super(key: key);
 
   @override
@@ -55,7 +57,7 @@ class _displayeddataState extends State<displayeddata> {
       money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining) as int?;
     }
     if (widget.type == '5 Days'){
-      money = ((widget.monthly / 6).floor()*((now.day-widget.payment_date.toDate().day)%5)) as int?;
+      money = ((widget.monthly / 6).floor()*((now.day-widget.payment_dates[widget.payment_dates.length-1].toDate().day)%5));
     }
     if (widget.type == 'widget.monthly'){
       money = (widget.monthly - widget.Amount_Remaining) as int?;
@@ -150,7 +152,7 @@ class _displayeddataState extends State<displayeddata> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${widget.payment_date.toDate().day}/${widget.payment_date.toDate().month}/${widget.payment_date.toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${widget.payment_dates[widget.payment_dates.length-1].toDate().day}/${widget.payment_dates[widget.payment_dates.length-1].toDate().month}/${widget.payment_dates[widget.payment_dates.length-1].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),
@@ -360,10 +362,16 @@ class _displayeddataState extends State<displayeddata> {
                 size: 20,
                 icon: Image.asset('assets/Acc/IC2.png'),
               ),
-              // circular_button(
-              //   size: 20,
-              //   icon: Image.asset('assets/Acc/IC4.png'),
-              // ),
+              circular_button(
+                onpressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Client_dbt()),
+                  );
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC4.png'),
+              ),
               circular_button(
                 onpressed: () {
                   print("hello");

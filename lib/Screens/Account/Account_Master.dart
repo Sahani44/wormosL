@@ -6,6 +6,8 @@ import 'package:internship2/Providers/scheme_selector.dart';
 import '../../models/views/displayed_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../widgets/amountdata.dart';
+
 class acc_master extends StatefulWidget {
   static const id = '/acc_master';
   acc_master(this.Location, {super.key});
@@ -20,6 +22,7 @@ class _acc_masterState extends State<acc_master> {
   );
   String Location;
   int _currentIndex = 0;
+  int _currentIndex1 = 0;
   late String Member_Name;
   late String Plan;
   late String Account_No;
@@ -28,10 +31,10 @@ class _acc_masterState extends State<acc_master> {
   late int monthly;
   bool _isloading = true;
   late String type;
-  List<Widget> Memberlist = [];
   late int total_installment;
   late int Amount_Remaining;
-  late Timestamp  payment_date;
+  late int Amount_Collected;
+  late List<Timestamp>  payment_dates;
   late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
   final _inactiveColor = const Color(0xffEBEBEB);
@@ -39,6 +42,11 @@ class _acc_masterState extends State<acc_master> {
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
   var tiles =[];
+  List<Widget> Memberlist = [];
+  List<Widget> newMemberList =[];
+  var totalClient = 0;
+  var totalAmount = 0;
+  var totalBalance = 0;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -51,7 +59,7 @@ class _acc_masterState extends State<acc_master> {
         date_open: date_open, 
         monthly: monthly,
         type: type, 
-        payment_date: payment_date, 
+        payment_dates: payment_dates, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
@@ -69,7 +77,8 @@ class _acc_masterState extends State<acc_master> {
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
-      payment_date = tile.get('payment_date');
+      Amount_Collected = tile.get('Amount_Collected');
+      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
@@ -89,9 +98,69 @@ class _acc_masterState extends State<acc_master> {
     }));
   }
 
+  void getNewMemberList (int currentIndex, int currentIndex1) {
+    for (int i=0; i<tiles.length; i++) {
+      var type = tiles[i].get('Type');
+      var plan = tiles[i].get('Plan');
+      if(_currentIndex == 0 && _currentIndex1 == 0 && plan == 'A'){
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+      else if (_currentIndex == 2 && type == '5 Days' && _currentIndex1 == 0 && plan == 'A') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      } 
+      else if (_currentIndex == 3 && type == 'Monthly' && _currentIndex1 == 0 && plan == 'A') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+      else if( _currentIndex == 1 && type == 'Daily' && _currentIndex1 == 0 && plan == 'A') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+      else if(_currentIndex == 0 && _currentIndex1 == 1 && plan == 'B'){
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+      else if (_currentIndex == 2 && type == '5 Days' && _currentIndex1 == 1 && plan == 'B') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      } 
+      else if (_currentIndex == 3 && type == 'Monthly' && _currentIndex1 == 1 && plan == 'B') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+      else if( _currentIndex == 1 && type == 'Daily' && _currentIndex1 == 1 && plan == 'B') {
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    newMemberList = [];
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    getNewMemberList(_currentIndex, _currentIndex1);
     // tiles.sort((a, b) {
     //   if(dropdownvalue1 == 'Member_Name') {
     //    return a.get('Member_Name').compareTo(b.get('Member_Name'));
@@ -163,22 +232,13 @@ class _acc_masterState extends State<acc_master> {
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(40),
-                ),
-                border: Border.all(
-                  width: 3,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
-                ),
-              ),
-              child: _buildAboveBar(),
-            ),
+          Row(
+            children: [
+              _buildAboveBar(),
+              _buildAboveBar1(),
+            ],
           ),
+          amountdata(totalClient, totalAmount,  totalBalance, context),
           _isloading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -188,20 +248,9 @@ class _acc_masterState extends State<acc_master> {
               SizedBox(
                   height: size.height * 0.68,
                   child: ListView.builder(
-                    itemCount: Memberlist.length,
+                    itemCount: newMemberList.length,
                     itemBuilder: (context, i) {
-                      var type = tiles[i].get('Type');
-                      Widget widget = const SizedBox(height: 0,);
-                      if (_currentIndex == 1 && type == '5 Days') {
-                          widget =  Memberlist[i];
-                      } 
-                      if (_currentIndex == 2 && type == 'Monthly') {
-                          widget =  Memberlist[i];
-                      }
-                      if( _currentIndex == 0 && type == 'Daily') {
-                        widget =  Memberlist[i];
-                      }
-                      return widget;
+                      return newMemberList[i];
                     },
                   )
                 ),
@@ -216,6 +265,8 @@ class _acc_masterState extends State<acc_master> {
     Size size = MediaQuery.of(context).size;
     return CustomAnimatedAboveBar(
       containerHeight: size.height * 0.07,
+      containerWidth : size.width * 0.70,
+      boxWidth: 60,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex,
       showElevation: true,
@@ -223,6 +274,11 @@ class _acc_masterState extends State<acc_master> {
       curve: Curves.easeIn,
       onItemSelected: (index) => setState(() => _currentIndex = index),
       items: <AboveNavyBarItem>[
+        AboveNavyBarItem(
+          alpha: 'All',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
         AboveNavyBarItem(
           alpha: 'Daily',
           activeColor: Colors.grey,
@@ -241,4 +297,32 @@ class _acc_masterState extends State<acc_master> {
       ],
     );
   }
+
+  Widget _buildAboveBar1() {
+    Size size = MediaQuery.of(context).size;
+    return CustomAnimatedAboveBar(
+      containerHeight: size.height * 0.07,
+      containerWidth : size.width * 0.26,
+      boxWidth: 40,
+      backgroundColor: Colors.white,
+      selectedIndex: _currentIndex1,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      onItemSelected: (index) => setState(() => _currentIndex1 = index),
+      items: <AboveNavyBarItem>[
+        AboveNavyBarItem(
+          alpha: 'A',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: 'B',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+      ],
+    );
+  }
+
 }

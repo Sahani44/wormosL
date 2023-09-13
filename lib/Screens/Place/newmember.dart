@@ -59,9 +59,8 @@ class _newmemState extends State<newmem> {
   }
 
   DateTime date_open = DateTime.now();
-  DateTime date_mature = DateTime(
-      DateTime.now().year + 5, DateTime.now().month, DateTime.now().day);
-  DateTime payment_date = DateTime.now();
+  DateTime date_mature = DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day);
+  List<DateTime> payment_dates = [DateTime.now()];
   @override
   Widget build(BuildContext context) {
     // DateTime now = DateTime.now();
@@ -669,8 +668,14 @@ class _newmemState extends State<newmem> {
                                   'total_installment': total_installment,
                                   'status': status,
                                   'deposit_field': true,
-                                  'payment_date': payment_date,
-                                  'place': ''
+                                  'payment_dates': payment_dates,
+                                  'place': '',
+                                  'payment_history': [Amount_Collected],
+                                  'history' : [{
+                                    'payment_date' : payment_dates[0],
+                                    'payment_mode' : mode,
+                                    'payment_amount' : Amount_Collected,
+                                  }]
                                 })
                                 :  _firestone
                                     .collection('new_account_d')
@@ -693,8 +698,14 @@ class _newmemState extends State<newmem> {
                                   'total_installment': total_installment,
                                   'status': status,
                                   'deposit_field': true,
-                                  'payment_date': payment_date,
-                                  'place' : widget.place
+                                  'payment_dates': payment_dates,
+                                  'place' : widget.place,
+                                  'payment_history': [Amount_Collected] ,
+                                  'history' : [{
+                                    'payment_date' : payment_dates[0],
+                                    'payment_mode' : mode,
+                                    'payment_amount' : Amount_Collected,
+                                  }]
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Member Created')),

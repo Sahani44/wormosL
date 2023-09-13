@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
@@ -9,21 +11,17 @@ import '../../Providers/scheme_selector.dart';
 
 class Record_Page extends StatefulWidget {
   static const id = '/Record_Page';
-  Record_Page(this.Location, {super.key});
-  String Location;
+  const Record_Page({super.key});
   @override
-  State<Record_Page> createState() => _Record_PageState(Location);
+  State<Record_Page> createState() => _Record_PageState();
 }
 
 class _Record_PageState extends State<Record_Page> {
   TextEditingController dateInput = TextEditingController();
   TextEditingController dateInput2 = TextEditingController();
+
   String dropdownvalue = 'Select City';
   var _selectedValue = DateTime.now();
-  _Record_PageState(
-    this.Location,
-  );
-  String Location;
   late String Member_Name;
   late String Plan;
   late String Account_No;
@@ -40,8 +38,7 @@ class _Record_PageState extends State<Record_Page> {
   late int Monthly;
   final _isloading = false;
   late final _firestone = FirebaseFirestore.instance;
-  int _currentIndex = 1;
-  final int _currentIndex2 = 0;
+  int _currentIndex = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
   void addData(List<Widget> Memberlist, size) {
     // Memberlist.add(
@@ -135,10 +132,7 @@ class _Record_PageState extends State<Record_Page> {
                 children: [
                   IconButton(
                       onPressed: () {
-                        Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CustomNavBar()),
-            );
+                        Navigator.pop(context);
                       },
                       icon: const Icon(Icons.arrow_back_ios)),
                   Expanded(
@@ -276,7 +270,7 @@ class _Record_PageState extends State<Record_Page> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
-                height: 50,
+                height: size.height * 0.08,
                 decoration: BoxDecoration(
                   color: const Color(0XFFEBF0EF),
                   borderRadius: const BorderRadius.all(
@@ -289,12 +283,13 @@ class _Record_PageState extends State<Record_Page> {
                   ),
                 ),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Container(
-                        height: 35,
-                        width: 150,
+                        height: size.height * 0.055,
+                        width: size.width * 0.4,
                         decoration: const BoxDecoration(
                           color: Color(0XFFFEFEFE),
                           borderRadius: BorderRadius.all(
@@ -328,95 +323,24 @@ class _Record_PageState extends State<Record_Page> {
                         ),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20.0),
+                      child: Container(
+                        height: size.height * 0.055,
+                        width: size.width * 0.4,
+                        decoration: const BoxDecoration(
+                          color: Color(0XFFFEFEFE),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(40),
+                          ),
+                        ),
+                        child: _buildAboveBar()
+                      ),
+                    ),
+
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40),
-                  ),
-                  border: Border.all(
-                    width: 3,
-                    color: Colors.grey,
-                    style: BorderStyle.solid,
-                  ),
-                ),
-                child: _buildAboveBar(),
-              ),
-            ),
-            SingleChildScrollView(
-              child: StreamBuilder(
-                  stream: _firestone
-                      .collection('new_account')
-                      .doc(Location)
-                      .collection(Location)
-                      .orderBy('Member_Name')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.lightBlueAccent,
-                        ),
-                      );
-                    }
-                    final tiles = snapshot.data!.docs;
-                    List<Widget> Memberlist = [];
-                    for (var tile in tiles) {
-                      Member_Name = tile.get('Member_Name');
-                      Plan = tile.get('Plan');
-                      Account_No = tile.get('Account_No').toString();
-                      date_open = tile.get('Date_of_Opening');
-                      date_mature = tile.get('Date_of_Maturity');
-                      mode = tile.get('mode');
-                      payment_date = tile.get('payment_date');
-                      Type = tile.get('Type');
-                      status = tile.get('status');
-                      paid_installment = tile.get('paid_installment');
-                      total_installment = tile.get('total_installment');
-                      Amount_Remaining = tile.get('Amount_Remaining');
-                      Amount_Collected = tile.get('Amount_Collected');
-                      Monthly = tile.get('monthly');
-                      DateTime openingDate =
-                          DateTime.fromMicrosecondsSinceEpoch(
-                              date_open.microsecondsSinceEpoch);
-
-                      // from date != "" && to date != "", then
-                      //if from date and to date is not empty, then
-                      //check if openingDate >= from date && openingDate <= to date, then
-                      //selectedDate >= from date && selectedDate <= to date, then
-                      //add data
-
-                      if (_currentIndex == 1) {
-                        if (Plan == 'A') {
-                          dateFilter(openingDate, Memberlist, size);
-                        }
-                      } else if (_currentIndex == 2) {
-                        if (Plan == 'B') {
-                          dateFilter(openingDate, Memberlist, size);
-                        }
-                      } else {
-                        dateFilter(openingDate, Memberlist, size);
-                      }
-                    }
-                    return _isloading
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : SingleChildScrollView(
-                            child: SizedBox(
-                              height: size.height * 0.61,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              ),
-                            ),
-                          );
-                  }),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -463,7 +387,9 @@ class _Record_PageState extends State<Record_Page> {
   Widget _buildAboveBar() {
     Size size = MediaQuery.of(context).size;
     return CustomAnimatedAboveBar(
-      containerHeight: size.height * 0.07,
+      containerHeight: size.height * 0.055,
+      containerWidth: size.width * 0.4,
+      boxWidth: 60,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex,
       showElevation: true,
@@ -471,11 +397,11 @@ class _Record_PageState extends State<Record_Page> {
       curve: Curves.easeIn,
       onItemSelected: (index) => setState(() => _currentIndex = index),
       items: <AboveNavyBarItem>[
-        AboveNavyBarItem(
-          alpha: 'All',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
+        // AboveNavyBarItem(
+        //   alpha: 'All',
+        //   activeColor: Colors.grey,
+        //   inactiveColor: _inactiveColor,
+        // ),
         AboveNavyBarItem(
           alpha: 'A',
           activeColor: Colors.grey,
@@ -490,3 +416,74 @@ class _Record_PageState extends State<Record_Page> {
     );
   }
 }
+
+/*
+SingleChildScrollView(
+              child: StreamBuilder(
+                  stream: _firestone
+                      .collection('new_account')
+                      .orderBy('Member_Name')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.lightBlueAccent,
+                        ),
+                      );
+                    }
+                    final tiles = snapshot.data!.docs;
+                    List<Widget> Memberlist = [];
+                    for (var tile in tiles) {
+                      Member_Name = tile.get('Member_Name');
+                      Plan = tile.get('Plan');
+                      Account_No = tile.get('Account_No').toString();
+                      date_open = tile.get('Date_of_Opening');
+                      date_mature = tile.get('Date_of_Maturity');
+                      mode = tile.get('mode');
+                      payment_dates = tile.get('payment_dates');
+                      Type = tile.get('Type');
+                      status = tile.get('status');
+                      paid_installment = tile.get('paid_installment');
+                      total_installment = tile.get('total_installment');
+                      Amount_Remaining = tile.get('Amount_Remaining');
+                      Amount_Collected = tile.get('Amount_Collected');
+                      Monthly = tile.get('monthly');
+                      DateTime openingDate =
+                          DateTime.fromMicrosecondsSinceEpoch(
+                              date_open.microsecondsSinceEpoch);
+
+                      // from date != "" && to date != "", then
+                      //if from date and to date is not empty, then
+                      //check if openingDate >= from date && openingDate <= to date, then
+                      //selectedDate >= from date && selectedDate <= to date, then
+                      //add data
+
+                      if (_currentIndex == 1) {
+                        if (Plan == 'A') {
+                          dateFilter(openingDate, Memberlist, size);
+                        }
+                      } else if (_currentIndex == 2) {
+                        if (Plan == 'B') {
+                          dateFilter(openingDate, Memberlist, size);
+                        }
+                      } else {
+                        dateFilter(openingDate, Memberlist, size);
+                      }
+                    }
+                    return _isloading
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : SingleChildScrollView(
+                            child: SizedBox(
+                              height: size.height * 0.61,
+                              child: ListView.builder(
+                                itemCount: Memberlist.length,
+                                itemBuilder: (context, i) => Memberlist[i],
+                              ),
+                            ),
+                          );
+                  }),
+            ),
+*/

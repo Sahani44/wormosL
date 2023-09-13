@@ -18,12 +18,12 @@ class CollectionLanding extends StatelessWidget {
             children: [
               menu_tile(
                 tle: 'Daily',
-                logo: Image.asset('assets/menu/acc_master.png'),
+                logo: Image.asset('assets/collection/image134.png'),
                 path:  collection(1),
               ),
               menu_tile(
                 tle: '5 Days',
-                logo: Image.asset('assets/menu/due_acc.png'),
+                logo: Image.asset('assets/collection/image134.png'),
                 path: collection2('5 Days'),
               ),
             ],
@@ -33,7 +33,7 @@ class CollectionLanding extends StatelessWidget {
             children: [
               menu_tile(
                 tle: 'Monthly',
-                logo: Image.asset('assets/menu/records.png'),
+                logo: Image.asset('assets/collection/image134.png'),
                 path: collection2('Monthly'),
               ),
               // menu_tile(

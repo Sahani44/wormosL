@@ -102,6 +102,8 @@ flutter:
      - assets/menu/maturity.png
      - assets/menu/records.png
      - assets/menu/rokar.png
+     - assets/collection/image134.png
+     - assets/menu/image139.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

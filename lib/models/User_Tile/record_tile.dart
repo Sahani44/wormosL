@@ -17,7 +17,7 @@ class record_tile extends StatelessWidget {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Record_Page(Name)),
+              MaterialPageRoute(builder: (context) => Record_Page()),
             );
           },
           selected: false,

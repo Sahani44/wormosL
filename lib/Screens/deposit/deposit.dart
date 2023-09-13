@@ -6,6 +6,7 @@ import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:internship2/models/views/deposit_display.dart';
+import 'package:internship2/widgets/amountdata.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/due_display.dart';
 import 'package:internship2/Screens/Menu.dart';
@@ -14,25 +15,20 @@ import 'package:internship2/Providers/getstatus.dart';
 
 class deposit extends StatefulWidget {
   static const id = '/deposit';
-  deposit(
-    this.Location,
+  const deposit({super.key}
   );
-  String Location;
   @override
-  State<deposit> createState() => _depositState(Location);
+  State<deposit> createState() => _depositState();
 }
 
 class _depositState extends State<deposit> {
-  _depositState(
-    this.Location,
-  );
-  String Location;
+  
   late String Member_Name;
   late String Plan;
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late Timestamp payment_date;
+  late List<Timestamp> payment_dates;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -43,30 +39,39 @@ class _depositState extends State<deposit> {
   late int Monthly;
   var _isloading = false;
   late final _firestone = FirebaseFirestore.instance;
+  String dropdownvalue ='Name';
+  String dropdownvalue1 = 'Member_Name';
+  var items = ['Name' ,'DOE'];
+  var tiles =[];
+  List<Widget> Memberlist = [];
+  List<Widget> newMemberList =[];
+  var totalClient = 0;
+  var totalAmount = 0;
+  var totalBalance = 0;
 
   int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
   void addData(List<Widget> Memberlist, size) {
-    Memberlist.add(
-      deposit_data(
-        deposit_field: deposit_field,
-        size: size,
-        Member_Name: Member_Name,
-        Plan: Plan,
-        Account_No: Account_No,
-        date_mature: date_mature,
-        date_open: date_open,
-        mode: mode,
-        paid_installment: paid_installment,
-        total_installment: total_installment,
-        status: status,
-        Location: Location,
-        Amount_Collected: Amount_Collected,
-        Amount_Remaining: Amount_Remaining,
-        Monthly: Monthly,
-        payment_date: payment_date,
-      ),
-    );
+    // Memberlist.add(
+    //   deposit_data(
+    //     deposit_field: deposit_field,
+    //     size: size,
+    //     Member_Name: Member_Name,
+    //     Plan: Plan,
+    //     Account_No: Account_No,
+    //     date_mature: date_mature,
+    //     date_open: date_open,
+    //     mode: mode,
+    //     paid_installment: paid_installment,
+    //     total_installment: total_installment,
+    //     status: status,
+    //     Location: '',
+    //     Amount_Collected: Amount_Collected,
+    //     Amount_Remaining: Amount_Remaining,
+    //     Monthly: Monthly,
+    //     payment_date: payment_dates[0],
+    //   ),
+    // );
   }
 
   void condition(List<Widget> Memberlist, size, type, index) {
@@ -107,7 +112,7 @@ class _depositState extends State<deposit> {
         title: Row(
           children: [
             Container(
-              width: size.width * 0.60,
+              width: size.width * 0.55,
               height: size.height * 0.05,
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
@@ -122,10 +127,32 @@ class _depositState extends State<deposit> {
                     border: InputBorder.none),
               ),
             ),
-            IconButton(
-                iconSize: 50,
-                onPressed: () {},
-                icon: Image.asset('assets/Acc/trailing.png'))
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: DropdownButton(
+                value: dropdownvalue,
+                icon: Image.asset('assets/Acc/trailing.png'),
+                items: items.map((String items) {
+                  return DropdownMenuItem(
+                    value: items,
+                    child: Text(items),
+                  );
+                }).toList(),
+                // After selecting the desired option,it will
+                // change button value to selected value
+                onChanged: (String? newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                    if(newValue == 'Name'){
+                      dropdownvalue1 = 'Member_Name';
+                    }
+                    else{
+                      dropdownvalue1 = 'Date_of_Opening';
+                    }
+                  });
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -157,12 +184,49 @@ class _depositState extends State<deposit> {
             ),
             child: _buildAboveBar(),
           ), */
-          SingleChildScrollView(
+          amountdata(totalClient, totalAmount, totalBalance, context)
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAboveBar2() {
+    Size size = MediaQuery.of(context).size;
+    return CustomAnimatedAboveBar(
+      containerHeight: size.height * 0.07,
+      boxWidth: 160,
+      backgroundColor: Colors.white,
+      selectedIndex: _currentIndex2,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      onItemSelected: (index) {
+        print(_currentIndex2);
+        setState(() => _currentIndex2 = index);
+      },
+      items: <AboveNavyBarItem>[
+        AboveNavyBarItem(
+          alpha: 'Paid Members',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: 'Deposited',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+      ],
+    );
+  }
+}
+
+
+/*
+
+SingleChildScrollView(
             child: StreamBuilder(
                 stream: _firestone
                     .collection('new_account')
-                    .doc(Location)
-                    .collection(Location)
                     .orderBy('Member_Name')
                     .snapshots(),
                 builder: (context, snapshot) {
@@ -183,7 +247,7 @@ class _depositState extends State<deposit> {
                     date_mature = tile.get('Date_of_Maturity');
                     mode = tile.get('mode');
                     status = tile.get('status');
-                    payment_date = tile.get('payment_date');
+                    payment_dates = tile.get('payment_dates');
                     paid_installment = tile.get('paid_installment');
                     total_installment = tile.get('total_installment');
                     Amount_Remaining = tile.get('Amount_Remaining');
@@ -212,36 +276,5 @@ class _depositState extends State<deposit> {
                         );
                 }),
           ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildAboveBar2() {
-    Size size = MediaQuery.of(context).size;
-    return DepositBar(
-      containerHeight: size.height * 0.07,
-      backgroundColor: Colors.white,
-      selectedIndex: _currentIndex2,
-      showElevation: true,
-      itemCornerRadius: 24,
-      curve: Curves.easeIn,
-      onItemSelected: (index) {
-        print(_currentIndex2);
-        setState(() => _currentIndex2 = index);
-      },
-      items: <AboveBarItem>[
-        AboveBarItem(
-          alpha: 'Paid Members',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-        AboveBarItem(
-          alpha: 'Deposited',
-          activeColor: Colors.grey,
-          inactiveColor: _inactiveColor,
-        ),
-      ],
-    );
-  }
-}
+*/

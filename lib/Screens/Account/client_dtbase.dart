@@ -18,7 +18,7 @@ class Client_dbt extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const menu()),
               );
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back_ios_new_outlined,
               color: Color(0xff144743),
             ),
@@ -35,7 +35,7 @@ class Client_dbt extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Color(0xffA5C5C3),
                         borderRadius: BorderRadius.all(
                           Radius.circular(10),
@@ -43,7 +43,7 @@ class Client_dbt extends StatelessWidget {
                       ),
                       height: size.height * 0.080,
                       width: size.width * 0.16,
-                      child: Center(
+                      child: const Center(
                         child: Text(
                           'A',
                           style: TextStyle(
@@ -56,7 +56,7 @@ class Client_dbt extends StatelessWidget {
                     SizedBox(
                       width: size.width * 0.1,
                     ),
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -88,7 +88,7 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.16,
                   ),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -116,20 +116,20 @@ class Client_dbt extends StatelessWidget {
                     width: size.width * 0.1,
                     child: TextButton(
                       onPressed: () {},
-                      child: Text(
+                      child: const Text(
                         'B',
                         style: TextStyle(
                           color: Colors.black,
                         ),
                       ),
-                      style: ButtonStyle(
+                      style: const ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll<Color>(
                               Color(0xff42A19A))),
                     ),
                   )
                 ],
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               SizedBox(
@@ -143,7 +143,7 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.05,
                   ),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -166,7 +166,7 @@ class Client_dbt extends StatelessWidget {
                   ),
                 ],
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               SizedBox(
@@ -185,7 +185,7 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.05,
                       ),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -222,7 +222,7 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.05,
                       ),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -247,7 +247,7 @@ class Client_dbt extends StatelessWidget {
                   ),
                 ],
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               SizedBox(
@@ -266,7 +266,7 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.07,
                       ),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -303,7 +303,7 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.07,
                       ),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -328,13 +328,13 @@ class Client_dbt extends StatelessWidget {
                   ),
                 ],
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               SizedBox(
                 height: size.height * 0.07,
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               Container(
@@ -350,7 +350,7 @@ class Client_dbt extends StatelessWidget {
                     SizedBox(
                       width: size.width * 0.05,
                     ),
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -374,7 +374,7 @@ class Client_dbt extends StatelessWidget {
                   ],
                 ),
               ),
-              Divider(
+              const Divider(
                 thickness: 1,
               ),
               Row(
@@ -388,7 +388,7 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.02,
                   ),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
