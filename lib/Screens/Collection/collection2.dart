@@ -40,7 +40,7 @@ class _collection2State extends State<collection2> {
   late List<Map<String,dynamic>> history;
   String accountType = '';
   String Type = '';
-  var _isloading = false;
+  var _isloading = true;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   final _inactiveColor = const Color(0xffEBEBEB);

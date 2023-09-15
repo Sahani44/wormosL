@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 
+import '../../models/views/due_display.dart';
+
 class lapse extends StatefulWidget {
   static const id = '/lapse';
   const lapse({super.key});
@@ -19,7 +21,7 @@ class _lapseState extends State<lapse> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late Timestamp payment_date;
+  late List<Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -27,9 +29,12 @@ class _lapseState extends State<lapse> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
+  String Location = '';
+  late String accountType;
+  late String Phone;
   String Type = 'Daily';
   int value = 0;
-  var _isloading = false;
+  var _isloading = true;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   int _currentIndex1 = 0;
@@ -45,35 +50,100 @@ class _lapseState extends State<lapse> {
   var totalBalance = 0;
 
 
-  void addData(List<Widget> Memberlist, size) {
-    // Memberlist.add(
-      // due_data(
-      //   size: size,
-      //   Member_Name: Member_Name,
-      //   Plan: Plan,
-      //   Account_No: Account_No,
-      //   date_mature: date_mature,
-      //   date_open: date_open,
-      //   mode: mode,
-      //   paid_installment: paid_installment,
-      //   total_installment: total_installment,
-      //   status: status,
-      //   Location: Location,
-      //   Amount_Collected: Amount_Collected,
-      //   Amount_Remaining: Amount_Remaining,
-      //   Monthly: Monthly,
-      //   Type: Type,
-      //   payment_date: payment_date,
-      // ),
-    // );
+  void addData(List<Widget> Memberlist) {
+    Memberlist.add(
+      due_data(
+        Location: Location,
+        Member_Name: Member_Name,
+        Plan: Plan,
+        Account_No: Account_No,
+        date_mature: date_mature,
+        date_open: date_open, 
+        Monthly: Monthly,
+        Type: Type, 
+        history: history, 
+        Amount_Remaining: Amount_Remaining, 
+        total_installment: total_installment, 
+        paid_installment: paid_installment, 
+        status: status, 
+        Amount_Collected: Amount_Collected,
+        accountType: accountType,
+        callBack: callBack,
+      ),
+    );
+  }
+
+  Future<bool> getDocs (Memberlist) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
+    tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
+    for (var tile in tiles) {
+      Member_Name = tile.get('Member_Name');
+      Phone = tile.get("Phone_No");
+      Plan = tile.get('Plan');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      status = tile.get('status');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      Type = tile.get('Type');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      Amount_Collected = tile.get('Amount_Collected');
+      Monthly = tile.get('monthly');
+      if(Type == '5 Days'){
+        accountType = 'new_account';
+      }
+      else if(Type == 'Monthly'){
+        accountType = 'new_account';
+      }
+      else {
+        accountType = 'new_account_d';
+      }
+      addData(Memberlist);
+    }
+    return false;
+  
+  }
+
+  void getNewMemberList (int currentIndex1) {
+    for (int i=0; i<tiles.length; i++) {
+      String plan = tiles[i].get('Plan');
+      String p = currentIndex1 == 0 ? 'A' : 'B';
+      if(plan == p){ 
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;}
+    }}
+
+  @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
+
+    callBack(int money) {
+    return setState(() {
+      totalBalance = totalBalance+money;
+      totalAmount = totalAmount+money; 
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    int month = now.month;
-    int year = now.year;
+    // DateTime now = DateTime.now();
+    // int month = now.month;
+    // int year = now.year;
     Size size = MediaQuery.of(context).size;
+    newMemberList = [];
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    getNewMemberList(_currentIndex1);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -161,9 +231,26 @@ class _lapseState extends State<lapse> {
             child: Row(
               children: [
                 localAmountdata(totalClient, totalAmount),
-                _buildAboveBar1()
+                _buildAboveBar1(),
               ],
             ),
+          ),
+           _isloading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+            children: [
+              SizedBox(
+                  height: size.height * 0.68,
+                  child: ListView.builder(
+                    itemCount: newMemberList.length,
+                    itemBuilder: (context, i) {
+                      return newMemberList[i];
+                    },
+                  )
+                ),
+            ],
           )
         ],
       ),

@@ -34,7 +34,7 @@ class _dueState extends State<due> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
-  var _isloading = false;
+  var _isloading = true;
   late List<Map<String,dynamic>> history;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;

@@ -31,7 +31,8 @@ class _depositState extends State<deposit> {
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
-  var _isloading = false;
+  late String accountType;
+  var _isloading = true;
   late final _firestone = FirebaseFirestore.instance;
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
@@ -61,7 +62,8 @@ class _depositState extends State<deposit> {
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly,
-        history: history
+        history: history,
+        accountType: accountType 
       ),
     );
   }
@@ -83,6 +85,7 @@ class _depositState extends State<deposit> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      accountType = tile.get('Type') == 'Daily' ? 'new_account_d' : 'new_account';
       addData(Memberlist);
     }
     return false;

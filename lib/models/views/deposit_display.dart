@@ -1,12 +1,9 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, must_be_immutable, camel_case_types
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:internship2/Screens/deposit/deposit_screen.dart';
 import 'package:internship2/widgets/button.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class deposit_data extends StatefulWidget {
@@ -25,6 +22,7 @@ class deposit_data extends StatefulWidget {
     required this.Amount_Remaining,
     required this.Monthly,
     required this.history,
+    required this.accountType
   }) : super(key: key);
 
   final String Member_Name;
@@ -36,6 +34,7 @@ class deposit_data extends StatefulWidget {
   final int paid_installment;
   final int total_installment;
   final String Location;
+  final String accountType;
   final bool deposit_field;
   final dynamic Amount_Collected;
   final dynamic Amount_Remaining;
@@ -46,10 +45,8 @@ class deposit_data extends StatefulWidget {
 }
 
 class _deposit_dataState extends State<deposit_data> {
-  String _toggleValue2 = 'cash';
   bool deposit = true;
   bool deposit_field = true;
-  bool _toggleValue1 = false;
   late int money = 0;
   Color colour = const Color(0xffD83F52);
   final _firestone = FirebaseFirestore.instance;
@@ -67,14 +64,14 @@ class _deposit_dataState extends State<deposit_data> {
     final yearm = datem.year;
     final monthm = datem.month;
     final daym = datem.day;
-    DateTime now = DateTime.now();
-    int Daily = (widget.Monthly / 30).floor();
+    // DateTime now = DateTime.now();
+    // int Daily = (widget.Monthly / 30).floor();
 
-    return buildDepositTile(size, yearo, montho, dayo, yearm, monthm, daym);
+    return buildDepositTile(size, yearo, montho, dayo, yearm, monthm, daym, widget.accountType);
   }
 
   Widget buildDepositTile(Size size, int yearo, int montho, int dayo, int yearm,
-      int monthm, int daym) {
+      int monthm, int daym, String accountType) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -108,9 +105,7 @@ class _deposit_dataState extends State<deposit_data> {
                     });
 
                     _firestone
-                        .collection('new_account')
-                        .doc(widget.Location)
-                        .collection(widget.Location)
+                        .collection(accountType)
                         .doc(widget.Account_No)
                         .update({
                       'deposit_field': false,
@@ -124,7 +119,7 @@ class _deposit_dataState extends State<deposit_data> {
                   },
                   child: button(
                     size: size.width * 0.3,
-                    text: 'Deposit',
+                    text: 'Deposited/Undo',
                     color: const Color(0xff353CE5),
                   ),
                 ),
@@ -136,9 +131,7 @@ class _deposit_dataState extends State<deposit_data> {
                     });
 
                     _firestone
-                        .collection('new_account')
-                        .doc(widget.Location)
-                        .collection(widget.Location)
+                        .collection(accountType)
                         .doc(widget.Account_No)
                         .update({
                       'deposit_field': true,
@@ -152,7 +145,7 @@ class _deposit_dataState extends State<deposit_data> {
                   },
                   child: button(
                     size: size.width * 0.3,
-                    text: 'Deposited/Undo',
+                    text: 'Deposit',
                     color: const Color(0xff353CE5),
                   ),
                 ),
@@ -346,63 +339,61 @@ class _deposit_dataState extends State<deposit_data> {
             ],
           ),
         ),
-        Container(
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                circular_button(
-                  onpressed: () {
-                    print("hello");
-                    String phoneNo = ""; // Nullable variable
+        Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              circular_button(
+                onpressed: () {
+                  print("hello");
+                  String phoneNo = ""; // Nullable variable
 
+                  _firestone
+                      .collection('new_account')
+                      .doc(widget.Location)
+                      .collection(widget.Location)
+                      .doc(widget.Account_No)
+                      .get()
+                      .then((DocumentSnapshot<Map<String, dynamic>>
+                          documentSnapshot) {
+                    if (documentSnapshot.exists) {
+                      var data = documentSnapshot.data();
+                      if (data != null) {
+                        phoneNo = data['Phone_No'];
+                        print(phoneNo);
+
+                        if (phoneNo.isNotEmpty) {
+                          launchUrl(Uri.parse("tel:+91$phoneNo"));
+                        } else {
+                          print('Phone number is empty');
+                        }
+                      }
+                    } else {
+                      print('Document does not exist in the database');
+                    }
+                  }).catchError((error) {
+                    print('Error retrieving document: $error');
+                  });
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC2.png'),
+              ),
+              circular_button(
+                onpressed: () {
+                  print("hello");
+                  setState(() {
                     _firestone
                         .collection('new_account')
                         .doc(widget.Location)
                         .collection(widget.Location)
                         .doc(widget.Account_No)
-                        .get()
-                        .then((DocumentSnapshot<Map<String, dynamic>>
-                            documentSnapshot) {
-                      if (documentSnapshot.exists) {
-                        var data = documentSnapshot.data();
-                        if (data != null) {
-                          phoneNo = data['Phone_No'];
-                          print(phoneNo);
-
-                          if (phoneNo.isNotEmpty) {
-                            launchUrl(Uri.parse("tel:+91$phoneNo"));
-                          } else {
-                            print('Phone number is empty');
-                          }
-                        }
-                      } else {
-                        print('Document does not exist in the database');
-                      }
-                    }).catchError((error) {
-                      print('Error retrieving document: $error');
-                    });
-                  },
-                  size: 20,
-                  icon: Image.asset('assets/Acc/IC2.png'),
-                ),
-                circular_button(
-                  onpressed: () {
-                    print("hello");
-                    setState(() {
-                      _firestone
-                          .collection('new_account')
-                          .doc(widget.Location)
-                          .collection(widget.Location)
-                          .doc(widget.Account_No)
-                          .delete();
-                    });
-                  },
-                  size: 20,
-                  icon: Image.asset('assets/Acc/IC5.png'),
-                ),
-              ],
-            ),
+                        .delete();
+                  });
+                },
+                size: 20,
+                icon: Image.asset('assets/Acc/IC5.png'),
+              ),
+            ],
           ),
         ),
         const Padding(

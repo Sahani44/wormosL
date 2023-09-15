@@ -3,13 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:internship2/models/views/displayed_data.dart';
-import 'package:internship2/widgets/customnavbar.dart';
-import '../../models/views/maturity_display.dart';
-import 'package:internship2/Screens/Menu.dart';
-import '../../models/views/due_display.dart';
 import '../../widgets/amountdata.dart';
 
 class maturity extends StatefulWidget {
@@ -38,7 +32,7 @@ class _maturityState extends State<maturity> {
   String Location = '';
   String Type = 'Daily';
   int value = 0;
-  var _isloading = false;
+  var _isloading = true;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
