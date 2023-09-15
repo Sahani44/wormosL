@@ -26,7 +26,7 @@ class _newmemState extends State<newmem> {
   int installment = 0;
   int money = 0;
   String status = 'Paid';
-  late int Amount;
+  late String Amount;
   late String CIF_No;
   String dropdownvalue1 ='5 Days';
   String dropdownvalue2 = 'Daily';
@@ -60,7 +60,7 @@ class _newmemState extends State<newmem> {
 
   DateTime date_open = DateTime.now();
   DateTime date_mature = DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day);
-  List<DateTime> payment_dates = [DateTime.now()];
+  DateTime payment_date = DateTime.now();
   @override
   Widget build(BuildContext context) {
     // DateTime now = DateTime.now();
@@ -131,7 +131,7 @@ class _newmemState extends State<newmem> {
                                         ),
                                         textAlign: TextAlign.left,
                                         onChanged: (value) {
-                                          Amount = int.parse(value);
+                                          Amount = value;
                                         },
                                         validator: ((value) {
                                           if(value == null || value.isEmpty || int.parse(value) > 20000) {
@@ -662,19 +662,16 @@ class _newmemState extends State<newmem> {
                                   'Date_of_Maturity': date_mature,
                                   'Date_of_Opening': date_open,
                                   'CIF_No': CIF_No,
-                                  'monthly': Amount,
-                                  'mode': mode,
-                                  'paid_installment': (Amount_Collected/Amount).floor(),
+                                  'monthly': int.parse(Amount),
+                                  'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
-                                  'deposit_field': true,
-                                  'payment_dates': payment_dates,
+                                  'deposit_field': false,
                                   'place': '',
-                                  'payment_history': [Amount_Collected],
                                   'history' : [{
-                                    'payment_date' : payment_dates[0],
+                                    'payment_date' : payment_date,
                                     'payment_mode' : mode,
-                                    'payment_amount' : Amount_Collected,
+                                    'payment_amount' : totalAmountCollected,
                                   }]
                                 })
                                 :  _firestone
@@ -692,19 +689,16 @@ class _newmemState extends State<newmem> {
                                   'Date_of_Maturity': date_mature,
                                   'Date_of_Opening': date_open,
                                   'CIF_No': CIF_No,
-                                  'monthly': Amount,
-                                  'mode': mode,
-                                  'paid_installment': (Amount_Collected/Amount).floor(),
+                                  'monthly': int.parse(Amount),
+                                  'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
-                                  'deposit_field': true,
-                                  'payment_dates': payment_dates,
+                                  'deposit_field': false,
                                   'place' : widget.place,
-                                  'payment_history': [Amount_Collected] ,
                                   'history' : [{
-                                    'payment_date' : payment_dates[0],
+                                    'payment_date' : payment_date,
                                     'payment_mode' : mode,
-                                    'payment_amount' : Amount_Collected,
+                                    'payment_amount' : totalAmountCollected,
                                   }]
                                 });
                                 ScaffoldMessenger.of(context).showSnackBar(

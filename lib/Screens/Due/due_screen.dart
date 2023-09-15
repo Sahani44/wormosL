@@ -1,12 +1,5 @@
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:internship2/Screens/Place/place_edit.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:internship2/models/User_Tile/place_tile.dart';
-import 'package:internship2/Screens/Menu.dart';
-import 'package:internship2/Screens/Collection/collection2.dart';
-import 'package:internship2/models/User_Tile/collection_tile.dart';
 import 'package:internship2/models/User_Tile/due_tile.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 
@@ -25,7 +18,7 @@ class _due_screenState extends State<due_screen> {
   var _isloading = false;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = Color(0xff71757A);
+  final _inactiveColor = const Color(0xff71757A);
   void strm(String Name) {
     StreamBuilder(
         stream: _firestone
@@ -64,12 +57,12 @@ class _due_screenState extends State<due_screen> {
               MaterialPageRoute(builder: (context) => const CustomNavBar()),
             );
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back_ios_new_outlined,
             color: Color(0xff144743),
           ),
         ),
-        title: Text(
+        title: const Text(
           'Place',
           style: TextStyle(
             color: Colors.black54,
@@ -88,7 +81,7 @@ class _due_screenState extends State<due_screen> {
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return Center(
+                  return const Center(
                     child: CircularProgressIndicator(
                       backgroundColor: Colors.lightBlueAccent,
                     ),
@@ -101,7 +94,7 @@ class _due_screenState extends State<due_screen> {
                   Memberlist.add(due_tile(Name));
                 }
                 return _isloading
-                    ? Center(
+                    ? const Center(
                         child: CircularProgressIndicator(),
                       )
                     : Column(

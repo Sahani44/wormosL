@@ -1,17 +1,13 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, camel_case_types
 
 import 'package:flutter/material.dart';
-import 'package:internship2/Providers/depositfilter.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
-import 'package:internship2/Providers/_buildBottomBar.dart';
-import 'package:internship2/models/views/deposit_display.dart';
 import 'package:internship2/widgets/amountdata.dart';
 import 'package:internship2/widgets/customnavbar.dart';
-import '../../models/views/due_display.dart';
-import 'package:internship2/Screens/Menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/Providers/getstatus.dart';
+
+import '../../models/views/deposit_display.dart';
 
 class deposit extends StatefulWidget {
   static const id = '/deposit';
@@ -28,12 +24,10 @@ class _depositState extends State<deposit> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late List<Timestamp> payment_dates;
-  late String mode;
+  late List<Map<String,dynamic>> history;
   late int paid_installment;
   late int total_installment;
   late bool deposit_field;
-  late String status;
   late int Amount_Collected;
   late int Amount_Remaining;
   late int Monthly;
@@ -48,50 +42,87 @@ class _depositState extends State<deposit> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
-
   int _currentIndex2 = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
-  void addData(List<Widget> Memberlist, size) {
-    // Memberlist.add(
-    //   deposit_data(
-    //     deposit_field: deposit_field,
-    //     size: size,
-    //     Member_Name: Member_Name,
-    //     Plan: Plan,
-    //     Account_No: Account_No,
-    //     date_mature: date_mature,
-    //     date_open: date_open,
-    //     mode: mode,
-    //     paid_installment: paid_installment,
-    //     total_installment: total_installment,
-    //     status: status,
-    //     Location: '',
-    //     Amount_Collected: Amount_Collected,
-    //     Amount_Remaining: Amount_Remaining,
-    //     Monthly: Monthly,
-    //     payment_date: payment_dates[0],
-    //   ),
-    // );
+
+  
+  void addData(List<Widget> Memberlist,) {
+    Memberlist.add(
+      deposit_data(
+        deposit_field: deposit_field,
+        Member_Name: Member_Name,
+        Plan: Plan,
+        Account_No: Account_No,
+        date_mature: date_mature,
+        date_open: date_open,
+        paid_installment: paid_installment,
+        total_installment: total_installment,
+        Location: '',
+        Amount_Collected: Amount_Collected,
+        Amount_Remaining: Amount_Remaining,
+        Monthly: Monthly,
+        history: history
+      ),
+    );
   }
 
-  void condition(List<Widget> Memberlist, size, type, index) {
-    if (type == 'A' && index == 1) {
-      addData(Memberlist, size);
-    } else if (type == 'B' && index == 2){
-      addData(Memberlist, size);
+    Future<bool> getDocs (Memberlist) async {
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
+    tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
+    for (var tile in tiles) {
+      Member_Name = tile.get('Member_Name');
+      Plan = tile.get('Plan');
+      deposit_field = tile.get('deposit_field');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      Amount_Collected = tile.get('Amount_Collected');
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      Monthly = tile.get('monthly');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      addData(Memberlist);
     }
-    else{
-      addData(Memberlist, size);
-    }
-  }
-
-  void str(String Account) async {
-    status = await getFieldValue(Account, 'status');
+    return false;
+  
   }
 
   @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
+
+    void getNewMemberList (int currentIndex2 ) {
+    for (int i=0; i<tiles.length; i++) {
+      var deposit_field = tiles[i].get('deposit_field');
+      bool currentIndexPD = currentIndex2 == 0 ? false : true;
+      if(deposit_field == currentIndexPD){
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+    }
+  }
+
+
+  // void str(String Account) async {
+  //   status = await getFieldValue(Account, 'status');
+  // }
+
+  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+   Size size = MediaQuery.of(context).size;
+    newMemberList = [];
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    getNewMemberList(_currentIndex2);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -184,7 +215,24 @@ class _depositState extends State<deposit> {
             ),
             child: _buildAboveBar(),
           ), */
-          amountdata(totalClient, totalAmount, totalBalance, context)
+          amountdata(totalClient, totalAmount, totalBalance, context),
+          _isloading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+            children: [
+              SizedBox(
+                  height: size.height * 0.63,
+                  child: ListView.builder(
+                    itemCount: newMemberList.length,
+                    itemBuilder: (context, i) {
+                      return newMemberList[i];
+                    },
+                  )
+                ),
+            ],
+          )
         ],
       ),
     );
@@ -201,7 +249,6 @@ class _depositState extends State<deposit> {
       itemCornerRadius: 24,
       curve: Curves.easeIn,
       onItemSelected: (index) {
-        print(_currentIndex2);
         setState(() => _currentIndex2 = index);
       },
       items: <AboveNavyBarItem>[

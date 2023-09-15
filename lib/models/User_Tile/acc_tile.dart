@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
-import 'package:internship2/Screens/Place/usersearch.dart';
 import 'package:internship2/Screens/Account/Account_Master.dart';
 
 class acc_tile extends StatelessWidget {

@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
+// ignore_for_file: camel_case_types, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 
 class user_tile extends StatefulWidget {
   final String Username;
   final int monthly;
-  user_tile(
-    @required this.Username,
-    @required this.monthly,
+  const user_tile(
+    this.Username,
+    this.monthly, {super.key}
   );
   @override
   State<user_tile> createState() => _user_tileState();
@@ -20,11 +21,11 @@ class _user_tileState extends State<user_tile> {
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
         selected: true,
-        focusColor: Color(0xff53927B),
+        focusColor: const Color(0xff53927B),
         tileColor: Colors.white,
-        selectedTileColor: Color(0xff53927B),
+        selectedTileColor: const Color(0xff53927B),
         leading: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(
               Radius.circular(10),
@@ -34,8 +35,8 @@ class _user_tileState extends State<user_tile> {
           width: size.width * 0.14,
           child: Center(
             child: Text(
-              '${widget.Username[0]}',
-              style: TextStyle(
+              widget.Username[0],
+              style: const TextStyle(
                   color: Color(0xff29756F),
                   fontWeight: FontWeight.bold,
                   fontSize: 20),
@@ -44,7 +45,7 @@ class _user_tileState extends State<user_tile> {
         ),
         trailing: IconButton(
             onPressed: () {},
-            icon: Icon(
+            icon: const Icon(
               Icons.expand_circle_down_rounded,
               color: Colors.white,
             )),
@@ -52,14 +53,14 @@ class _user_tileState extends State<user_tile> {
           borderRadius: BorderRadius.circular(15),
         ),
         title: Text(
-          '${widget.Username}',
-          style: TextStyle(
+          widget.Username,
+          style: const TextStyle(
             color: Colors.black,
           ),
         ),
         subtitle: Text(
           '${widget.monthly}/Month',
-          style: TextStyle(color: Colors.grey),
+          style: const TextStyle(color: Colors.grey),
         ),
       ),
     );

@@ -2,10 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
-// import 'package:internship2/widgets/customnavbar.dart';
 import '../../models/views/displayed_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../widgets/amountdata.dart';
 
 class acc_master extends StatefulWidget {
@@ -34,7 +32,7 @@ class _acc_masterState extends State<acc_master> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late List<Timestamp>  payment_dates;
+  late List<Map<String,dynamic>> history;
   late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
   final _inactiveColor = const Color(0xffEBEBEB);
@@ -59,7 +57,7 @@ class _acc_masterState extends State<acc_master> {
         date_open: date_open, 
         monthly: monthly,
         type: type, 
-        payment_dates: payment_dates, 
+        history: history, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
@@ -78,7 +76,7 @@ class _acc_masterState extends State<acc_master> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
@@ -246,7 +244,7 @@ class _acc_masterState extends State<acc_master> {
           : Column(
             children: [
               SizedBox(
-                  height: size.height * 0.68,
+                  height: size.height * 0.73,
                   child: ListView.builder(
                     itemCount: newMemberList.length,
                     itemBuilder: (context, i) {

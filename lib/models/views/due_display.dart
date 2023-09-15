@@ -17,7 +17,6 @@ class due_data extends StatefulWidget {
     required this.Account_No,
     required this.Member_Name,
     required this.Plan,
-    required this.mode,
     required this.paid_installment,
     required this.total_installment,
     required this.status,
@@ -26,7 +25,7 @@ class due_data extends StatefulWidget {
     required this.Amount_Collected,
     required this.Amount_Remaining,
     required this.Monthly,
-    required this.payment_dates,
+    required this.history,
     required this.accountType,
     required this.callBack,
   });
@@ -35,9 +34,8 @@ class due_data extends StatefulWidget {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  final List<Timestamp> payment_dates;
-  final String mode;
-  final int paid_installment;
+  final List<Map<String,dynamic>> history;
+  int paid_installment;
   final int total_installment;
   final String status;
   final String Type;
@@ -49,74 +47,28 @@ class due_data extends StatefulWidget {
   var callBack;
 
   @override
-  State<due_data> createState() => _due_dataState(
-        Member_Name: Member_Name,
-        Plan: Plan,
-        Account_No: Account_No,
-        date_mature: date_mature,
-        date_open: date_open,
-        mode: mode,
-        paid_installment: paid_installment,
-        total_installment:total_installment,
-        status: status,
-        Type: Type,
-        Location: Location,
-        Amount_Collected: Amount_Collected,
-        Amount_Remaining: Amount_Remaining,
-        Monthly: Monthly,
-        payment_dates: payment_dates,
-      );
+  State<due_data> createState() => _due_dataState();
 }
 
 class _due_dataState extends State<due_data> {
 
-  _due_dataState({
-    required this.date_open,
-    required this.date_mature,
-    required this.Account_No,
-    required this.Member_Name,
-    required this.Plan,
-    required this.mode,
-    required this.payment_dates,
-    required this.Type,
-    required this.paid_installment,
-    required this.total_installment,
-    required this.status,
-    required this.Location,
-    required this.Amount_Collected,
-    required this.Amount_Remaining,
-    required this.Monthly,
-  });
   String _toggleValue2 = 'cash';
   bool _toggleValue1 = false;
-  final String Type;
-  final String Member_Name;
-  final String Plan;
-  final String Account_No;
-  final Timestamp date_open;
-  final Timestamp date_mature;
-  List<Timestamp> payment_dates;
-  final int Amount_Collected;
-  int Amount_Remaining;
-  int Monthly;
-  String mode;
-  int paid_installment;
-  int total_installment;
-  String status;
-  late int money = Monthly;
-  final String Location;
+  late String status = widget.status;
+  late int money = widget.Monthly;
+  String mode = 'cash';
   Color colour = const Color(0xffD83F52);
   final _firestone = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     final dateo =
-        DateTime.fromMillisecondsSinceEpoch(date_open.millisecondsSinceEpoch);
+        DateTime.fromMillisecondsSinceEpoch(widget.date_open.millisecondsSinceEpoch);
     final yearo = dateo.year;
     final montho = dateo.month;
     final dayo = dateo.day;
     final datem =
-        DateTime.fromMillisecondsSinceEpoch(date_mature.millisecondsSinceEpoch);
+        DateTime.fromMillisecondsSinceEpoch(widget.date_mature.millisecondsSinceEpoch);
     final yearm = datem.year;
     final monthm = datem.month;
     final daym = datem.day;
@@ -128,24 +80,24 @@ class _due_dataState extends State<due_data> {
     // }
     // int Daily = (Monthly / 30).floor();
     // int Weekly = (Monthly / 4).floor();
-    if(Type == 'Daily') {
-      if (now.day-payment_dates[payment_dates.length-1].toDate().day >= 1 || now.month-payment_dates[payment_dates.length-1].toDate().month >= 1) {
+    if(widget.Type == 'Daily') {
+      if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 1 || now.month-widget.history[widget.history.length-1]['payment_date'].toDate().month >= 1) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
     }
-      money = (now.day>30 ? 30*(Monthly / 30).floor()-Amount_Remaining : now.day*(Monthly / 30).floor()-Amount_Remaining);
+      money = (now.day>30 ? 30*(widget.Monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.Monthly / 30).floor()-widget.Amount_Remaining);
     }
-    if (Type == '5 Days'){
-      if (now.day-payment_dates[payment_dates.length-1].toDate().day >= 5) {
+    if (widget.Type == '5 Days'){
+      if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 5) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
     }
-      money = (Monthly / 6).floor()*((now.day-payment_dates[payment_dates.length-1].toDate().day)%5);
+      money = (widget.Monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5) as int;
     }
-    if (Type == 'Monthly'){
-      money = Monthly - Amount_Remaining;
+    if (widget.Type == 'Monthly'){
+      money = widget.Monthly - widget.Amount_Remaining;
       if(money > 0){
         status = 'Due';
       }
@@ -165,7 +117,7 @@ class _due_dataState extends State<due_data> {
               Column(
                 children: [
                   Text(
-                    Member_Name,
+                    widget.Member_Name,
                     style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
@@ -173,7 +125,7 @@ class _due_dataState extends State<due_data> {
                     ),
                   ),
                   Text(
-                    Account_No,
+                    widget.Account_No,
                     style: const TextStyle(color: Color(0xffAF545F), fontSize: 13.0),
                   ),
                 ],
@@ -182,27 +134,30 @@ class _due_dataState extends State<due_data> {
                 onPressed: () {
                   if(status == 'Due'){
                     status = 'Paid';
-                    payment_dates.add(Timestamp.now());
-                    if (paid_installment >total_installment) paid_installment = 0;
+                    widget.history.add({
+                      'payment_date':Timestamp.now(),
+                      'mode' : mode,
+                      'payment_amount' : money,
+                    });
+                    if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
                   _firestone
                       .collection(widget.accountType)
-                      .doc(Account_No)
+                      .doc(widget.Account_No)
                       .update({
+                    'history':widget.history,
                     'status': status,
-                    'mode': mode,
-                    'payment_dates': payment_dates,
-                    'Amount_Collected': Amount_Collected + money,
-                    'Amount_Remaining': Amount_Remaining + money,
+                    'Amount_Collected': widget.Amount_Collected + money,
+                    'Amount_Remaining': widget.Amount_Remaining + money,
                   });
 
-                  if(Amount_Remaining + money >= Monthly){
-                    paid_installment++;
+                  if(widget.Amount_Remaining + money >= widget.Monthly){
+                    widget.paid_installment++;
                     _firestone
                       .collection(widget.accountType)
-                      .doc(Account_No)
+                      .doc(widget.Account_No)
                       .update({
-                        'Amount_Remaining': Amount_Remaining + money - Monthly,
-                        'paid_installment': paid_installment,
+                        'Amount_Remaining': widget.Amount_Remaining + money - widget.Monthly,
+                        'paid_installment': widget.paid_installment,
                       });
                   }
                   widget.callBack(money);
@@ -241,7 +196,7 @@ class _due_dataState extends State<due_data> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${payment_dates[payment_dates.length-1].toDate().day}/${payment_dates[payment_dates.length-1].toDate().month}/${payment_dates[payment_dates.length-1].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),
@@ -367,7 +322,7 @@ class _due_dataState extends State<due_data> {
                               padding:
                                   const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
                               child: Center(
-                                child: Text('$Amount_Remaining'),
+                                child: Text('${widget.Amount_Remaining}'),
                               ),
                             ),
                           ),
@@ -432,7 +387,7 @@ class _due_dataState extends State<due_data> {
                       SizedBox(
                         width: size.width * 0.03,
                       ),
-                      Text('$Monthly/-'),
+                      Text('${widget.Monthly}/-'),
                       SizedBox(
                         width: size.width * 0.18,
                       ),
@@ -455,7 +410,7 @@ class _due_dataState extends State<due_data> {
                         width: size.width * 0.01,
                       ),
                       Text(
-                        '$paid_installment/$total_installment',
+                        '${widget.paid_installment}/${widget.total_installment}',
                         style: const TextStyle(
                           fontSize: 13.5,
                           color: Colors.black,
@@ -481,7 +436,7 @@ class _due_dataState extends State<due_data> {
 
                   _firestone
                       .collection(widget.accountType)
-                      .doc(Account_No)
+                      .doc(widget.Account_No)
                       .get()
                       .then((DocumentSnapshot<Map<String, dynamic>>
                           documentSnapshot) {
@@ -528,7 +483,7 @@ class _due_dataState extends State<due_data> {
                   // });
                   _firestone
                       .collection(widget.accountType)
-                      .doc(Account_No)
+                      .doc(widget.Account_No)
                       .get()
                       .then((DocumentSnapshot<Map<String, dynamic>>
                           documentSnapshot) {
@@ -537,7 +492,7 @@ class _due_dataState extends State<due_data> {
                       if (data != null) {
                          _firestone
                           .collection('deleted_accounts')
-                          .doc(Account_No)
+                          .doc(widget.Account_No)
                           .set(data);
                       }
                     } else {

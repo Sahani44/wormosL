@@ -17,10 +17,10 @@ class displayeddata extends StatefulWidget {
   final String Location;
   final String type;
   final int monthly;
-  final Amount_Remaining;
-  final total_installment;
-  final paid_installment;
-  final List<Timestamp> payment_dates;
+  final int Amount_Remaining;
+  final int total_installment;
+  final int paid_installment;
+  final List<Map<String,dynamic>> history;
 
   const displayeddata({
     Key? key,
@@ -35,7 +35,7 @@ class displayeddata extends StatefulWidget {
     required this.Amount_Remaining,
     required this.total_installment,
     required this.paid_installment,
-    required this.payment_dates
+    required this.history
   }) : super(key: key);
 
   @override
@@ -54,13 +54,13 @@ class _displayeddataState extends State<displayeddata> {
     DateTime now = DateTime.now();
 
      if(widget.type == 'Daily') {
-      money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining) as int?;
+      money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining);
     }
     if (widget.type == '5 Days'){
-      money = ((widget.monthly / 6).floor()*((now.day-widget.payment_dates[widget.payment_dates.length-1].toDate().day)%5));
+      money = ((widget.monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5)) as int?;
     }
     if (widget.type == 'widget.monthly'){
-      money = (widget.monthly - widget.Amount_Remaining) as int?;
+      money = (widget.monthly - widget.Amount_Remaining);
     } 
     Size size = MediaQuery.of(context).size;
     final dateo =
@@ -109,7 +109,7 @@ class _displayeddataState extends State<displayeddata> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 12.0),
+                padding: const EdgeInsets.only(right: 14.0),
                 child: Container(
                   width: size.width * 0.3,
                   decoration: BoxDecoration(
@@ -152,7 +152,7 @@ class _displayeddataState extends State<displayeddata> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${widget.payment_dates[widget.payment_dates.length-1].toDate().day}/${widget.payment_dates[widget.payment_dates.length-1].toDate().month}/${widget.payment_dates[widget.payment_dates.length-1].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),

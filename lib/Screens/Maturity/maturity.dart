@@ -27,7 +27,7 @@ class _maturityState extends State<maturity> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late List<Timestamp> payment_dates;
+  late List<Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -63,7 +63,7 @@ class _maturityState extends State<maturity> {
         date_open: date_open, 
         monthly: Monthly,
         type: Type, 
-        payment_dates: payment_dates, 
+        history: history, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
@@ -82,7 +82,7 @@ class _maturityState extends State<maturity> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
@@ -249,7 +249,7 @@ class _maturityState extends State<maturity> {
           : Column(
             children: [
               SizedBox(
-                  height: size.height * 0.68,
+                  height: size.height * 0.70,
                   child: ListView.builder(
                     itemCount: newMemberList.length,
                     itemBuilder: (context, i) {

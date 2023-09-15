@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Menu.dart';
 
@@ -83,63 +85,12 @@ class Client_dbt extends StatelessWidget {
               SizedBox(
                 height: size.height * 0.025,
               ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: size.width * 0.16,
-                  ),
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '2,00,0000',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Color(0xff545454),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        'Premium Plan',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xff205955),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: size.width * 0.34,
-                  ),
-                  Container(
-                    width: size.width * 0.1,
-                    child: TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'B',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              Color(0xff42A19A))),
-                    ),
-                  )
-                ],
-              ),
-              const Divider(
-                thickness: 1,
-              ),
               SizedBox(
                 height: size.height * 0.013,
               ),
               Row(
                 children: [
-                  Container(
-                    child: Image.asset('assets/Acc/image 27.png'),
-                  ),
+                  Image.asset('assets/Acc/image 27.png'),
                   SizedBox(
                     width: size.width * 0.05,
                   ),
@@ -164,6 +115,56 @@ class Client_dbt extends StatelessWidget {
                       ),
                     ],
                   ),
+                  SizedBox(
+                    width: size.width * 0.28,
+                  ),
+                  SizedBox(
+                    width: size.width * 0.1,
+                    child: TextButton(
+                      onPressed: () {},
+                      style: const ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              Color(0xff42A19A))),
+                      child: const Text(
+                        'B',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+              const Divider(
+                thickness: 1,
+              ),
+              Row(
+                children: [
+                  Image.asset('assets/image 35.png'),
+                  SizedBox(
+                    width: size.width * 0.05,
+                  ),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '685379986',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xff545454),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Text(
+                        'CIF No',
+                        style: TextStyle(
+                          fontSize: 11.5,
+                          color: Color(0xff205955),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
               const Divider(
@@ -178,9 +179,7 @@ class Client_dbt extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          child: Image.asset('assets/Acc/calendar.png'),
-                        ),
+                        child: Image.asset('assets/Acc/calendar.png'),
                       ),
                       SizedBox(
                         width: size.width * 0.05,
@@ -215,9 +214,7 @@ class Client_dbt extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          child: Image.asset('assets/Acc/calendar.png'),
-                        ),
+                        child: Image.asset('assets/Acc/calendar.png'),
                       ),
                       SizedBox(
                         width: size.width * 0.05,
@@ -333,11 +330,44 @@ class Client_dbt extends StatelessWidget {
               ),
               SizedBox(
                 height: size.height * 0.07,
+                child: Row(
+                  children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: size.width * 0.05,
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * 0.07,
+                  ),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                    Text(
+                      '3000',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xff545454),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      'Monthly',
+                      style: TextStyle(
+                        fontSize: 9.5,
+                        color: Color(0xff205955),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],)
+                ]),
               ),
               const Divider(
                 thickness: 1,
               ),
-              Container(
+              SizedBox(
                 height: size.height * 0.06,
                 child: Row(
                   children: [

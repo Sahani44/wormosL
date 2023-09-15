@@ -25,7 +25,7 @@ class _deleted_landingState extends State<deleted_landing> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late List<Timestamp>  payment_dates;
+  late List<Map<String,dynamic>> history;
   late int paid_installment;
   late String place;
   late final _firestone = FirebaseFirestore.instance;
@@ -50,7 +50,7 @@ class _deleted_landingState extends State<deleted_landing> {
         date_open: date_open, 
         monthly: monthly,
         type: type, 
-        payment_dates: payment_dates, 
+        history: history, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
@@ -68,7 +68,7 @@ class _deleted_landingState extends State<deleted_landing> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       place = tile.get('place');
       monthly = tile.get('monthly');

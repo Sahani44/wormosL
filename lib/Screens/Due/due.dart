@@ -35,7 +35,7 @@ class _dueState extends State<due> {
   late int Amount_Remaining;
   late int Monthly;
   var _isloading = false;
-  late List<Timestamp> payment_dates;
+  late List<Map<String,dynamic>> history;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   int _currentIndex2 = 0;
@@ -59,7 +59,6 @@ class _dueState extends State<due> {
         Account_No: Account_No,
         date_mature: date_mature,
         date_open: date_open,
-        mode: mode,
         paid_installment: paid_installment,
         status: status,
         Location: '',
@@ -68,7 +67,7 @@ class _dueState extends State<due> {
         Monthly: Monthly, 
         total_installment: total_installment, 
         Type: Type,
-        payment_dates: payment_dates, 
+        history: history, 
         accountType: '', 
         callBack: null,
       ),
@@ -101,11 +100,10 @@ class _dueState extends State<due> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
-      mode = tile.get('mode');
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
@@ -125,14 +123,29 @@ class _dueState extends State<due> {
     }));
   }
 
+  void getNewMemberList (int currentIndex, int currentIndex2,List<Widget> newMemberList ) {
+    String currentIndexPD = currentIndex == 0 ? 'Paid' : 'Due';
+    String currentIndex2AB = currentIndex2 == 0 ? 'A' : 'B';
+    for (int i=0; i<tiles.length; i++) {
+      var status = tiles[i].get('status');
+      var plan = tiles[i].get('Plan');
+      if(status == currentIndexPD && plan == currentIndex2AB){
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += Amount_Collected;
+        totalBalance += Amount_Remaining;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    newMemberList = [];
+    newMemberList.clear();
     totalClient = 0;
     totalAmount = 0;
     totalBalance = 0;
-    // getNewMemberList(_currentIndex, _currentIndex1);
+    getNewMemberList(_currentIndex, _currentIndex2,newMemberList);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -203,6 +216,23 @@ class _dueState extends State<due> {
             ],
           ),
           amountdata(totalClient, totalAmount, totalBalance, context),
+          _isloading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Column(
+            children: [
+              SizedBox(
+                  height: size.height * 0.73,
+                  child: ListView.builder(
+                    itemCount: newMemberList.length,
+                    itemBuilder: (context, i) {
+                      return newMemberList[i];
+                    },
+                  )
+                ),
+            ],
+          )
         ],
       ),
     );
@@ -215,11 +245,11 @@ class _dueState extends State<due> {
       containerWidth: size.width * 0.40,
       boxWidth: 70,
       backgroundColor: Colors.white,
-      selectedIndex: _currentIndex,
+      selectedIndex: _currentIndex2,
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex = index),
+      onItemSelected: (index) => setState(() => _currentIndex2= index),
       items: <AboveNavyBarItem>[
         // AboveNavyBarItem(
         //   alpha: 'All',
@@ -247,11 +277,11 @@ class _dueState extends State<due> {
       containerWidth: size.width * 0.55,
       boxWidth: 100,
       backgroundColor: Colors.white,
-      selectedIndex: _currentIndex2,
+      selectedIndex: _currentIndex,
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex2 = index),
+      onItemSelected: (index) => setState(() => _currentIndex = index),
       items: <AboveNavyBarItem>[
         AboveNavyBarItem(
           alpha: 'Paid',

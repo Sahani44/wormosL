@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Account/Account_Master.dart';
 import 'package:internship2/Screens/Deleted/deleted_landing.dart';
 import 'package:internship2/Screens/Due/due.dart';
-import 'package:internship2/Screens/Due/due_screen.dart';
-import 'package:internship2/Screens/Lapse/lapsescreen.dart';
 import 'package:internship2/Screens/Maturity/maturity.dart';
-import 'package:internship2/Screens/Records/location.dart';
 import 'package:internship2/Screens/Records/record_screen.dart';
 import 'package:internship2/models/views/menu_tile.dart';
 import 'package:internship2/widgets/customnavbar.dart';
-
 import 'Lapse/lapse.dart';
 
 class menu extends StatelessWidget {

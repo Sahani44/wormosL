@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import '../../models/views/due_display.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../widgets/amountdata.dart';
 
 class collection2 extends StatefulWidget {
@@ -28,7 +27,6 @@ class _collection2State extends State<collection2> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late String mode;
   late int paid_installment;
   late int total_installment;
   late String status;
@@ -39,7 +37,7 @@ class _collection2State extends State<collection2> {
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-  late List<Timestamp> payment_dates;
+  late List<Map<String,dynamic>> history;
   String accountType = '';
   String Type = '';
   var _isloading = false;
@@ -64,11 +62,10 @@ class _collection2State extends State<collection2> {
         date_open: date_open, 
         Monthly: Monthly,
         Type: Type, 
-        payment_dates: payment_dates, 
+        history: history, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment, 
-        mode: mode, 
         status: status, 
         Amount_Collected: Amount_Collected,
         accountType: accountType,
@@ -88,11 +85,10 @@ class _collection2State extends State<collection2> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
-      mode = tile.get('mode');
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      payment_dates = List<Timestamp>.from(tile.get('payment_dates'));
+      history = List<Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
@@ -267,7 +263,7 @@ class _collection2State extends State<collection2> {
           : Column(
             children: [
               SizedBox(
-                  height: size.height * 0.68,
+                  height: size.height * 0.72,
                   child: ListView.builder(
                     itemCount: newMemberList.length,
                     itemBuilder: (context, i) {

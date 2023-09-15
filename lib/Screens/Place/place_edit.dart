@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, camel_case_types
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/Screens/Place/newmember.dart';

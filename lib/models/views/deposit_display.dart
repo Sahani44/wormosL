@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,24 +10,21 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class deposit_data extends StatefulWidget {
-  const deposit_data({
+  deposit_data({
     Key? key,
-    required this.size,
     required this.date_open,
     required this.deposit_field,
     required this.date_mature,
     required this.Account_No,
     required this.Member_Name,
     required this.Plan,
-    required this.mode,
     required this.paid_installment,
     required this.total_installment,
-    required this.status,
     required this.Location,
     required this.Amount_Collected,
     required this.Amount_Remaining,
     required this.Monthly,
-    required this.payment_date,
+    required this.history,
   }) : super(key: key);
 
   final String Member_Name;
@@ -33,12 +32,9 @@ class deposit_data extends StatefulWidget {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  final Timestamp payment_date;
-  final Size size;
-  final String mode;
+  List<Map<String,dynamic>> history;
   final int paid_installment;
   final int total_installment;
-  final String status;
   final String Location;
   final bool deposit_field;
   final dynamic Amount_Collected;
@@ -127,7 +123,7 @@ class _deposit_dataState extends State<deposit_data> {
                     // );
                   },
                   child: button(
-                    size: widget.size.width * 0.3,
+                    size: size.width * 0.3,
                     text: 'Deposit',
                     color: const Color(0xff353CE5),
                   ),
@@ -155,7 +151,7 @@ class _deposit_dataState extends State<deposit_data> {
                     // );
                   },
                   child: button(
-                    size: widget.size.width * 0.3,
+                    size: size.width * 0.3,
                     text: 'Deposited/Undo',
                     color: const Color(0xff353CE5),
                   ),
@@ -184,7 +180,7 @@ class _deposit_dataState extends State<deposit_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width: size.width * 0.03,
                       ),
                       Text('$yearo/$montho/$dayo'),
                     ],
@@ -201,7 +197,7 @@ class _deposit_dataState extends State<deposit_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width: size.width * 0.03,
                       ),
                       Text('$yearm/$monthm/$daym'),
                     ],
@@ -222,9 +218,9 @@ class _deposit_dataState extends State<deposit_data> {
                             borderRadius: BorderRadius.circular(5)
                           ),
                           alignment: Alignment.center,
-                          width: widget.size.width*0.3,
-                          height: widget.size.height*0.030,
-                          child: Text('${widget.payment_date.toDate().day}/${widget.payment_date.toDate().month}/${widget.payment_date.toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                          width: size.width*0.3,
+                          height: size.height*0.030,
+                          child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
                         )
                       ],
                     ),
@@ -310,11 +306,11 @@ class _deposit_dataState extends State<deposit_data> {
                         textAlign: TextAlign.left,
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.03,
+                        width:size.width * 0.03,
                       ),
                       Text('${widget.Monthly}/-'),
                       SizedBox(
-                        width: widget.size.width * 0.18,
+                        width: size.width * 0.18,
                       ),
                       const SizedBox(
                         child: Wrap(
@@ -332,7 +328,7 @@ class _deposit_dataState extends State<deposit_data> {
                         ),
                       ),
                       SizedBox(
-                        width: widget.size.width * 0.01,
+                        width: size.width * 0.01,
                       ),
                       Text(
                         '${widget.paid_installment}/${widget.total_installment}',

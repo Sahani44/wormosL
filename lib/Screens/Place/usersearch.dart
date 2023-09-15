@@ -1,6 +1,5 @@
-// ignore_for_file: no_logic_in_create_state, non_constant_identifier_names
+// ignore_for_file: no_logic_in_create_state, non_constant_identifier_names, camel_case_types, must_be_immutable
 
-import 'package:internship2/Providers/custom_animated_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/newmember.dart';
 import 'package:internship2/models/User_Tile/user_tile.dart';
