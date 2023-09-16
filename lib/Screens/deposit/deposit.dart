@@ -63,6 +63,7 @@ class _depositState extends State<deposit> {
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly,
         history: history,
+        callBack: callBack,
         accountType: accountType 
       ),
     );
@@ -100,19 +101,30 @@ class _depositState extends State<deposit> {
     }));
   }
 
-    void getNewMemberList (int currentIndex2 ) {
+  void getNewMemberList (int currentIndex2 ) {
     for (int i=0; i<tiles.length; i++) {
       var deposit_field = tiles[i].get('deposit_field');
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
       bool currentIndexPD = currentIndex2 == 0 ? false : true;
       if(deposit_field == currentIndexPD){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
     }
   }
 
+  callBack() {
+    // setState(() {
+    //   _isloading = true;
+    // });
+    Memberlist = [];
+    getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
 
   // void str(String Account) async {
   //   status = await getFieldValue(Account, 'status');

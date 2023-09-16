@@ -1,10 +1,38 @@
 // ignore_for_file: camel_case_types
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Menu.dart';
 
 class Client_dbt extends StatelessWidget {
-  const Client_dbt({Key? key}) : super(key: key);
+  final String acc;
+  final String memberName;
+  final String cif;
+  final Timestamp doo;
+  final Timestamp dom;
+  final String location;
+  final int amtcltd;
+  final int amtrmn;
+  final String add;
+  final int monthly;
+  final String phone;
+  final String plan;
+
+  const Client_dbt({
+    Key? key,
+    required this.memberName,
+    required this.acc,
+    required this.cif,
+    required this.doo,
+    required this.dom,
+    required this.location,
+    required this.amtcltd,
+    required this.amtrmn,
+    required this.add,
+    required this.monthly,
+    required this.phone, 
+    required this.plan,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +73,10 @@ class Client_dbt extends StatelessWidget {
                       ),
                       height: size.height * 0.080,
                       width: size.width * 0.16,
-                      child: const Center(
+                      child: Center(
                         child: Text(
-                          'A',
-                          style: TextStyle(
+                          memberName[0],
+                          style: const TextStyle(
                               color: Color(0xff29756F),
                               fontWeight: FontWeight.bold,
                               fontSize: 30),
@@ -58,21 +86,21 @@ class Client_dbt extends StatelessWidget {
                     SizedBox(
                       width: size.width * 0.1,
                     ),
-                    const Column(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Ashish Jain',
-                          style: TextStyle(
+                          memberName,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w400,
                             fontSize: 25.0,
                           ),
                         ),
                         Text(
-                          'Basant Road',
-                          style: TextStyle(
+                          location,
+                          style: const TextStyle(
                             color: Color(0xff205955),
                             fontWeight: FontWeight.w400,
                           ),
@@ -94,18 +122,18 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.05,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '97756379986',
-                        style: TextStyle(
+                        acc,
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Color(0xff545454),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Account No',
                         style: TextStyle(
                           fontSize: 11.5,
@@ -125,9 +153,9 @@ class Client_dbt extends StatelessWidget {
                       style: const ButtonStyle(
                           backgroundColor: MaterialStatePropertyAll<Color>(
                               Color(0xff42A19A))),
-                      child: const Text(
-                        'B',
-                        style: TextStyle(
+                      child: Text(
+                        plan,
+                        style: const TextStyle(
                           color: Colors.black,
                         ),
                       ),
@@ -144,18 +172,18 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.05,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '685379986',
-                        style: TextStyle(
+                        cif,
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Color(0xff545454),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'CIF No',
                         style: TextStyle(
                           fontSize: 11.5,
@@ -184,18 +212,18 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.05,
                       ),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '10/06/22',
-                            style: TextStyle(
+                            '${doo.toDate().day}/${doo.toDate().month}/${doo.toDate().year}',
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xff545454),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Date of Opening',
                             style: TextStyle(
                               fontSize: 11.5,
@@ -219,18 +247,18 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.05,
                       ),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '10/06/27',
-                            style: TextStyle(
+                            '${dom.toDate().day}/${dom.toDate().month}/${dom.toDate().year}',
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xff545454),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Date of Maturity',
                             style: TextStyle(
                               fontSize: 11.5,
@@ -263,18 +291,18 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.07,
                       ),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '245367',
-                            style: TextStyle(
+                            amtcltd.toString(),
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xff545454),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Amount Collected',
                             style: TextStyle(
                               fontSize: 9.5,
@@ -300,18 +328,18 @@ class Client_dbt extends StatelessWidget {
                       SizedBox(
                         width: size.width * 0.07,
                       ),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '245678',
-                            style: TextStyle(
+                            amtrmn.toString(),
+                            style: const TextStyle(
                               fontSize: 18,
                               color: Color(0xff545454),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Amount Remaining',
                             style: TextStyle(
                               fontSize: 9.5,
@@ -341,19 +369,19 @@ class Client_dbt extends StatelessWidget {
                   SizedBox(
                     width: size.width * 0.07,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                     Text(
-                      '3000',
-                      style: TextStyle(
+                      monthly.toString(),
+                      style: const TextStyle(
                         fontSize: 18,
                         color: Color(0xff545454),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Text(
+                    const Text(
                       'Monthly',
                       style: TextStyle(
                         fontSize: 9.5,
@@ -380,18 +408,18 @@ class Client_dbt extends StatelessWidget {
                     SizedBox(
                       width: size.width * 0.05,
                     ),
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Greater Noida',
-                          style: TextStyle(
+                          add,
+                          style: const TextStyle(
                             fontSize: 17,
                             color: Color(0xff545454),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        Text(
+                        const Text(
                           'Address',
                           style: TextStyle(
                             fontSize: 10.5,
@@ -411,25 +439,23 @@ class Client_dbt extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      child: Image.asset('assets/Acc/call.png'),
-                    ),
+                    child: Image.asset('assets/Acc/call.png'),
                   ),
                   SizedBox(
                     width: size.width * 0.02,
                   ),
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '8973572348',
-                        style: TextStyle(
+                        phone,
+                        style: const TextStyle(
                           fontSize: 18,
                           color: Color(0xff545454),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'Phone No',
                         style: TextStyle(
                           fontSize: 11.5,

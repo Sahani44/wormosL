@@ -45,6 +45,9 @@ class _maturityState extends State<maturity> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String cif;
+  late String phone;
 
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -61,6 +64,10 @@ class _maturityState extends State<maturity> {
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
+        cif: cif, 
+        Amount_Collected: Amount_Collected, 
+        add: add, 
+        phone: phone,
       ),
     );
   }
@@ -72,6 +79,9 @@ class _maturityState extends State<maturity> {
     for (var tile in tiles) {
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
+      phone = tile.get('Phone_No');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
@@ -99,47 +109,19 @@ class _maturityState extends State<maturity> {
   void getNewMemberList (int currentIndex,) {
     for (int i=0; i<tiles.length; i++) {
       var paid_installment = tiles[i].get('paid_installment');
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
       if(_currentIndex ==0 && paid_installment >= 54){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
-      else if(_currentIndex == 2 && paid_installment == 58){
+      else if(_currentIndex == 60 - paid_installment){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
-      }
-      else if(_currentIndex == 3 && paid_installment == 57){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
-      }
-      else if(_currentIndex == 4 && paid_installment == 56){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
-      }
-      else if(_currentIndex == 5 && paid_installment == 55){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
-      }
-      else if(_currentIndex == 6 && paid_installment == 54){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
-      }
-      else if(_currentIndex == 1 && paid_installment == 59){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
     }
   }

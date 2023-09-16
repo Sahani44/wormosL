@@ -643,6 +643,11 @@ class _newmemState extends State<newmem> {
                               // monthly = gap3 * 12;
                               // monthly = monthly - gap1 - gap2;
                               // monthly = (int.parse(Amount) / monthly).floor();
+                              
+                              var next_due_date = DateTime(
+                                                  date_open.year,
+                                                  date_open.month + (Amount_Collected/int.parse(Amount)).floor() + 1,
+                                                  date_open.day);
                               if (_formKey.currentState!.validate()) {
                                 int total_installment = 60;
                                 int totalAmountCollected = Amount_Collected+Amount_Remaining;
@@ -666,6 +671,7 @@ class _newmemState extends State<newmem> {
                                   'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
+                                  'next_due_date' : next_due_date,
                                   'deposit_field': false,
                                   'place': '',
                                   'history' : [{
@@ -688,6 +694,7 @@ class _newmemState extends State<newmem> {
                                   'Type': dropdownvalue2,
                                   'Date_of_Maturity': date_mature,
                                   'Date_of_Opening': date_open,
+                                  'next_due_date': next_due_date,
                                   'CIF_No': CIF_No,
                                   'monthly': int.parse(Amount),
                                   'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),

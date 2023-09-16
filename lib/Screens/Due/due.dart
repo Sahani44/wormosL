@@ -25,6 +25,7 @@ class _dueState extends State<due> {
   String accountType = '';
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp next_due_date;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -49,6 +50,8 @@ class _dueState extends State<due> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String cif;
 
 
   void addData(List<Widget> Memberlist,) {
@@ -62,6 +65,7 @@ class _dueState extends State<due> {
         paid_installment: paid_installment,
         status: status,
         Location: '',
+        next_due_date: next_due_date,
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly, 
@@ -69,20 +73,12 @@ class _dueState extends State<due> {
         Type: Type,
         history: history, 
         accountType: '', 
-        callBack: null,
+        callBack: callBack,
+        cif: cif, 
+        add: add, 
+        phone: Phone,
       ),
     );
-  }
-
-  void condition(List<Widget> Memberlist, type, index) {
-    if (type == 'A' && index == 1) {
-      addData(Memberlist, );
-    } else if (type == 'B' && index == 2){
-      addData(Memberlist, );
-    }
-    else{
-      addData(Memberlist, );
-    }
   }
 
   void str(String Account) async {
@@ -97,9 +93,12 @@ class _dueState extends State<due> {
       Member_Name = tile.get('Member_Name');
       Phone = tile.get("Phone_No");
       Plan = tile.get('Plan');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      next_due_date = tile.get('next_due_date');
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
@@ -123,29 +122,38 @@ class _dueState extends State<due> {
     }));
   }
 
-  void getNewMemberList (int currentIndex, int currentIndex2,List<Widget> newMemberList ) {
+  void getNewMemberList (int currentIndex, int currentIndex2 ) {
     String currentIndexPD = currentIndex == 0 ? 'Paid' : 'Due';
     String currentIndex2AB = currentIndex2 == 0 ? 'A' : 'B';
     for (int i=0; i<tiles.length; i++) {
       var status = tiles[i].get('status');
       var plan = tiles[i].get('Plan');
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
       if(status == currentIndexPD && plan == currentIndex2AB){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
     }
+  }
+
+  callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    newMemberList.clear();
+    newMemberList = [];
     totalClient = 0;
     totalAmount = 0;
     totalBalance = 0;
-    getNewMemberList(_currentIndex, _currentIndex2,newMemberList);
+    getNewMemberList(_currentIndex, _currentIndex2);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

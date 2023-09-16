@@ -21,6 +21,7 @@ class _lapseState extends State<lapse> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp next_due_date;
   late List<Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
@@ -48,6 +49,8 @@ class _lapseState extends State<lapse> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String cif;
 
 
   void addData(List<Widget> Memberlist) {
@@ -58,6 +61,7 @@ class _lapseState extends State<lapse> {
         Plan: Plan,
         Account_No: Account_No,
         date_mature: date_mature,
+        next_due_date: next_due_date,
         date_open: date_open, 
         Monthly: Monthly,
         Type: Type, 
@@ -68,6 +72,9 @@ class _lapseState extends State<lapse> {
         status: status, 
         Amount_Collected: Amount_Collected,
         accountType: accountType,
+        cif: cif, 
+        add: add, 
+        phone: Phone,
         callBack: callBack,
       ),
     );
@@ -81,9 +88,12 @@ class _lapseState extends State<lapse> {
       Member_Name = tile.get('Member_Name');
       Phone = tile.get("Phone_No");
       Plan = tile.get('Plan');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      next_due_date = tile.get('next_due_date');
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
@@ -107,15 +117,30 @@ class _lapseState extends State<lapse> {
   
   }
 
-  void getNewMemberList (int currentIndex1) {
+  void getNewMemberList (int currentIndex1, int currentIndex) {
     for (int i=0; i<tiles.length; i++) {
       String plan = tiles[i].get('Plan');
       String p = currentIndex1 == 0 ? 'A' : 'B';
-      if(plan == p){ 
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;}
+      DateTime ndd = tiles[i].get('next_due_date').toDate();
+      DateTime now = Timestamp.now().toDate();
+      int pm = tiles[i].get('paid_installment');
+      int em = (now.difference(tiles[i].get('Date_of_Opening').toDate()).inDays/30).round() ;
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
+      if(plan == p && ndd.isBefore(now) ){ 
+        if(currentIndex != 0 && em-pm == currentIndex){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+        else if(currentIndex == 0){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+       }
     }}
 
   @override
@@ -126,11 +151,11 @@ class _lapseState extends State<lapse> {
     }));
   }
 
-    callBack(int money) {
-    return setState(() {
-      totalBalance = totalBalance+money;
-      totalAmount = totalAmount+money; 
-    });
+    callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override
@@ -143,7 +168,7 @@ class _lapseState extends State<lapse> {
     totalClient = 0;
     totalAmount = 0;
     totalBalance = 0;
-    getNewMemberList(_currentIndex1);
+    getNewMemberList(_currentIndex1, _currentIndex);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

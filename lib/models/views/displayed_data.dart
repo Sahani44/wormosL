@@ -18,8 +18,12 @@ class displayeddata extends StatefulWidget {
   final String type;
   final int monthly;
   final int Amount_Remaining;
+  final int Amount_Collected;
+  final String add;
+  final String phone;
   final int total_installment;
   final int paid_installment;
+  final String cif;
   final List<Map<String,dynamic>> history;
 
   const displayeddata({
@@ -35,7 +39,11 @@ class displayeddata extends StatefulWidget {
     required this.Amount_Remaining,
     required this.total_installment,
     required this.paid_installment,
-    required this.history
+    required this.history, 
+    required this.cif, 
+    required this.Amount_Collected, 
+    required this.add, 
+    required this.phone
   }) : super(key: key);
 
   @override
@@ -331,33 +339,38 @@ class _displayeddataState extends State<displayeddata> {
             children: [
               circular_button(
                 onpressed: () {
-                  print("hello");
-                  String phoneNo = ""; // Nullable variable
-
-                  _firestone
-                      .collection('accountType')
-                      .doc(widget.Account_No)
-                      .get()
-                      .then((DocumentSnapshot<Map<String, dynamic>>
-                          documentSnapshot) {
-                    if (documentSnapshot.exists) {
-                      var data = documentSnapshot.data();
-                      if (data != null) {
-                        phoneNo = data['Phone_No'];
-                        print(phoneNo);
-
-                        if (phoneNo.isNotEmpty) {
-                          launchUrl(Uri.parse("tel:+91$phoneNo"));
+                  if (widget.phone.isNotEmpty) {
+                          launchUrl(Uri.parse("tel:+91${widget.phone}"));
                         } else {
                           print('Phone number is empty');
                         }
-                      }
-                    } else {
-                      print('Document does not exist in the database');
-                    }
-                  }).catchError((error) {
-                    print('Error retrieving document: $error');
-                  });
+                  // print("hello");
+                  // String phoneNo = ""; // Nullable variable
+
+                  // _firestone
+                  //     .collection('accountType')
+                  //     .doc(widget.Account_No)
+                  //     .get()
+                  //     .then((DocumentSnapshot<Map<String, dynamic>>
+                  //         documentSnapshot) {
+                  //   if (documentSnapshot.exists) {
+                  //     var data = documentSnapshot.data();
+                  //     if (data != null) {
+                  //       phoneNo = data['Phone_No'];
+                  //       print(phoneNo);
+
+                  //       if (phoneNo.isNotEmpty) {
+                  //         launchUrl(Uri.parse("tel:+91$phoneNo"));
+                  //       } else {
+                  //         print('Phone number is empty');
+                  //       }
+                  //     }
+                  //   } else {
+                  //     print('Document does not exist in the database');
+                  //   }
+                  // }).catchError((error) {
+                  //   print('Error retrieving document: $error');
+                  // });
                 },
                 size: 20,
                 icon: Image.asset('assets/Acc/IC2.png'),
@@ -366,7 +379,7 @@ class _displayeddataState extends State<displayeddata> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Client_dbt()),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,)),
                   );
                 },
                 size: 20,

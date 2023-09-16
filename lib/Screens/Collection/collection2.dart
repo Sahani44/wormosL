@@ -27,6 +27,7 @@ class _collection2State extends State<collection2> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp next_due_date;
   late int paid_installment;
   late int total_installment;
   late String status;
@@ -50,6 +51,9 @@ class _collection2State extends State<collection2> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String phone;
+  late String cif;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -60,6 +64,7 @@ class _collection2State extends State<collection2> {
         Account_No: Account_No,
         date_mature: date_mature,
         date_open: date_open, 
+        next_due_date: next_due_date,
         Monthly: Monthly,
         Type: Type, 
         history: history, 
@@ -69,6 +74,9 @@ class _collection2State extends State<collection2> {
         status: status, 
         Amount_Collected: Amount_Collected,
         accountType: accountType,
+        cif: cif, 
+        add: add, 
+        phone: phone,
         callBack: callBack,
       ),
     );
@@ -82,9 +90,13 @@ class _collection2State extends State<collection2> {
       Member_Name = tile.get('Member_Name');
       Phone = tile.get("Phone_No");
       Plan = tile.get('Plan');
-      Account_No = tile.get('Account_No').toString();
+      Account_No = tile.get('Account_No');
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      next_due_date = tile.get('next_due_date');
+      phone = tile.get('Phone_No');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
@@ -123,51 +135,53 @@ class _collection2State extends State<collection2> {
       String plan = tiles[i].get('Plan');
       String type = tiles[i].get('Type');
       String loc = tiles[i].get('place');
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
         if( _currentIndex == 0 && Location == type) {
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         }
         else if (_currentIndex == 1 && plan == "A" && Location == type) {
           newMemberList.add(Memberlist[i]) ;
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         } 
         else if (_currentIndex == 2 && plan == "B" && Location == type) {
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         }
         else if( _currentIndex == 0 && Location == loc) {
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         }
         else if (_currentIndex == 1 && plan == "A" && Location == loc) {
           newMemberList.add(Memberlist[i]) ;
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         } 
         else if (_currentIndex == 2 && plan == "B" && Location == loc) {
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
-          totalAmount += Amount_Collected;
-          totalBalance += Amount_Remaining;
+          totalAmount += ac;
+          totalBalance += ar;
         }
     }
   }
 
 
-  callBack(int money) {
-    return setState(() {
-      totalBalance = totalBalance+money;
-      totalAmount = totalAmount+money; 
-    });
+  callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override

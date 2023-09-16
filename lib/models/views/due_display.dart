@@ -1,4 +1,4 @@
-// ignore_for_file: camel_case_types, non_constant_identifier_names, no_logic_in_create_state, avoid_print
+// ignore_for_file: camel_case_types, non_constant_identifier_names, no_logic_in_create_state, avoid_print, must_be_immutable
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -28,22 +28,30 @@ class due_data extends StatefulWidget {
     required this.history,
     required this.accountType,
     required this.callBack,
+    required this.next_due_date,
+    required this.cif, 
+    required this.add, 
+    required this.phone
   });
   final String Member_Name;
   final String Plan;
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
+  Timestamp next_due_date;
   final List<Map<String,dynamic>> history;
   int paid_installment;
   final int total_installment;
   final String status;
   final String Type;
   final String Location;
-  final int Amount_Collected;
-  final int Amount_Remaining;
+  late int Amount_Collected;
+  late int Amount_Remaining;
   final int Monthly;
   final String accountType;
+  final String add;
+  final String phone;
+  final String cif;
   var callBack;
 
   @override
@@ -136,7 +144,7 @@ class _due_dataState extends State<due_data> {
                     status = 'Paid';
                     widget.history.add({
                       'payment_date':Timestamp.now(),
-                      'mode' : mode,
+                      'payment_mode' : mode,
                       'payment_amount' : money,
                     });
                     if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
@@ -149,7 +157,8 @@ class _due_dataState extends State<due_data> {
                     'Amount_Collected': widget.Amount_Collected + money,
                     'Amount_Remaining': widget.Amount_Remaining + money,
                   });
-
+                  widget.Amount_Collected += money;
+                  widget.Amount_Remaining += money; 
                   if(widget.Amount_Remaining + money >= widget.Monthly){
                     widget.paid_installment++;
                     _firestone
@@ -160,7 +169,7 @@ class _due_dataState extends State<due_data> {
                         'paid_installment': widget.paid_installment,
                       });
                   }
-                  widget.callBack(money);
+                  widget.callBack();
                   setState(() {
                     colour = const Color(0xff29756F);
                     // if(Amount_Remaining + money >= Monthly){
@@ -208,6 +217,7 @@ class _due_dataState extends State<due_data> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
@@ -229,6 +239,23 @@ class _due_dataState extends State<due_data> {
                   Row(
                     children: [
                       const Text(
+                        'NDD',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          color: Color(0xffAF545F),
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.left,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.03,
+                      ),
+                      Text('${widget.next_due_date.toDate().day}/${widget.next_due_date.toDate().month}/${widget.next_due_date.toDate().year}')
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
                         'DOM',
                         style: TextStyle(
                           fontSize: 13.5,
@@ -242,7 +269,7 @@ class _due_dataState extends State<due_data> {
                       ),
                       Text('$daym/$monthm/$yearm')
                     ],
-                  )
+                  ),
                 ],
               ),
               Column(
@@ -431,33 +458,38 @@ class _due_dataState extends State<due_data> {
             children: [
               circular_button(
                 onpressed: () {
-                  print("hello");
-                  String phoneNo = ""; // Nullable variable
-
-                  _firestone
-                      .collection(widget.accountType)
-                      .doc(widget.Account_No)
-                      .get()
-                      .then((DocumentSnapshot<Map<String, dynamic>>
-                          documentSnapshot) {
-                    if (documentSnapshot.exists) {
-                      var data = documentSnapshot.data();
-                      if (data != null) {
-                        phoneNo = data['Phone_No'];
-                        print(phoneNo);
-
-                        if (phoneNo.isNotEmpty) {
-                          launchUrl(Uri.parse("tel:+91$phoneNo"));
+                  if (widget.phone.isNotEmpty) {
+                          launchUrl(Uri.parse("tel:+91${widget.phone}"));
                         } else {
                           print('Phone number is empty');
                         }
-                      }
-                    } else {
-                      print('Document does not exist in the database');
-                    }
-                  }).catchError((error) {
-                    print('Error retrieving document: $error');
-                  });
+                  // print("hello");
+                  // String phoneNo = ""; // Nullable variable
+
+                  // _firestone
+                  //     .collection(widget.accountType)
+                  //     .doc(widget.Account_No)
+                  //     .get()
+                  //     .then((DocumentSnapshot<Map<String, dynamic>>
+                  //         documentSnapshot) {
+                  //   if (documentSnapshot.exists) {
+                  //     var data = documentSnapshot.data();
+                  //     if (data != null) {
+                  //       phoneNo = data['Phone_No'];
+                  //       print(phoneNo);
+
+                  //       if (phoneNo.isNotEmpty) {
+                  //         launchUrl(Uri.parse("tel:+91$phoneNo"));
+                  //       } else {
+                  //         print('Phone number is empty');
+                  //       }
+                  //     }
+                  //   } else {
+                  //     print('Document does not exist in the database');
+                  //   }
+                  // }).catchError((error) {
+                  //   print('Error retrieving document: $error');
+                  // });
                 },
                 size: 20,
                 icon: Image.asset('assets/Acc/IC2.png'),
@@ -466,7 +498,7 @@ class _due_dataState extends State<due_data> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Client_dbt()),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.Monthly, phone: widget.phone,plan: widget.Plan,)),
                   );
                 },
                 size: 20,

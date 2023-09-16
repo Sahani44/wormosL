@@ -22,7 +22,8 @@ class deposit_data extends StatefulWidget {
     required this.Amount_Remaining,
     required this.Monthly,
     required this.history,
-    required this.accountType
+    required this.accountType,
+    required this.callBack,
   }) : super(key: key);
 
   final String Member_Name;
@@ -39,6 +40,7 @@ class deposit_data extends StatefulWidget {
   final dynamic Amount_Collected;
   final dynamic Amount_Remaining;
   final int Monthly;
+  var callBack;
 
   @override
   State<deposit_data> createState() => _deposit_dataState();
@@ -110,6 +112,7 @@ class _deposit_dataState extends State<deposit_data> {
                         .update({
                       'deposit_field': false,
                     });
+                    widget.callBack();
                     // Navigator.pushReplacement(
                     //   context,
                     //   MaterialPageRoute(
@@ -136,6 +139,7 @@ class _deposit_dataState extends State<deposit_data> {
                         .update({
                       'deposit_field': true,
                     });
+                    widget.callBack();
                     // Navigator.pushReplacement(
                     //   context,
                     //   MaterialPageRoute(

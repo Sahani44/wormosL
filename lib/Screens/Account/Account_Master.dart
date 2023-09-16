@@ -45,6 +45,9 @@ class _acc_masterState extends State<acc_master> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String phone;
+  late String cif;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -60,7 +63,11 @@ class _acc_masterState extends State<acc_master> {
         history: history, 
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
-        paid_installment: paid_installment,
+        paid_installment: paid_installment, 
+        cif: cif, 
+        Amount_Collected: Amount_Collected, 
+        add: add, 
+        phone: phone,
       ),
     );
   }
@@ -72,6 +79,9 @@ class _acc_masterState extends State<acc_master> {
     for (var tile in tiles) {
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
+      phone = tile.get('Phone_No');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
@@ -100,53 +110,55 @@ class _acc_masterState extends State<acc_master> {
     for (int i=0; i<tiles.length; i++) {
       var type = tiles[i].get('Type');
       var plan = tiles[i].get('Plan');
+      int ac = tiles[i].get('Amount_Collected');
+      int ar = tiles[i].get('Amount_Remaining');
       if(_currentIndex == 0 && _currentIndex1 == 0 && plan == 'A'){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
       else if (_currentIndex == 2 && type == '5 Days' && _currentIndex1 == 0 && plan == 'A') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       } 
       else if (_currentIndex == 3 && type == 'Monthly' && _currentIndex1 == 0 && plan == 'A') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
       else if( _currentIndex == 1 && type == 'Daily' && _currentIndex1 == 0 && plan == 'A') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
       else if(_currentIndex == 0 && _currentIndex1 == 1 && plan == 'B'){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
       else if (_currentIndex == 2 && type == '5 Days' && _currentIndex1 == 1 && plan == 'B') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       } 
       else if (_currentIndex == 3 && type == 'Monthly' && _currentIndex1 == 1 && plan == 'B') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
       else if( _currentIndex == 1 && type == 'Daily' && _currentIndex1 == 1 && plan == 'B') {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
-        totalAmount += Amount_Collected;
-        totalBalance += Amount_Remaining;
+        totalAmount += ac;
+        totalBalance += ar;
       }
     }
   }

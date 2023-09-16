@@ -38,6 +38,9 @@ class _deleted_landingState extends State<deleted_landing> {
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
+  late String add;
+  late String phone;
+  late String cif;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
@@ -54,6 +57,10 @@ class _deleted_landingState extends State<deleted_landing> {
         Amount_Remaining: Amount_Remaining, 
         total_installment: total_installment, 
         paid_installment: paid_installment,
+        cif: cif, 
+        Amount_Collected: Amount_Collected, 
+        add: add, 
+        phone: phone,
       ),
     );
   }
@@ -64,6 +71,9 @@ class _deleted_landingState extends State<deleted_landing> {
     for (var tile in tiles) {
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
+      phone = tile.get('Phone_No');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
