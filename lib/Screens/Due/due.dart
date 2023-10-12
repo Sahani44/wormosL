@@ -36,7 +36,7 @@ class _dueState extends State<due> {
   late int Amount_Remaining;
   late int Monthly;
   var _isloading = true;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   int _currentIndex2 = 0;
@@ -72,7 +72,7 @@ class _dueState extends State<due> {
         total_installment: total_installment, 
         Type: Type,
         history: history, 
-        accountType: '', 
+        accountType: place == '' ? 'new_account' : 'new_account_d', 
         callBack: callBack,
         cif: cif, 
         add: add, 
@@ -102,7 +102,7 @@ class _dueState extends State<due> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
@@ -128,7 +128,7 @@ class _dueState extends State<due> {
     for (int i=0; i<tiles.length; i++) {
       var status = tiles[i].get('status');
       var plan = tiles[i].get('Plan');
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
       if(status == currentIndexPD && plan == currentIndex2AB){
         newMemberList.add(Memberlist[i]);
@@ -215,33 +215,35 @@ class _dueState extends State<due> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              _buildAboveBar2(),
-              _buildAboveBar(),
-            ],
-          ),
-          amountdata(totalClient, totalAmount, totalBalance, context),
-          _isloading
-          ? const Center(
-              child: CircularProgressIndicator(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                _buildAboveBar2(),
+                _buildAboveBar(),
+              ],
+            ),
+            amountdata(totalClient, totalAmount, totalBalance, context),
+            _isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+              children: [
+                SizedBox(
+                    height: size.height * 0.73,
+                    child: ListView.builder(
+                      itemCount: newMemberList.length,
+                      itemBuilder: (context, i) {
+                        return newMemberList[i];
+                      },
+                    )
+                  ),
+              ],
             )
-          : Column(
-            children: [
-              SizedBox(
-                  height: size.height * 0.73,
-                  child: ListView.builder(
-                    itemCount: newMemberList.length,
-                    itemBuilder: (context, i) {
-                      return newMemberList[i];
-                    },
-                  )
-                ),
-            ],
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

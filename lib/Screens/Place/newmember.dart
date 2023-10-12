@@ -19,8 +19,8 @@ class _newmemState extends State<newmem> {
   String Plan = 'B';
   late String Account_No;
   late String Address;
-  late int Amount_Collected = 0;
-  late int Amount_Remaining = 0;
+  late String Amount_Collected;
+  late String Amount_Remaining;
   late String Phone_No;
   String mode = 'cash';
   int installment = 0;
@@ -28,15 +28,12 @@ class _newmemState extends State<newmem> {
   String status = 'Paid';
   late String Amount;
   late String CIF_No;
-  String dropdownvalue1 ='5 Days';
-  String dropdownvalue2 = 'Daily';
+  late String dropdownvalue;
   String placedropdownvalue = 'Basant Road';
   final _firestone = FirebaseFirestore.instance;
   bool selA = false;
   bool selB = true;
   late int monthly = 0;
-  var items1 = ['5 Days' ,'Monthly'];
-  var items2 = ['Daily'];
   final _formKey = GlobalKey<FormState>();
 
   Event buildEvent({Recurrence? recurrence}) {
@@ -65,6 +62,15 @@ class _newmemState extends State<newmem> {
   Widget build(BuildContext context) {
     // DateTime now = DateTime.now();
     Size size = MediaQuery.of(context).size;
+    if(widget.place == '5 Days'){
+      dropdownvalue = '5 Days';
+    }
+    else if(widget.place == 'Monthly'){
+      dropdownvalue = 'Monthly';
+    }
+    else{
+      dropdownvalue = 'Daily';
+    }
     return Scaffold(
         body: SingleChildScrollView(
           child: Column(
@@ -125,6 +131,7 @@ class _newmemState extends State<newmem> {
                                       const EdgeInsets.fromLTRB(8.0, 0.0, 0.0, 0.0),
                                   child: Center(
                                     child: TextFormField(
+                                      initialValue: '0',
                                       keyboardType: TextInputType.number,
                                         style: const TextStyle(
                                           color: Colors.black87,
@@ -141,7 +148,7 @@ class _newmemState extends State<newmem> {
                                         }),
                                         decoration: const InputDecoration(
                                           // border: InputBorder.none,
-                                          hintText: 'Monthly Amount',
+                                          helperText: 'Monthly Amount',
                                         )),
                                   ),
                                 ),
@@ -286,46 +293,10 @@ class _newmemState extends State<newmem> {
                                 ),
                               ),
                             ),
-                            widget.place == '' ?
-                             DropdownButton(
-                              value: dropdownvalue1,
-                
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                
-                              items: items1.map((String items) {
-                                return DropdownMenuItem(
-                                  value: items,
-                                  child: Text(items),
-                                );
-                              }).toList(),
-                              // After selecting the desired option,it will
-                              // change button value to selected value
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownvalue1 = newValue!;
-                                });
-                              },
+                            Padding(
+                              padding: EdgeInsets.all(size.width * 0.04 ),
+                              child: Text(dropdownvalue, style: const TextStyle(fontSize: 20),),
                             )
-                            :
-                            DropdownButton(
-                              value: dropdownvalue2,
-                
-                              icon: const Icon(Icons.keyboard_arrow_down),
-                
-                              items: items2.map((String items) {
-                                return DropdownMenuItem(
-                                  value: items,
-                                  child: Text(items),
-                                );
-                              }).toList(),
-                              // After selecting the desired option,it will
-                              // change button value to selected value
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  dropdownvalue2 = newValue!;
-                                });
-                              },
-                            ),
                           ],
                         ),
                         Row(
@@ -379,7 +350,7 @@ class _newmemState extends State<newmem> {
                                   const Icon(Icons.calendar_month_rounded),
                                   Container(
                                     height: size.height * 0.045,
-                                    width: size.width * 0.345,
+                                    width: size.width * 0.34,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: const BorderRadius.all(
@@ -424,7 +395,7 @@ class _newmemState extends State<newmem> {
                                   const Icon(Icons.calendar_month_rounded),
                                   Container(
                                     height: size.height * 0.045,
-                                    width: size.width * 0.345,
+                                    width: size.width * 0.34,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
                                         borderRadius: const BorderRadius.all(
@@ -479,13 +450,14 @@ class _newmemState extends State<newmem> {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Center(
                                 child: TextFormField(
+                                  initialValue: '0',
                                   keyboardType: TextInputType.number,
                                     style: const TextStyle(
                                       color: Colors.black87,
                                     ),
                                     textAlign: TextAlign.left,
                                     onChanged: (value) {
-                                      Amount_Collected = int.parse(value);
+                                      Amount_Collected = value;
                                     },
                                     validator: ((value) {
                                       if(value == null || value.isEmpty) {
@@ -494,7 +466,7 @@ class _newmemState extends State<newmem> {
                                       return null;
                                     }),
                                     decoration: const InputDecoration(
-                                        hintText: 'Amount Collected')),
+                                        helperText: 'Amount Collected')),
                               ),
                             ),
                           ),
@@ -514,13 +486,14 @@ class _newmemState extends State<newmem> {
                               padding: const EdgeInsets.only(left: 8.0),
                               child: Center(
                                 child: TextFormField(
+                                  initialValue: '0',
                                   keyboardType: TextInputType.number,
                                     style: const TextStyle(
                                       color: Colors.black87,
                                     ),
                                     textAlign: TextAlign.left,
                                     onChanged: (value) {
-                                      Amount_Remaining = int.parse(value);
+                                      Amount_Remaining = value;
                                     },
                                     validator: ((value) {
                                       if(value == null || value.isEmpty) {
@@ -529,7 +502,7 @@ class _newmemState extends State<newmem> {
                                       return null;
                                     }),
                                     decoration: const InputDecoration(
-                                        hintText: 'Balance')),
+                                        helperText: 'Balance',)),
                               ),
                             ),
                           ),
@@ -644,14 +617,14 @@ class _newmemState extends State<newmem> {
                               // monthly = monthly - gap1 - gap2;
                               // monthly = (int.parse(Amount) / monthly).floor();
                               
-                              var next_due_date = DateTime(
-                                                  date_open.year,
-                                                  date_open.month + (Amount_Collected/int.parse(Amount)).floor() + 1,
-                                                  date_open.day);
                               if (_formKey.currentState!.validate()) {
                                 int total_installment = 60;
-                                int totalAmountCollected = Amount_Collected+Amount_Remaining;
-                                widget.place == '' 
+                                int totalAmountCollected = int.parse(Amount_Collected)+int.parse(Amount_Remaining);
+                                var next_due_date = DateTime(
+                                                  date_open.year,
+                                                  date_open.month + (int.parse(Amount_Collected)/int.parse(Amount)).floor() + 1,
+                                                  date_open.day);
+                                widget.place == '5 Days' || widget.place == 'Monthly' 
                                 ?  _firestone
                                     .collection('new_account')
                                     .doc(Account_No)
@@ -661,24 +634,25 @@ class _newmemState extends State<newmem> {
                                   'Account_No': Account_No,
                                   'Address': Address,
                                   'Amount_Collected': totalAmountCollected,
-                                  'Amount_Remaining': Amount_Remaining,
+                                  'Amount_Remaining': int.parse(Amount_Remaining),
                                   'Phone_No': Phone_No,
-                                  'Type': dropdownvalue1,
+                                  'Type': dropdownvalue,
                                   'Date_of_Maturity': date_mature,
                                   'Date_of_Opening': date_open,
                                   'CIF_No': CIF_No,
                                   'monthly': int.parse(Amount),
-                                  'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),
+                                  'paid_installment': (int.parse(Amount_Collected)/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
                                   'next_due_date' : next_due_date,
                                   'deposit_field': false,
                                   'place': '',
-                                  'history' : [{
-                                    'payment_date' : payment_date,
-                                    'payment_mode' : mode,
-                                    'payment_amount' : totalAmountCollected,
-                                  }]
+                                  'history' : {
+                                    '${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}' : {
+                                      'payment_mode' : mode,
+                                      'payment_amount' : totalAmountCollected,
+                                    }
+                                  }
                                 })
                                 :  _firestone
                                     .collection('new_account_d')
@@ -689,25 +663,32 @@ class _newmemState extends State<newmem> {
                                   'Account_No': Account_No,
                                   'Address': Address,
                                   'Amount_Collected': totalAmountCollected,
-                                  'Amount_Remaining': Amount_Remaining,
+                                  'Amount_Remaining': int.parse(Amount_Remaining),
                                   'Phone_No': Phone_No,
-                                  'Type': dropdownvalue2,
+                                  'Type': dropdownvalue,
                                   'Date_of_Maturity': date_mature,
                                   'Date_of_Opening': date_open,
                                   'next_due_date': next_due_date,
                                   'CIF_No': CIF_No,
                                   'monthly': int.parse(Amount),
-                                  'paid_installment': (Amount_Collected/int.parse(Amount)).floor(),
+                                  'paid_installment': (int.parse(Amount_Collected)/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
                                   'deposit_field': false,
                                   'place' : widget.place,
-                                  'history' : [{
-                                    'payment_date' : payment_date,
-                                    'payment_mode' : mode,
-                                    'payment_amount' : totalAmountCollected,
-                                  }]
-                                });
+                                  'history' : {
+                                    '${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}' : {
+                                      'payment_mode' : mode,
+                                      'payment_amount' : totalAmountCollected,
+                                    }
+                                  }
+                                }
+                                );
+                                _firestone
+                                  .collection('records')
+                                  .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
+                                  .set({Account_No : totalAmountCollected}, SetOptions(merge: true));
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Member Created')),
                                 );

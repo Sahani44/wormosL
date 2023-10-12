@@ -44,6 +44,7 @@ class _depositState extends State<deposit> {
   var totalAmount = 0;
   var totalBalance = 0;
   int _currentIndex2 = 0;
+  int _currentIndex = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
 
   
@@ -101,17 +102,29 @@ class _depositState extends State<deposit> {
     }));
   }
 
-  void getNewMemberList (int currentIndex2 ) {
+  void getNewMemberList (int currentIndex2 ,int currentIndex) {
     for (int i=0; i<tiles.length; i++) {
       var deposit_field = tiles[i].get('deposit_field');
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
+      String plan = tiles[i].get('Plan');
       bool currentIndexPD = currentIndex2 == 0 ? false : true;
-      if(deposit_field == currentIndexPD){
-        newMemberList.add(Memberlist[i]);
-        totalClient += 1;
-        totalAmount += ac;
-        totalBalance += ar;
+      String currentIndexAB = currentIndex == 1 ? 'A' : currentIndex == 2 ? 'B' : '';
+      if(ac == ar){
+          if(deposit_field == currentIndexPD && currentIndexAB == ''){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+        else {
+          if(deposit_field == currentIndexPD && currentIndexAB == plan){
+            newMemberList.add(Memberlist[i]);
+            totalClient += 1;
+            totalAmount += ac;
+            totalBalance += ar;
+          }
+      }
       }
     }
   }
@@ -137,7 +150,7 @@ class _depositState extends State<deposit> {
     totalClient = 0;
     totalAmount = 0;
     totalBalance = 0;
-    getNewMemberList(_currentIndex2);
+    getNewMemberList(_currentIndex2, _currentIndex);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -217,6 +230,7 @@ class _depositState extends State<deposit> {
             ),
             child: _buildAboveBar2(),
           ),
+          _buildAboveBar(),
           /* Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(
@@ -238,7 +252,7 @@ class _depositState extends State<deposit> {
           : Column(
             children: [
               SizedBox(
-                  height: size.height * 0.63,
+                  height: size.height * 0.55,
                   child: ListView.builder(
                     itemCount: newMemberList.length,
                     itemBuilder: (context, i) {
@@ -274,6 +288,37 @@ class _depositState extends State<deposit> {
         ),
         AboveNavyBarItem(
           alpha: 'Deposited',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAboveBar() {
+    Size size = MediaQuery.of(context).size;
+    return CustomAnimatedAboveBar(
+      containerHeight: size.height * 0.07,
+      backgroundColor: Colors.white,
+      selectedIndex: _currentIndex,
+      showElevation: true,
+      itemCornerRadius: 24,
+      curve: Curves.easeIn,
+      boxWidth: 100,
+      onItemSelected: (index) => setState(() {_currentIndex = index;}),
+      items: <AboveNavyBarItem>[
+        AboveNavyBarItem(
+          alpha: 'All',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: 'A',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
+        AboveNavyBarItem(
+          alpha: 'B',
           activeColor: Colors.grey,
           inactiveColor: _inactiveColor,
         ),

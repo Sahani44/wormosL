@@ -48,6 +48,13 @@ dependencies:
   horizontal_week_calendar: ^0.0.10
   date_picker_timeline: ^1.2.5
   url_launcher: ^6.1.12
+  excel: ^2.1.0
+  syncfusion_flutter_datagrid_export: ^22.2.12
+  syncfusion_flutter_xlsio: ^22.2.12
+  syncfusion_flutter_pdf: ^22.2.12
+  syncfusion_flutter_datagrid: ^22.2.12
+  path_provider: ^2.1.1
+  open_file: ^3.3.2
 
 #dependency_overrides:
 #  firebase_core_platform_interface: 4.5.1

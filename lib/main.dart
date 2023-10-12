@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
 // import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Lapse/lapsescreen.dart';
+import 'package:internship2/Screens/Place/new_member_landing.dart';
 import 'package:internship2/Screens/Place/plaace.dart';
 import 'package:internship2/Screens/Place/place_edit.dart';
 import 'package:internship2/Screens/Records/location.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
                   place.id: (ctx) => const place(),
                   acc_master.id: (ctx) => acc_master(''),
                   acc_screen.id: (ctx) => acc_screen(0),
+                  NewMemberLanding.id: (ctx) => const NewMemberLanding(),
                   // newmem.id: (ctx) => newmem(),
                   user.id: (ctx) => user(''),
                   Record_Page.id: (ctx) => const Record_Page(),

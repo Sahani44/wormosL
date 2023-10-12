@@ -56,24 +56,11 @@ class _deposit_dataState extends State<deposit_data> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    final dateo = DateTime.fromMillisecondsSinceEpoch(
-        widget.date_open.millisecondsSinceEpoch);
-    final yearo = dateo.year;
-    final montho = dateo.month;
-    final dayo = dateo.day;
-    final datem = DateTime.fromMillisecondsSinceEpoch(
-        widget.date_mature.millisecondsSinceEpoch);
-    final yearm = datem.year;
-    final monthm = datem.month;
-    final daym = datem.day;
+    final dateo = widget.date_open.toDate();
+    final datem = widget.date_mature.toDate();
     // DateTime now = DateTime.now();
     // int Daily = (widget.Monthly / 30).floor();
 
-    return buildDepositTile(size, yearo, montho, dayo, yearm, monthm, daym, widget.accountType);
-  }
-
-  Widget buildDepositTile(Size size, int yearo, int montho, int dayo, int yearm,
-      int monthm, int daym, String accountType) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -107,7 +94,7 @@ class _deposit_dataState extends State<deposit_data> {
                     });
 
                     _firestone
-                        .collection(accountType)
+                        .collection(widget.accountType)
                         .doc(widget.Account_No)
                         .update({
                       'deposit_field': false,
@@ -134,7 +121,7 @@ class _deposit_dataState extends State<deposit_data> {
                     });
 
                     _firestone
-                        .collection(accountType)
+                        .collection(widget.accountType)
                         .doc(widget.Account_No)
                         .update({
                       'deposit_field': true,
@@ -179,7 +166,7 @@ class _deposit_dataState extends State<deposit_data> {
                       SizedBox(
                         width: size.width * 0.03,
                       ),
-                      Text('$yearo/$montho/$dayo'),
+                      Text('${dateo.day}/${dateo.month}/${dateo.year}'),
                     ],
                   ),
                   Row(
@@ -196,7 +183,7 @@ class _deposit_dataState extends State<deposit_data> {
                       SizedBox(
                         width: size.width * 0.03,
                       ),
-                      Text('$yearm/$monthm/$daym'),
+                      Text('${datem.day}/${datem.month}/${datem.year}'),
                     ],
                   ),
                 ],
@@ -410,5 +397,6 @@ class _deposit_dataState extends State<deposit_data> {
         ),
       ],
     );
+  
   }
 }

@@ -39,7 +39,7 @@ class due_data extends StatefulWidget {
   final Timestamp date_open;
   final Timestamp date_mature;
   Timestamp next_due_date;
-  final List<Map<String,dynamic>> history;
+  final Map<String, Map<String,dynamic>> history;
   int paid_installment;
   final int total_installment;
   final String status;
@@ -67,6 +67,8 @@ class _due_dataState extends State<due_data> {
   String mode = 'cash';
   Color colour = const Color(0xffD83F52);
   final _firestone = FirebaseFirestore.instance;
+  DateTime new_payment_date = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -89,20 +91,20 @@ class _due_dataState extends State<due_data> {
     // int Daily = (Monthly / 30).floor();
     // int Weekly = (Monthly / 4).floor();
     if(widget.Type == 'Daily') {
-      if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 1 || now.month-widget.history[widget.history.length-1]['payment_date'].toDate().month >= 1) {
+      // if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 1 || now.month-widget.history[widget.history.length-1]['payment_date'].toDate().month >= 1) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
-    }
-      money = (now.day>30 ? 30*(widget.Monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.Monthly / 30).floor()-widget.Amount_Remaining);
+    // }
+      // money = (now.day>30 ? 30*(widget.Monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.Monthly / 30).floor()-widget.Amount_Remaining);
     }
     if (widget.Type == '5 Days'){
-      if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 5) {
+      // if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 5) {
       status = 'Due';
       colour = const Color(0xffD83F52);
       // setState(() {});
-    }
-      money = (widget.Monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5) as int;
+    // }
+      // money = (widget.Monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5) as int;
     }
     if (widget.Type == 'Monthly'){
       money = widget.Monthly - widget.Amount_Remaining;
@@ -142,11 +144,17 @@ class _due_dataState extends State<due_data> {
                 onPressed: () {
                   if(status == 'Due'){
                     status = 'Paid';
-                    widget.history.add({
-                      'payment_date':Timestamp.now(),
-                      'payment_mode' : mode,
-                      'payment_amount' : money,
+                    widget.history.addAll({
+                      '${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}' : {
+                        'payment_mode' : mode,
+                        'payment_amount' : money,
+                      }
                     });
+                    _firestone
+                      .collection('records')
+                      .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
+                      .set({widget.Account_No : money}, SetOptions(merge: true));
+
                     if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
                   _firestone
                       .collection(widget.accountType)
@@ -205,7 +213,7 @@ class _due_dataState extends State<due_data> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${DateTime.parse(widget.history.keys.last).day}/${DateTime.parse(widget.history.keys.last).month}/${DateTime.parse(widget.history.keys.last).year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),
@@ -305,10 +313,10 @@ class _due_dataState extends State<due_data> {
                                     onToggle: (val) {
                                       setState(() {
                                         if (val == true) {
-                                          _toggleValue2 = 'cash';
+                                          _toggleValue2 = 'online';
                                           _toggleValue1 = val;
                                         } else {
-                                          _toggleValue2 = 'online';
+                                          _toggleValue2 = 'cash';
                                           _toggleValue1 = val;
                                         }
                                         mode = _toggleValue2;
@@ -375,7 +383,7 @@ class _due_dataState extends State<due_data> {
                                       color: Colors.black87,
                                     ),
                                     textAlign: TextAlign.left,
-                                    onSubmitted: (value) {
+                                    onChanged: (value) {
                                       money = int.parse(value);
                                     },
                                     decoration: InputDecoration(
@@ -418,7 +426,51 @@ class _due_dataState extends State<due_data> {
                       SizedBox(
                         width: size.width * 0.18,
                       ),
-                      const SizedBox(
+                      Column(
+                        children: [
+                          Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_month_rounded),
+                            Container(
+                              height: size.height * 0.045,
+                              width: size.width * 0.25,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
+                                  border: Border.all(color: Colors.grey)),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Center(
+                                  child: TextButton(
+                                      onPressed: () async {
+                                        DateTime? newPaymentDate =
+                                            await showDatePicker(
+                                                context: context,
+                                                initialDate: new_payment_date,
+                                                firstDate: DateTime(1990),
+                                                lastDate: DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day));
+                                        if (newPaymentDate == null) return;
+          
+                                        setState(() => new_payment_date = newPaymentDate);
+                                      },
+                                      child: Text(
+                                          style: const TextStyle(
+                                            color: Colors.black87,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                          '${new_payment_date.day}/${new_payment_date.month}/${new_payment_date.year}')),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        children: [const SizedBox(
                         child: Wrap(
                           children: [
                             Text(
@@ -444,7 +496,10 @@ class _due_dataState extends State<due_data> {
                           fontWeight: FontWeight.w500,
                         ),
                         textAlign: TextAlign.left,
-                      ),
+                      ),],
+                      )
+                        ],
+                      )
                     ],
                   ),
                 ],
@@ -506,33 +561,52 @@ class _due_dataState extends State<due_data> {
               ),
               circular_button(
                 onpressed: () {
-                  print("hello");
-                  // setState(() {
-                  //   _firestone
-                  //       .collection('new_account')
-                  //       .doc(Account_No)
-                  //       .delete();
-                  // });
-                  _firestone
-                      .collection(widget.accountType)
-                      .doc(widget.Account_No)
-                      .get()
-                      .then((DocumentSnapshot<Map<String, dynamic>>
-                          documentSnapshot) {
-                    if (documentSnapshot.exists) {
-                      var data = documentSnapshot.data();
-                      if (data != null) {
-                         _firestone
-                          .collection('deleted_accounts')
-                          .doc(widget.Account_No)
-                          .set(data);
-                      }
-                    } else {
-                      print('Document does not exist in the database');
-                    }
-                  }).catchError((error) {
-                    print('Error retrieving document: $error');
-                  });
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Deleting Account ?'),
+                      content: const Text('Tap on OK to shift this account to deleted accounts'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _firestone
+                                .collection(widget.accountType)
+                                .doc(widget.Account_No)
+                                .get()
+                                .then((DocumentSnapshot<Map<String, dynamic>>
+                                    documentSnapshot) {
+                              if (documentSnapshot.exists) {
+                                var data = documentSnapshot.data();
+                                if (data != null) {
+                                  _firestone
+                                    .collection('deleted_accounts')
+                                    .doc(widget.Account_No)
+                                    .set(data);
+
+                                  _firestone
+                                  .collection(widget.accountType)
+                                  .doc(widget.Account_No)
+                                  .delete();
+
+                                  widget.callBack();
+                                }
+                              } else {
+                                print('Document does not exist in the database');
+                              }
+                            }).catchError((error) {
+                              print('Error retrieving document: $error');
+                            });
+                            Navigator.pop(context, 'OK');
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                 },
                 size: 20,
                 icon: Image.asset('assets/Acc/IC5.png'),

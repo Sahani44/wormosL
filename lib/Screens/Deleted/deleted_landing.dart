@@ -25,7 +25,7 @@ class _deleted_landingState extends State<deleted_landing> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late int paid_installment;
   late String place;
   late final _firestone = FirebaseFirestore.instance;
@@ -45,6 +45,9 @@ class _deleted_landingState extends State<deleted_landing> {
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
       displayeddata(
+        callback: callBack,
+        accountType: place == '' ? 'new_account' : 'new_account_d',
+        deleted: true,
         Location: place,
         Member_Name: Member_Name,
         Plan: Plan,
@@ -78,7 +81,7 @@ class _deleted_landingState extends State<deleted_landing> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       place = tile.get('place');
       monthly = tile.get('monthly');
@@ -86,12 +89,19 @@ class _deleted_landingState extends State<deleted_landing> {
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
       totalClient += 1;
-      totalAmount += Amount_Collected;
+      totalAmount += monthly;
       totalBalance += Amount_Remaining;
       addData(Memberlist);
     }
     return false;
   
+  }
+
+  callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override
@@ -102,13 +112,25 @@ class _deleted_landingState extends State<deleted_landing> {
     }));
   }
 
+
+  void getAmountData(){
+    for (int i=0; i<tiles.length; i++) {
+      int ac = tiles[i].get('monthly');
+      int ar = tiles[i].get('Amount_Remaining');
+      totalClient += 1;
+      totalAmount += ac;
+      totalBalance += ar;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    // newMemberList = [];
-    // totalClient = 0;
-    // totalAmount = 0;
-    // totalBalance = 0;
+    totalClient = 0;
+    totalAmount = 0;
+    totalBalance = 0;
+    getAmountData();
     // tiles.sort((a, b) {
     //   if(dropdownvalue1 == 'Member_Name') {
     //    return a.get('Member_Name').compareTo(b.get('Member_Name'));

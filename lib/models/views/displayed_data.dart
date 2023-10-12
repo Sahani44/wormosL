@@ -20,15 +20,19 @@ class displayeddata extends StatefulWidget {
   final int Amount_Remaining;
   final int Amount_Collected;
   final String add;
+  final String accountType;
   final String phone;
   final int total_installment;
   final int paid_installment;
   final String cif;
-  final List<Map<String,dynamic>> history;
+  final bool deleted;
+  final Map<String, Map<String,dynamic>> history;
+  var callback;
 
-  const displayeddata({
+  displayeddata({
     Key? key,
     required this.Member_Name,
+    required this.accountType,
     required this.Plan,
     required this.Account_No,
     required this.date_open,
@@ -43,7 +47,9 @@ class displayeddata extends StatefulWidget {
     required this.cif, 
     required this.Amount_Collected, 
     required this.add, 
-    required this.phone
+    required this.phone,
+    required this.deleted,
+    required this.callback,
   }) : super(key: key);
 
   @override
@@ -65,7 +71,7 @@ class _displayeddataState extends State<displayeddata> {
       money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining);
     }
     if (widget.type == '5 Days'){
-      money = ((widget.monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5)) as int?;
+      money = ((widget.monthly / 6).floor()*((now.day-DateTime.parse(widget.history.keys.last).day)%5));
     }
     if (widget.type == 'widget.monthly'){
       money = (widget.monthly - widget.Amount_Remaining);
@@ -81,8 +87,8 @@ class _displayeddataState extends State<displayeddata> {
     final yearm = datem.year;
     final monthm = datem.month;
     final daym = datem.day;
-    String monthName = DateFormat('MMMM').format(dateo);
-    final currentYear = DateFormat.y().format(dateo);
+    String monthName = DateFormat('MMMM').format(datem);
+    final currentYear = DateFormat.y().format(datem);
 
     // if (now.day-payment_date.toDate().day == 1) {
     //   status = 'Due';
@@ -160,7 +166,7 @@ class _displayeddataState extends State<displayeddata> {
                 alignment: Alignment.center,
                 width: size.width*0.3,
                 height: size.height*0.030,
-                child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                child: Text('${DateTime.parse(widget.history.keys.last).day}/${DateTime.parse(widget.history.keys.last).month}/${DateTime.parse(widget.history.keys.last).year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
               )
             ],
           ),
@@ -340,37 +346,10 @@ class _displayeddataState extends State<displayeddata> {
               circular_button(
                 onpressed: () {
                   if (widget.phone.isNotEmpty) {
-                          launchUrl(Uri.parse("tel:+91${widget.phone}"));
-                        } else {
-                          print('Phone number is empty');
-                        }
-                  // print("hello");
-                  // String phoneNo = ""; // Nullable variable
-
-                  // _firestone
-                  //     .collection('accountType')
-                  //     .doc(widget.Account_No)
-                  //     .get()
-                  //     .then((DocumentSnapshot<Map<String, dynamic>>
-                  //         documentSnapshot) {
-                  //   if (documentSnapshot.exists) {
-                  //     var data = documentSnapshot.data();
-                  //     if (data != null) {
-                  //       phoneNo = data['Phone_No'];
-                  //       print(phoneNo);
-
-                  //       if (phoneNo.isNotEmpty) {
-                  //         launchUrl(Uri.parse("tel:+91$phoneNo"));
-                  //       } else {
-                  //         print('Phone number is empty');
-                  //       }
-                  //     }
-                  //   } else {
-                  //     print('Document does not exist in the database');
-                  //   }
-                  // }).catchError((error) {
-                  //   print('Error retrieving document: $error');
-                  // });
+                    launchUrl(Uri.parse("tel:+91${widget.phone}"));
+                  } else {
+                    print('Phone number is empty');
+                  }
                 },
                 size: 20,
                 icon: Image.asset('assets/Acc/IC2.png'),
@@ -387,13 +366,110 @@ class _displayeddataState extends State<displayeddata> {
               ),
               circular_button(
                 onpressed: () {
-                  print("hello");
-                  setState(() {
-                    _firestone
-                        .collection('accountType')
-                        .doc(widget.Account_No)
-                        .delete();
-                  });
+                  widget.deleted == true
+                  ? {
+                    showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Permanently deleting Account ?'),
+                      content: const Text('Tap on OK to permanently delete this account\nTap on Restore to restore this account'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _firestone
+                                .collection('deleted_accounts')
+                                .doc(widget.Account_No)
+                                .get()
+                                .then((DocumentSnapshot<Map<String, dynamic>>
+                                    documentSnapshot) {
+                              if (documentSnapshot.exists) {
+                                var data = documentSnapshot.data();
+                                if (data != null) {
+                                  _firestone
+                                    .collection(widget.accountType)
+                                    .doc(widget.Account_No)
+                                    .set(data);
+                                  _firestone
+                                  .collection('deleted_accounts')
+                                  .doc(widget.Account_No)
+                                  .delete();
+                                  widget.callback();
+                                }
+                              } else {
+                                print('Document does not exist in the database');
+                              }
+                            }).catchError((error) {
+                              print('Error retrieving document: $error');
+                            });
+                            Navigator.pop(context, 'Restore');
+                          },
+                          child: const Text('Restore'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _firestone
+                                  .collection('deleted_accounts')
+                                  .doc(widget.Account_No)
+                                  .delete();
+                            Navigator.pop(context, 'OK');
+                            widget.callback();
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  )
+                  }
+                  : {
+                    showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Deleting Account ?'),
+                      content: const Text('Tap on OK to shift this account to deleted accounts'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _firestone
+                                .collection(widget.accountType)
+                                .doc(widget.Account_No)
+                                .get()
+                                .then((DocumentSnapshot<Map<String, dynamic>>
+                                    documentSnapshot) {
+                              if (documentSnapshot.exists) {
+                                var data = documentSnapshot.data();
+                                if (data != null) {
+                                  _firestone
+                                    .collection('deleted_accounts')
+                                    .doc(widget.Account_No)
+                                    .set(data);
+                                  _firestone
+                                  .collection(widget.accountType)
+                                  .doc(widget.Account_No)
+                                  .delete();
+                                  widget.callback();
+                                }
+                              } else {
+                                print('Document does not exist in the database');
+                              }
+                            }).catchError((error) {
+                              print('Error retrieving document: $error');
+                            });
+                            Navigator.pop(context, 'OK');
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  )
+                  } ;
                 },
                 size: 20,
                 icon: Image.asset('assets/Acc/IC5.png'),

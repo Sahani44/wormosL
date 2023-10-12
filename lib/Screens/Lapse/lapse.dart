@@ -22,7 +22,7 @@ class _lapseState extends State<lapse> {
   late Timestamp date_open;
   late Timestamp date_mature;
   late Timestamp next_due_date;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -97,7 +97,7 @@ class _lapseState extends State<lapse> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
@@ -120,14 +120,28 @@ class _lapseState extends State<lapse> {
   void getNewMemberList (int currentIndex1, int currentIndex) {
     for (int i=0; i<tiles.length; i++) {
       String plan = tiles[i].get('Plan');
-      String p = currentIndex1 == 0 ? 'A' : 'B';
+      String p = currentIndex1 == 1 ? 'A' : (currentIndex == 2 ? 'B' : '') ;
       DateTime ndd = tiles[i].get('next_due_date').toDate();
       DateTime now = Timestamp.now().toDate();
       int pm = tiles[i].get('paid_installment');
       int em = (now.difference(tiles[i].get('Date_of_Opening').toDate()).inDays/30).round() ;
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
       if(plan == p && ndd.isBefore(now) ){ 
+        if(currentIndex != 0 && em-pm == currentIndex){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+        else if(currentIndex == 0){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+       }
+       else if(p == '' && ndd.isBefore(now)){
         if(currentIndex != 0 && em-pm == currentIndex){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
@@ -338,7 +352,7 @@ class _lapseState extends State<lapse> {
     return CustomAnimatedAboveBar(
       containerHeight: size.height * 0.07,
       containerWidth: size.width * 0.40,
-      boxWidth: 70,
+      boxWidth: 40,
       backgroundColor: Colors.white,
       selectedIndex: _currentIndex1,
       showElevation: true,
@@ -346,11 +360,11 @@ class _lapseState extends State<lapse> {
       curve: Curves.easeIn,
       onItemSelected: (index) => setState(() => _currentIndex1 = index),
       items: <AboveNavyBarItem>[
-        // AboveNavyBarItem(
-        //   alpha: 'All',
-        //   activeColor: Colors.grey,
-        //   inactiveColor: _inactiveColor,
-        // ),
+        AboveNavyBarItem(
+          alpha: 'All',
+          activeColor: Colors.grey,
+          inactiveColor: _inactiveColor,
+        ),
         AboveNavyBarItem(
           alpha: 'A',
           activeColor: Colors.grey,

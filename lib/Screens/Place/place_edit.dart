@@ -181,27 +181,6 @@ class _placeeditState extends State<placeedit> {
                 })
           ]),
         ),
-        floatingActionButton: SizedBox(
-        width: size.width * 0.45,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const newmem(place: '',)),
-            );
-          },
-          backgroundColor: const Color(0xffA0205E),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(15.0)),
-          ),
-          child: const Text(
-            'Add Member',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-        )
       ),
     );
   }

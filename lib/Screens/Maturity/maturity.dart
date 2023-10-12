@@ -21,7 +21,7 @@ class _maturityState extends State<maturity> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -48,10 +48,14 @@ class _maturityState extends State<maturity> {
   late String add;
   late String cif;
   late String phone;
+  late String place;
 
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
       displayeddata(
+        callback: callBack,
+        accountType: place == '' ? 'new_account' : 'new_account_d',
+        deleted: false,
         Location: Location,
         Member_Name: Member_Name,
         Plan: Plan,
@@ -82,11 +86,12 @@ class _maturityState extends State<maturity> {
       phone = tile.get('Phone_No');
       cif = tile.get('CIF_No');
       add = tile.get('Address');
+      place = tile.get('place');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
@@ -109,7 +114,7 @@ class _maturityState extends State<maturity> {
   void getNewMemberList (int currentIndex,) {
     for (int i=0; i<tiles.length; i++) {
       var paid_installment = tiles[i].get('paid_installment');
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
       if(_currentIndex ==0 && paid_installment >= 54){
         newMemberList.add(Memberlist[i]);
@@ -126,6 +131,12 @@ class _maturityState extends State<maturity> {
     }
   }
 
+  callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
+  }
 
   @override
   Widget build(BuildContext context) {

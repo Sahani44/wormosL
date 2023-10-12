@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:internship2/Screens/Account/account_summary.dart';
+import 'package:internship2/Screens/Home/account_landing.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
 import 'package:internship2/Screens/Menu.dart';
-import 'package:internship2/Screens/Place/place_edit.dart';
+import 'package:internship2/Screens/Place/new_member_landing.dart';
 import 'package:internship2/Screens/deposit/deposit.dart';
-import 'package:internship2/Screens/deposit/deposit_screen.dart';
 
 class CustomNavBar extends StatefulWidget {
   const CustomNavBar({Key? key}) : super(key: key);
@@ -16,13 +15,13 @@ class CustomNavBar extends StatefulWidget {
 class _CustomNavBarState extends State<CustomNavBar> {
   final tabs = [
     const Center(
-      child: placeedit(),
+      child: NewMemberLanding(),
     ),
     const Center(
       child: menu(),
     ),
     const Center(
-      child: AccountSummary(),
+      child: HomeLanding(),
     ),
     const Center(
       child: CollectionLanding(),

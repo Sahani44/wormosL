@@ -4,21 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Menu.dart';
 
-class Client_dbt extends StatelessWidget {
-  final String acc;
-  final String memberName;
-  final String cif;
-  final Timestamp doo;
-  final Timestamp dom;
-  final String location;
-  final int amtcltd;
-  final int amtrmn;
-  final String add;
-  final int monthly;
-  final String phone;
-  final String plan;
+class Client_dbt extends StatefulWidget {
+  late String acc;
+  late String memberName;
+  late String cif;
+  late Timestamp doo;
+  late Timestamp dom;
+  late String location;
+  late int amtcltd;
+  late int amtrmn;
+  late String add;
+  late int monthly;
+  late String phone;
+  late String plan;
 
-  const Client_dbt({
+  Client_dbt({
     Key? key,
     required this.memberName,
     required this.acc,
@@ -33,6 +33,14 @@ class Client_dbt extends StatelessWidget {
     required this.phone, 
     required this.plan,
   }) : super(key: key);
+
+  @override
+  State<Client_dbt> createState() => _Client_dbtState();
+}
+
+class _Client_dbtState extends State<Client_dbt> {
+  
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -54,177 +62,195 @@ class Client_dbt extends StatelessWidget {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: size.height * 0.099,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xffA5C5C3),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10),
-                        ),
-                      ),
-                      height: size.height * 0.080,
-                      width: size.width * 0.16,
-                      child: Center(
-                        child: Text(
-                          memberName[0],
-                          style: const TextStyle(
-                              color: Color(0xff29756F),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.1,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(30.0),
+            child: Form(
+              key:_formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: size.height * 0.099,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          memberName,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 25.0,
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Color(0xffA5C5C3),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          height: size.height * 0.080,
+                          width: size.width * 0.16,
+                          child: Center(
+                            child: Text(
+                              widget.memberName[0],
+                              style: const TextStyle(
+                                  color: Color(0xff29756F),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30),
+                            ),
                           ),
                         ),
-                        Text(
-                          location,
-                          style: const TextStyle(
-                            color: Color(0xff205955),
-                            fontWeight: FontWeight.w400,
-                          ),
+                        SizedBox(
+                          width: size.width * 0.1,
                         ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.memberName,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 25.0,
+                              ),
+                            ),
+                            Text(
+                              widget.location,
+                              style: const TextStyle(
+                                color: Color(0xff205955),
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ],
+                        )
                       ],
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: size.height * 0.025,
-              ),
-              SizedBox(
-                height: size.height * 0.013,
-              ),
-              Row(
-                children: [
-                  Image.asset('assets/Acc/image 27.png'),
-                  SizedBox(
-                    width: size.width * 0.05,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        acc,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Color(0xff545454),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Text(
-                        'Account No',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xff205955),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: size.width * 0.28,
-                  ),
-                  SizedBox(
-                    width: size.width * 0.1,
-                    child: TextButton(
-                      onPressed: () {},
-                      style: const ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                              Color(0xff42A19A))),
-                      child: Text(
-                        plan,
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
                     ),
-                  )
-                ],
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              Row(
-                children: [
-                  Image.asset('assets/image 35.png'),
+                  ),
                   SizedBox(
-                    width: size.width * 0.05,
+                    height: size.height * 0.025,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        cif,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Color(0xff545454),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Text(
-                        'CIF No',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xff205955),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                  SizedBox(
+                    height: size.height * 0.013,
                   ),
-                ],
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              SizedBox(
-                height: size.height * 0.013,
-              ),
-              Row(
-                children: [
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/Acc/calendar.png'),
-                      ),
+                      Image.asset('assets/Acc/image 27.png'),
                       SizedBox(
                         width: size.width * 0.05,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '${doo.toDate().day}/${doo.toDate().month}/${doo.toDate().year}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff545454),
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.34,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                            ),
+                            child: TextFormField(
+                              initialValue: widget.acc,
+                              keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
+                                textAlign: TextAlign.left,
+                                onChanged: (value) {
+                                  widget.acc = value;
+                                },
+                                validator: ((value) {
+                                  if(value == null || value.isEmpty || value.length < 10) {
+                                    return 'Please enter correct value';
+                                  }
+                                  return null;
+                                }
+                              ),
+                              // decoration: InputDecoration(
+                              //   hintText: widget.acc,
+                              //   hintStyle:const TextStyle(
+                              //     fontSize: 18,
+                              //     color: Color(0xff545454),
+                              //     fontWeight: FontWeight.w500,
+                              //   )
+                              // )
                             ),
                           ),
                           const Text(
-                            'Date of Opening',
+                            'Account No',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: Color(0xff205955),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: size.width * 0.2,
+                      ),
+                      SizedBox(
+                        width: size.width * 0.1,
+                        child: TextButton(
+                          onPressed: () {},
+                          style: const ButtonStyle(
+                              backgroundColor: MaterialStatePropertyAll<Color>(
+                                  Color(0xff42A19A))),
+                          child: Text(
+                            widget.plan,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  Row(
+                    children: [
+                      Image.asset('assets/image 35.png'),
+                      SizedBox(
+                        width: size.width * 0.05,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.34,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                            ),
+                            child: TextFormField(
+                              initialValue: widget.cif,
+                              keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
+                                textAlign: TextAlign.left,
+                                onChanged: (value) {
+                                  widget.cif = value;
+                                },
+                                validator: ((value) {
+                                  if(value == null || value.isEmpty ) {
+                                    return 'Please enter correct value';
+                                  }
+                                  return null;
+                                }),
+                              // decoration: InputDecoration(
+                              //   hintText: widget.cif,
+                              //   hintStyle:const TextStyle(
+                              //     fontSize: 18,
+                              //     color: Color(0xff545454),
+                              //     fontWeight: FontWeight.w500,
+                              //   )
+                              // )
+                            ),
+                          ),
+                          const Text(
+                            'CIF No',
                             style: TextStyle(
                               fontSize: 11.5,
                               color: Color(0xff205955),
@@ -235,240 +261,402 @@ class Client_dbt extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const Divider(
+                    thickness: 1,
+                  ),
                   SizedBox(
-                    width: size.width * 0.08,
+                    height: size.height * 0.013,
                   ),
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset('assets/Acc/calendar.png'),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('assets/Acc/calendar.png'),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.05,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${widget.doo.toDate().day}/${widget.doo.toDate().month}/${widget.doo.toDate().year}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xff545454),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Text(
+                                'Date of Opening',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  color: Color(0xff205955),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                       SizedBox(
-                        width: size.width * 0.05,
+                        width: size.width * 0.02,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Row(
                         children: [
-                          Text(
-                            '${dom.toDate().day}/${dom.toDate().month}/${dom.toDate().year}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff545454),
-                              fontWeight: FontWeight.w500,
-                            ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset('assets/Acc/calendar.png'),
                           ),
-                          const Text(
-                            'Date of Maturity',
-                            style: TextStyle(
-                              fontSize: 11.5,
-                              color: Color(0xff205955),
-                              fontWeight: FontWeight.w500,
-                            ),
+                          SizedBox(
+                            width: size.width * 0.05,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${widget.dom.toDate().day}/${widget.dom.toDate().month}/${widget.dom.toDate().year}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xff545454),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Text(
+                                'Date of Maturity',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  color: Color(0xff205955),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              SizedBox(
-                height: size.height * 0.013,
-              ),
-              Row(
-                children: [
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  SizedBox(
+                    height: size.height * 0.013,
+                  ),
                   Row(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: size.width * 0.05,
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: size.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.07,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                          height: size.height * 0.065,
+                          width: size.width * 0.25,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                          ),
+                          child: TextFormField(
+                            initialValue: widget.amtcltd.toString(),
+                            keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.left,
+                              onChanged: (value) {
+                                widget.amtcltd = int.parse(value);
+                              },
+                              validator: ((value) {
+                                if(value == null || value.isEmpty) {
+                                  return 'Please enter correct value';
+                                }
+                                return null;
+                              }),
+                            // decoration: InputDecoration(
+                            //   hintText: widget.amtcltd.toString(),
+                            //   hintStyle:const TextStyle(
+                            //     fontSize: 18,
+                            //     color: Color(0xff545454),
+                            //     fontWeight: FontWeight.w500,
+                            //   )
+                            // )
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: size.width * 0.07,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            amtcltd.toString(),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff545454),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Text(
-                            'Amount Collected',
-                            style: TextStyle(
-                              fontSize: 9.5,
-                              color: Color(0xff205955),
-                              fontWeight: FontWeight.w500,
-                            ),
+                              const Text(
+                                'Amount Collected',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  color: Color(0xff205955),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  SizedBox(
-                    width: size.width * 0.08,
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          width: size.width * 0.05,
+                      SizedBox(
+                        width: size.width * 0.04,
+                      ),
+                      Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: size.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(
+                            width: size.width * 0.07,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                          height: size.height * 0.065,
+                          width: size.width * 0.2,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                          ),
+                          child: TextFormField(
+                            initialValue: widget.amtrmn.toString(),
+                            keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.left,
+                              onChanged: (value) {
+                                widget.amtrmn = int.parse(value);
+                              },
+                              validator: ((value) {
+                                if(value == null || value.isEmpty) {
+                                  return 'Please enter correct value';
+                                }
+                                return null;
+                              }),
+                            // decoration: InputDecoration(
+                            //   hintText: widget.amtrmn.toString(),
+                            //   hintStyle:const TextStyle(
+                            //     fontSize: 18,
+                            //     color: Color(0xff545454),
+                            //     fontWeight: FontWeight.w500,
+                            //   )
+                            // )
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: size.width * 0.07,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            amtrmn.toString(),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Color(0xff545454),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Text(
-                            'Amount Remaining',
-                            style: TextStyle(
-                              fontSize: 9.5,
-                              color: Color(0xff205955),
-                              fontWeight: FontWeight.w500,
-                            ),
+                              const Text(
+                                'Amount Remaining',
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  color: Color(0xff205955),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              SizedBox(
-                height: size.height * 0.07,
-                child: Row(
-                  children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: size.width * 0.05,
-                    ),
+                  const Divider(
+                    thickness: 1,
                   ),
                   SizedBox(
-                    width: size.width * 0.07,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                    Text(
-                      monthly.toString(),
-                      style: const TextStyle(
-                        fontSize: 18,
-                        color: Color(0xff545454),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const Text(
-                      'Monthly',
-                      style: TextStyle(
-                        fontSize: 9.5,
-                        color: Color(0xff205955),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],)
-                ]),
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              SizedBox(
-                height: size.height * 0.06,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: size.width * 0.07,
-                      ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.05,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    height: size.height * 0.07,
+                    child: Row(
                       children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: size.width * 0.05,
+                        ),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.07,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
                         Text(
-                          add,
+                          widget.monthly.toString(),
                           style: const TextStyle(
-                            fontSize: 17,
+                            fontSize: 18,
                             color: Color(0xff545454),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
                         const Text(
-                          'Address',
+                          'Monthly',
                           style: TextStyle(
-                            fontSize: 10.5,
+                            fontSize: 9.5,
                             color: Color(0xff205955),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Divider(
-                thickness: 1,
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Image.asset('assets/Acc/call.png'),
+                      ],)
+                    ]),
                   ),
-                  SizedBox(
-                    width: size.width * 0.02,
+                  const Divider(
+                    thickness: 1,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(
-                        phone,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Color(0xff545454),
-                          fontWeight: FontWeight.w500,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: size.width * 0.07,
                         ),
                       ),
-                      const Text(
-                        'Phone No',
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Color(0xff205955),
-                          fontWeight: FontWeight.w500,
-                        ),
+                      SizedBox(
+                        width: size.width * 0.05,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.34,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                            ),
+                            child: TextFormField(
+                              initialValue: widget.add,
+                              keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
+                                textAlign: TextAlign.left,
+                                onChanged: (value) {
+                                  widget.add = value;
+                                },
+                                validator: ((value) {
+                                  if(value == null || value.isEmpty ) {
+                                    return 'Please enter correct value';
+                                  }
+                                  return null;
+                                }),
+                              // decoration: InputDecoration(
+                              //   hintText: widget.add,
+                              //   hintStyle:const TextStyle(
+                              //     fontSize: 18,
+                              //     color: Color(0xff545454),
+                              //     fontWeight: FontWeight.w500,
+                              //   )
+                              // )
+                            ),
+                          ),
+                          const Text(
+                            'Address',
+                            style: TextStyle(
+                              fontSize: 10.5,
+                              color: Color(0xff205955),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Image.asset('assets/Acc/call.png'),
+                      ),
+                      SizedBox(
+                        width: size.width * 0.02,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: size.height * 0.065,
+                            width: size.width * 0.34,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                            ),
+                            child: TextFormField(
+                              initialValue: widget.phone,
+                              keyboardType: TextInputType.number,
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                ),
+                                textAlign: TextAlign.left,
+                                onChanged: (value) {
+                                  widget.phone = value;
+                                },
+                                validator: ((value) {
+                                  if(value == null || value.isEmpty || value.length < 10) {
+                                    return 'Please enter correct value';
+                                  }
+                                  return null;
+                                }),
+                              // decoration: InputDecoration(
+                              //   hintText: widget.phone,
+                              //   hintStyle:const TextStyle(
+                              //     fontSize: 18,
+                              //     color: Color(0xff545454),
+                              //     fontWeight: FontWeight.w500,
+                              //   )
+                              // )
+                            ),
+                          ),
+                          const Text(
+                            'Phone No',
+                            style: TextStyle(
+                              fontSize: 11.5,
+                              color: Color(0xff205955),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    thickness: 1,
+                  ),
+                  SizedBox(height: size.height * 0.02,),
+                  FloatingActionButton.extended(
+                    label: const Text('Done'),
+                    backgroundColor: const Color(0xff42A19A),
+                    onPressed: () => {
+                      if (_formKey.currentState!.validate()) {
+                        
+                      }
+                    }
+                  )
                 ],
               ),
-            ],
+            ),
           ),
-        ));
+        )
+      );
   }
 }

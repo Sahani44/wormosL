@@ -38,7 +38,7 @@ class _collection2State extends State<collection2> {
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   String accountType = '';
   String Type = '';
   var _isloading = true;
@@ -100,7 +100,7 @@ class _collection2State extends State<collection2> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
@@ -135,7 +135,7 @@ class _collection2State extends State<collection2> {
       String plan = tiles[i].get('Plan');
       String type = tiles[i].get('Type');
       String loc = tiles[i].get('place');
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
         if( _currentIndex == 0 && Location == type) {
           newMemberList.add(Memberlist[i]);

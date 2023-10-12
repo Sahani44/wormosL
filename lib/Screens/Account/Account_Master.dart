@@ -32,7 +32,7 @@ class _acc_masterState extends State<acc_master> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
   final _inactiveColor = const Color(0xffEBEBEB);
@@ -48,10 +48,14 @@ class _acc_masterState extends State<acc_master> {
   late String add;
   late String phone;
   late String cif;
+  late String place;
   
   void addData(List<Widget> Memberlist) {
     Memberlist.add(
       displayeddata(
+        callback: callBack,
+        accountType: place == '' ? 'new_account' : 'new_account_d',
+        deleted: false,
         Location: Location,
         Member_Name: Member_Name,
         Plan: Plan,
@@ -82,11 +86,12 @@ class _acc_masterState extends State<acc_master> {
       phone = tile.get('Phone_No');
       cif = tile.get('CIF_No');
       add = tile.get('Address');
+      place = tile.get('place');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
@@ -110,7 +115,7 @@ class _acc_masterState extends State<acc_master> {
     for (int i=0; i<tiles.length; i++) {
       var type = tiles[i].get('Type');
       var plan = tiles[i].get('Plan');
-      int ac = tiles[i].get('Amount_Collected');
+      int ac = tiles[i].get('monthly');
       int ar = tiles[i].get('Amount_Remaining');
       if(_currentIndex == 0 && _currentIndex1 == 0 && plan == 'A'){
         newMemberList.add(Memberlist[i]);
@@ -161,6 +166,13 @@ class _acc_masterState extends State<acc_master> {
         totalBalance += ar;
       }
     }
+  }
+
+  callBack() {
+      Memberlist = [];
+      getDocs(Memberlist).then((value) => setState(() {
+      _isloading = value;
+    }));
   }
 
   @override
