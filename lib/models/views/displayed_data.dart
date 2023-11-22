@@ -26,6 +26,7 @@ class displayeddata extends StatefulWidget {
   final int paid_installment;
   final String cif;
   final bool deleted;
+  final id;
   final Map<String, Map<String,dynamic>> history;
   var callback;
 
@@ -49,6 +50,7 @@ class displayeddata extends StatefulWidget {
     required this.add, 
     required this.phone,
     required this.deleted,
+    required this.id,
     required this.callback,
   }) : super(key: key);
 
@@ -358,7 +360,7 @@ class _displayeddataState extends State<displayeddata> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,)),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: widget.callback,)),
                   );
                 },
                 size: 20,

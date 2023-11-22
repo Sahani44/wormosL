@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:internship2/Screens/Home/home.dart';
 
 class newmem extends StatefulWidget {
   static const String id = 'Newmem';
@@ -624,11 +625,11 @@ class _newmemState extends State<newmem> {
                                                   date_open.year,
                                                   date_open.month + (int.parse(Amount_Collected)/int.parse(Amount)).floor() + 1,
                                                   date_open.day);
-                                widget.place == '5 Days' || widget.place == 'Monthly' 
-                                ?  _firestone
-                                    .collection('new_account')
-                                    .doc(Account_No)
-                                    .set({
+                                 
+                                _firestone
+                                    .collection(widget.place == '5 Days' || widget.place == 'Monthly' ? 'new_account' : 'new_account_d')
+                                    .add(
+                                    {
                                   'Member_Name': Member_Name,
                                   'Plan': Plan,
                                   'Account_No': Account_No,
@@ -646,44 +647,18 @@ class _newmemState extends State<newmem> {
                                   'status': status,
                                   'next_due_date' : next_due_date,
                                   'deposit_field': false,
-                                  'place': '',
+                                  'place': widget.place == '5 Days' || widget.place == 'Monthly' ? '' : widget.place,
                                   'history' : {
                                     '${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}' : {
                                       'payment_mode' : mode,
                                       'payment_amount' : totalAmountCollected,
                                     }
                                   }
-                                })
-                                :  _firestone
-                                    .collection('new_account_d')
-                                    .doc(Account_No)
-                                    .set({
-                                  'Member_Name': Member_Name,
-                                  'Plan': Plan,
-                                  'Account_No': Account_No,
-                                  'Address': Address,
-                                  'Amount_Collected': totalAmountCollected,
-                                  'Amount_Remaining': int.parse(Amount_Remaining),
-                                  'Phone_No': Phone_No,
-                                  'Type': dropdownvalue,
-                                  'Date_of_Maturity': date_mature,
-                                  'Date_of_Opening': date_open,
-                                  'next_due_date': next_due_date,
-                                  'CIF_No': CIF_No,
-                                  'monthly': int.parse(Amount),
-                                  'paid_installment': (int.parse(Amount_Collected)/int.parse(Amount)).floor(),
-                                  'total_installment': total_installment,
-                                  'status': status,
-                                  'deposit_field': false,
-                                  'place' : widget.place,
-                                  'history' : {
-                                    '${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}' : {
-                                      'payment_mode' : mode,
-                                      'payment_amount' : totalAmountCollected,
-                                    }
-                                  }
-                                }
-                                );
+                                });
+                                // _firestone
+                                //   .collection('summary')
+                                //   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
+                                //   .set(,SetOptions(merge: true));
                                 _firestone
                                   .collection('records')
                                   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')

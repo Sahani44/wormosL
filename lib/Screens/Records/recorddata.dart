@@ -2,11 +2,11 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:internship2/Screens/Records/view.dart';
-import 'package:internship2/widgets/button.dart';
-import 'package:internship2/widgets/bottom_circular_button.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'package:internship2/Screens/Records/view.dart';
+import 'package:internship2/widgets/bottom_circular_button.dart';
+import 'package:internship2/widgets/button.dart';
 
 class record_data extends StatefulWidget {
   const record_data({
@@ -219,7 +219,6 @@ class _record_dataState extends State<record_data> {
             children: [
               circular_button(
                 onpressed: () {
-                  print("hello");
                   String phoneNo = ""; // Nullable variable
 
                   _firestone
@@ -232,19 +231,15 @@ class _record_dataState extends State<record_data> {
                       var data = documentSnapshot.data();
                       if (data != null) {
                         phoneNo = data['Phone_No'];
-                        print(phoneNo);
 
                         if (phoneNo.isNotEmpty) {
                           launchUrl(Uri.parse("tel:+91$phoneNo"));
                         } else {
-                          print('Phone number is empty');
                         }
                       }
                     } else {
-                      print('Document does not exist in the database');
                     }
                   }).catchError((error) {
-                    print('Error retrieving document: $error');
                   });
                 },
                 size: 20,
@@ -256,7 +251,6 @@ class _record_dataState extends State<record_data> {
               // ),
               circular_button(
                 onpressed: () {
-                  print("hello");
                   setState(() {
                     _firestone
                         .collection('new_account')

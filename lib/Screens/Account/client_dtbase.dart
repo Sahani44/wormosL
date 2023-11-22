@@ -17,6 +17,10 @@ class Client_dbt extends StatefulWidget {
   late int monthly;
   late String phone;
   late String plan;
+  late var id;
+  late String accType;
+  var callback;
+
 
   Client_dbt({
     Key? key,
@@ -32,6 +36,9 @@ class Client_dbt extends StatefulWidget {
     required this.monthly,
     required this.phone, 
     required this.plan,
+    required this.id,
+    required this.accType,
+    required this.callback,
   }) : super(key: key);
 
   @override
@@ -41,6 +48,8 @@ class Client_dbt extends StatefulWidget {
 class _Client_dbtState extends State<Client_dbt> {
   
   final _formKey = GlobalKey<FormState>();
+  final _firestone = FirebaseFirestore.instance;
+
 
   @override
   Widget build(BuildContext context) {
@@ -648,7 +657,20 @@ class _Client_dbtState extends State<Client_dbt> {
                     backgroundColor: const Color(0xff42A19A),
                     onPressed: () => {
                       if (_formKey.currentState!.validate()) {
-                        
+                        _firestone
+                        .collection(widget.accType == 'Daily' ? 'new_account_d' : 'new_account')
+                        .doc(widget.id)
+                        .set({
+                          'Account_No' : widget.acc,
+                          'CIF_No' : widget.cif,
+                          'Amount_Collected' : widget.amtcltd,
+                          'Amount_Remaining' : widget.amtrmn,
+                          'Address' : widget.add,
+                          'Phone_No' : widget.phone,
+                        },SetOptions(merge: true))
+                      },
+                      if(widget.callback !=''){
+                        widget.callback()
                       }
                     }
                   )

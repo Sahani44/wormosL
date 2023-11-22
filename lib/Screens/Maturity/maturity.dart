@@ -40,6 +40,8 @@ class _maturityState extends State<maturity> {
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
   var tiles =[];
+  var newTiles = [];
+  var results = [];
   List<Widget> Memberlist = [];
   List<Widget> newMemberList =[];
   var totalClient = 0;
@@ -49,8 +51,10 @@ class _maturityState extends State<maturity> {
   late String cif;
   late String phone;
   late String place;
+  late var id;
+  final myController = TextEditingController();
 
-  void addData(List<Widget> Memberlist) {
+  void addData() {
     Memberlist.add(
       displayeddata(
         callback: callBack,
@@ -72,15 +76,35 @@ class _maturityState extends State<maturity> {
         Amount_Collected: Amount_Collected, 
         add: add, 
         phone: phone,
+        id:id
       ),
     );
   }
 
-  Future<bool> getDocs (Memberlist) async {
+  Future<bool> getDocs () async {
+    tiles = [];
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
-    for (var tile in tiles) {
+    tiles.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(tiles);
+    return false;
+  
+  }
+
+  void createTiles(List nT){
+    Memberlist = [];
+    newTiles = [];
+    for (var tile in nT) {
+      newTiles.add(tile);
+      id = tile.id;
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
       phone = tile.get('Phone_No');
@@ -97,25 +121,23 @@ class _maturityState extends State<maturity> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
-      addData(Memberlist);
+      addData();
     }
-    return false;
-  
   }
 
   @override
   void initState() {
     super.initState();
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
 
   void getNewMemberList (int currentIndex,) {
-    for (int i=0; i<tiles.length; i++) {
-      var paid_installment = tiles[i].get('paid_installment');
-      int ac = tiles[i].get('monthly');
-      int ar = tiles[i].get('Amount_Remaining');
+    for (int i=0; i<newTiles.length; i++) {
+      var paid_installment = newTiles[i].get('paid_installment');
+      int ac = newTiles[i].get('monthly');
+      int ar = newTiles[i].get('Amount_Remaining');
       if(_currentIndex ==0 && paid_installment >= 54){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
@@ -133,9 +155,32 @@ class _maturityState extends State<maturity> {
 
   callBack() {
       Memberlist = [];
-      getDocs(Memberlist).then((value) => setState(() {
+      getDocs().then((value) => setState(() {
       _isloading = value;
     }));
+  }
+
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    results.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(results);
+    setState(() {
+      
+    });
   }
 
   @override
@@ -171,8 +216,10 @@ class _maturityState extends State<maturity> {
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: myController,
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
@@ -203,6 +250,7 @@ class _maturityState extends State<maturity> {
                     else{
                       dropdownvalue1 = 'Date_of_Opening';
                     }
+                    _runFilter(myController.text);
                   });
                 },
               ),
@@ -210,43 +258,45 @@ class _maturityState extends State<maturity> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(40),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  border: Border.all(
+                    width: 3,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
                 ),
-                border: Border.all(
-                  width: 3,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
-                ),
+                child: _buildAboveBar(),
               ),
-              child: _buildAboveBar(),
             ),
-          ),
-          amountdata(totalClient, totalAmount,  totalBalance, context),
-          _isloading
-          ? const Center(
-              child: CircularProgressIndicator(),
+            amountdata(totalClient, totalAmount,  totalBalance, context),
+            _isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+              children: [
+                SizedBox(
+                    height: size.height * 0.70,
+                    child: ListView.builder(
+                      itemCount: newMemberList.length,
+                      itemBuilder: (context, i) {
+                        return newMemberList[i];
+                      },
+                    )
+                  ),
+              ],
             )
-          : Column(
-            children: [
-              SizedBox(
-                  height: size.height * 0.70,
-                  child: ListView.builder(
-                    itemCount: newMemberList.length,
-                    itemBuilder: (context, i) {
-                      return newMemberList[i];
-                    },
-                  )
-                ),
-            ],
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

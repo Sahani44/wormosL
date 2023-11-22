@@ -32,6 +32,7 @@ class _acc_masterState extends State<acc_master> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
+  late var docid;
   late Map<String, Map<String,dynamic>> history;
   late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
@@ -39,9 +40,11 @@ class _acc_masterState extends State<acc_master> {
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-  var tiles =[];
+  var tiles = [];
+  var newTiles = [];
   List<Widget> Memberlist = [];
   List<Widget> newMemberList =[];
+  List results = [];
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
@@ -49,8 +52,9 @@ class _acc_masterState extends State<acc_master> {
   late String phone;
   late String cif;
   late String place;
+  final myController = TextEditingController();
   
-  void addData(List<Widget> Memberlist) {
+  void addData() {
     Memberlist.add(
       displayeddata(
         callback: callBack,
@@ -72,15 +76,35 @@ class _acc_masterState extends State<acc_master> {
         Amount_Collected: Amount_Collected, 
         add: add, 
         phone: phone,
+        id: docid
       ),
     );
   }
 
-  Future<bool> getDocs (Memberlist) async {
+  Future<bool> getDocs () async {
+    tiles = [];
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
-    for (var tile in tiles) {
+    tiles.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(tiles);
+    return false;
+  
+  }
+
+  void createTiles(List nT) {
+    Memberlist = [];
+    newTiles = [];
+    for (var tile in nT) {
+      newTiles.add(tile);
+      docid = tile.id;
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
       phone = tile.get('Phone_No');
@@ -97,26 +121,25 @@ class _acc_masterState extends State<acc_master> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
-      addData(Memberlist);
+      addData();
     }
-    return false;
-  
   }
 
   @override
   void initState() {
     super.initState();
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
 
   void getNewMemberList (int currentIndex, int currentIndex1) {
-    for (int i=0; i<tiles.length; i++) {
-      var type = tiles[i].get('Type');
-      var plan = tiles[i].get('Plan');
-      int ac = tiles[i].get('monthly');
-      int ar = tiles[i].get('Amount_Remaining');
+    
+    for (int i=0; i<newTiles.length; i++) {
+      var type = newTiles[i].get('Type');
+      var plan = newTiles[i].get('Plan');
+      int ac = newTiles[i].get('monthly');
+      int ar = newTiles[i].get('Amount_Remaining');
       if(_currentIndex == 0 && _currentIndex1 == 0 && plan == 'A'){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
@@ -170,9 +193,32 @@ class _acc_masterState extends State<acc_master> {
 
   callBack() {
       Memberlist = [];
-      getDocs(Memberlist).then((value) => setState(() {
+      getDocs().then((value) => setState(() {
       _isloading = value;
     }));
+  }
+
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    results.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(results);
+    setState(() {
+      
+    });
   }
 
   @override
@@ -183,14 +229,6 @@ class _acc_masterState extends State<acc_master> {
     totalAmount = 0;
     totalBalance = 0;
     getNewMemberList(_currentIndex, _currentIndex1);
-    // tiles.sort((a, b) {
-    //   if(dropdownvalue1 == 'Member_Name') {
-    //    return a.get('Member_Name').compareTo(b.get('Member_Name'));
-    //   }
-    //   else {
-    //    return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
-    //   }
-    // },);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -213,8 +251,10 @@ class _acc_masterState extends State<acc_master> {
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: myController,
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
@@ -245,6 +285,7 @@ class _acc_masterState extends State<acc_master> {
                     else{
                       dropdownvalue1 = 'Date_of_Opening';
                     }
+                    _runFilter(myController.text);
                   });
                 },
               ),
@@ -252,33 +293,35 @@ class _acc_masterState extends State<acc_master> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Row(
-            children: [
-              _buildAboveBar(),
-              _buildAboveBar1(),
-            ],
-          ),
-          amountdata(totalClient, totalAmount,  totalBalance, context),
-          _isloading
-          ? const Center(
-              child: CircularProgressIndicator(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                _buildAboveBar(),
+                _buildAboveBar1(),
+              ],
+            ),
+            amountdata(totalClient, totalAmount,  totalBalance, context),
+            _isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+              children: [
+                SizedBox(
+                    height: size.height * 0.73,
+                    child: ListView.builder(
+                      itemCount: newMemberList.length,
+                      itemBuilder: (context, i) {
+                        return newMemberList[i];
+                      },
+                    )
+                  ),
+              ],
             )
-          : Column(
-            children: [
-              SizedBox(
-                  height: size.height * 0.73,
-                  child: ListView.builder(
-                    itemCount: newMemberList.length,
-                    itemBuilder: (context, i) {
-                      return newMemberList[i];
-                    },
-                  )
-                ),
-            ],
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

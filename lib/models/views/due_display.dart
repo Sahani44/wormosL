@@ -31,7 +31,8 @@ class due_data extends StatefulWidget {
     required this.next_due_date,
     required this.cif, 
     required this.add, 
-    required this.phone
+    required this.phone,
+    required this.id,
   });
   final String Member_Name;
   final String Plan;
@@ -53,6 +54,7 @@ class due_data extends StatefulWidget {
   final String phone;
   final String cif;
   var callBack;
+  var id;
 
   @override
   State<due_data> createState() => _due_dataState();
@@ -158,7 +160,7 @@ class _due_dataState extends State<due_data> {
                     if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
                   _firestone
                       .collection(widget.accountType)
-                      .doc(widget.Account_No)
+                      .doc(widget.id)
                       .update({
                     'history':widget.history,
                     'status': status,
@@ -553,7 +555,7 @@ class _due_dataState extends State<due_data> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.Monthly, phone: widget.phone,plan: widget.Plan,)),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.Monthly, phone: widget.phone,plan: widget.Plan,id: widget.id,accType: widget.Type,callback: widget.callBack,)),
                   );
                 },
                 size: 20,

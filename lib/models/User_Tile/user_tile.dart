@@ -22,6 +22,7 @@ class user_tile extends StatefulWidget {
   int total_installment;
   int paid_installment;
   String cif;
+  var id;
   Map<String, Map<String,dynamic>> history;
   user_tile({
     Key? key,
@@ -41,6 +42,7 @@ class user_tile extends StatefulWidget {
     required this.paid_installment,
     required this.cif,
     required this.history,
+    required this.id,
   }) : super(key: key);
   
   @override
@@ -80,7 +82,7 @@ class _user_tileState extends State<user_tile> {
         trailing: IconButton(
             onPressed: () {Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,)),
+              MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: '',)),
             );},
             icon: const Icon(
               Icons.expand_circle_down_rounded,

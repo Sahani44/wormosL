@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Records/recorddata.dart';
-import 'package:internship2/Screens/Records/records.dart';
 import 'package:internship2/widgets/amountdata.dart';
 import 'package:intl/intl.dart';
 import 'package:open_file/open_file.dart';
@@ -177,7 +176,7 @@ class _Record_PageState extends State<Record_Page> {
     if (ma != null) {
       List accNo = ma!.keys.toList();
       for (int i = 0; i < tiles.length; i++) {
-        if (accNo.contains(tiles[i].id)) {
+        if (accNo.contains(tiles[i].get('Account_No'))) {
           var plan = tiles[i].get('Plan');
           int ac = tiles[i].get('monthly');
           int ar = tiles[i].get('Amount_Remaining');

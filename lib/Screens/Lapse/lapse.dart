@@ -44,6 +44,8 @@ class _lapseState extends State<lapse> {
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
   var tiles =[];
+  var newTiles =[];
+  var results = [];
   List<Widget> Memberlist = [];
   List<Widget> newMemberList =[];
   var totalClient = 0;
@@ -51,11 +53,13 @@ class _lapseState extends State<lapse> {
   var totalBalance = 0;
   late String add;
   late String cif;
+  late var id;
+  final myController = TextEditingController();
 
-
-  void addData(List<Widget> Memberlist) {
+  void addData() {
     Memberlist.add(
       due_data(
+        id:id,
         Location: Location,
         Member_Name: Member_Name,
         Plan: Plan,
@@ -80,11 +84,31 @@ class _lapseState extends State<lapse> {
     );
   }
 
-  Future<bool> getDocs (Memberlist) async {
+  Future<bool> getDocs () async {
+    
+    tiles = [];
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
-    for (var tile in tiles) {
+    tiles.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(tiles);
+    return false;
+  
+  }
+
+  void createTiles(List nT){
+    Memberlist = [];
+    newTiles = [];
+    for (var tile in nT) {
+      newTiles.add(tile);
+      id = tile.id;
       Member_Name = tile.get('Member_Name');
       Phone = tile.get("Phone_No");
       Plan = tile.get('Plan');
@@ -111,22 +135,20 @@ class _lapseState extends State<lapse> {
       else {
         accountType = 'new_account_d';
       }
-      addData(Memberlist);
+      addData();
     }
-    return false;
-  
   }
 
   void getNewMemberList (int currentIndex1, int currentIndex) {
-    for (int i=0; i<tiles.length; i++) {
-      String plan = tiles[i].get('Plan');
+    for (int i=0; i<newTiles.length; i++) {
+      String plan = newTiles[i].get('Plan');
       String p = currentIndex1 == 1 ? 'A' : (currentIndex == 2 ? 'B' : '') ;
-      DateTime ndd = tiles[i].get('next_due_date').toDate();
+      DateTime ndd = newTiles[i].get('next_due_date').toDate();
       DateTime now = Timestamp.now().toDate();
-      int pm = tiles[i].get('paid_installment');
-      int em = (now.difference(tiles[i].get('Date_of_Opening').toDate()).inDays/30).round() ;
-      int ac = tiles[i].get('monthly');
-      int ar = tiles[i].get('Amount_Remaining');
+      int pm = newTiles[i].get('paid_installment');
+      int em = (now.difference(newTiles[i].get('Date_of_Opening').toDate()).inDays/30).round() ;
+      int ac = newTiles[i].get('monthly');
+      int ar = newTiles[i].get('Amount_Remaining');
       if(plan == p && ndd.isBefore(now) ){ 
         if(currentIndex != 0 && em-pm == currentIndex){
           newMemberList.add(Memberlist[i]);
@@ -160,16 +182,39 @@ class _lapseState extends State<lapse> {
   @override
   void initState() {
     super.initState();
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
 
     callBack() {
       Memberlist = [];
-      getDocs(Memberlist).then((value) => setState(() {
+      getDocs().then((value) => setState(() {
       _isloading = value;
     }));
+  }
+
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    results.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(results);
+    setState(() {
+      
+    });
   }
 
   @override
@@ -208,8 +253,10 @@ class _lapseState extends State<lapse> {
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: myController,
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
@@ -240,6 +287,7 @@ class _lapseState extends State<lapse> {
                     else{
                       dropdownvalue1 = 'Date_of_Opening';
                     }
+                    _runFilter(myController.text);
                   });
                 },
               ),
@@ -247,51 +295,53 @@ class _lapseState extends State<lapse> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(40),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(40),
+                  ),
+                  border: Border.all(
+                    width: 3,
+                    color: Colors.grey,
+                    style: BorderStyle.solid,
+                  ),
                 ),
-                border: Border.all(
-                  width: 3,
-                  color: Colors.grey,
-                  style: BorderStyle.solid,
-                ),
+                child: _buildAboveBar(),
               ),
-              child: _buildAboveBar(),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  localAmountdata(totalClient, totalAmount),
+                  _buildAboveBar1(),
+                ],
+              ),
+            ),
+             _isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
               children: [
-                localAmountdata(totalClient, totalAmount),
-                _buildAboveBar1(),
+                SizedBox(
+                    height: size.height * 0.68,
+                    child: ListView.builder(
+                      itemCount: newMemberList.length,
+                      itemBuilder: (context, i) {
+                        return newMemberList[i];
+                      },
+                    )
+                  ),
               ],
-            ),
-          ),
-           _isloading
-          ? const Center(
-              child: CircularProgressIndicator(),
             )
-          : Column(
-            children: [
-              SizedBox(
-                  height: size.height * 0.68,
-                  child: ListView.builder(
-                    itemCount: newMemberList.length,
-                    itemBuilder: (context, i) {
-                      return newMemberList[i];
-                    },
-                  )
-                ),
-            ],
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

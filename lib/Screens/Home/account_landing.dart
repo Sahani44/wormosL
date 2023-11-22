@@ -1,5 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Home/home.dart';
+
+import 'home_functions.dart';
 
 class HomeLanding extends StatefulWidget {
   const HomeLanding({super.key});
@@ -11,66 +14,60 @@ class HomeLanding extends StatefulWidget {
 class _HomeLandingState extends State<HomeLanding> {
   DateTime date = DateTime.now();
   bool _isloading = true;
-  late final _firestone = FirebaseFirestore.instance;
+  // late final _firestone = FirebaseFirestore.instance;
   var dates = {};
-  Map<String, dynamic>? ma = {};
-  int depositedAmount = 0;
-  int closedAmount = 0 ;
-  int totalBalance = 0 ;
-  int pendingAccount = 0 ;
-  int closedAccount = 0;
-  int newAccount = 0 ;
-  int totalAmount = 0 ; 
-  int depositedAccount = 0 ; 
-  int newAmount = 0 ;
-  int totalAccount = 0 ;
-  int pendingAmount = 0;
 
+  // Future<bool> getDocs () async {
+  //   QuerySnapshot<Map<String,dynamic>> querySnapshot = await _firestone.collection("summary").get();
+  //   var tiles = querySnapshot.docs.toList();
+  //   for (var tile in tiles) {
+  //     dates.addAll({tile.id: tile.data()});
+  //   }
+  //   return false;
+  // }
 
-  Future<bool> getDocs () async {
-    QuerySnapshot<Map<String,dynamic>> querySnapshot = await _firestone.collection("summary").get();
-    var tiles = querySnapshot.docs.toList();
-    for (var tile in tiles) {
-      dates.addAll({tile.id: tile.data()});
-    }
-    return false;
-  
-  }
-
-  void getNewData() async {
-    ma = dates['${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}'];
-    depositedAmount = 0;
-    closedAmount = 0 ;
-    totalBalance = 0 ;
-    pendingAccount = 0 ;
-    closedAccount = 0;
-    newAccount = 0 ;
-    totalAmount = 0 ; 
-    depositedAccount = 0 ; 
-    newAmount = 0 ;
-    totalAccount = 0 ;
-    pendingAmount = 0;
-    if(ma != null) {
-      ma!.forEach((key, value) {
-        depositedAmount +=  value['DepositedAmount'] as int;
-        closedAmount +=  value['ClosedAmount'] as int ;
-        totalBalance +=  value['TotalBalance'] as int ;
-        pendingAccount +=  value['PendingAccount'] as int ;
-        closedAccount +=  value['ClosedAccount'] as int;
-        newAccount +=  value['NewAccount'] as int ;
-        totalAmount +=  value['TotalAmount'] as int ; 
-        depositedAccount +=  value['DepositedAccount'] as int ; 
-        newAmount +=  value['NewAmount'] as int ;
-        totalAccount +=  value['TotalAccount'] as int ;
-        pendingAmount +=  value['PendingAmount'] as int;
-       });
-    }
-  }
+  // Home getNewData() {
+  //   ma = dates['${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}'];
+  //   Home a;
+  //   if(ma!=null){
+  //     a = Home.fromMap(ma!);
+  //      print(a.toString());
+  //   }
+  //   else{
+  //     a = Home(totalClient: 0, totalAmount: 0, clientA: 0, amountA: 0, clientB: 0, amountB: 0, A: {
+  //   'totalAccount' : 0,
+  //   'pending': {
+  //     'remainingAccount' : 0,
+  //     'totalAmount' : 0,
+  //     'remainingAmount' : 0
+  //   },
+  //   'deposit': {
+  //     'remainingAccount' : 0,
+  //     'totalDeposited' : 0,
+  //     'remainingDeposited' : 0
+  //   }
+  // }, B: {
+  //   'totalAccount' : 0,
+  //   'pending': {
+  //     'remainingAccount' : 0,
+  //     'totalAmount' : 0,
+  //     'remainingAmount' : 0
+  //   },
+  //   'deposit': {
+  //     'remainingAccount' : 0,
+  //     'totalDeposited' : 0,
+  //     'remainingDeposited' : 0
+  //   }
+  // }, totalBalance: 0, newAccount: 0, newAmount: 0, closedAmount: 0, closedAccount: 0);
+  //   }
+  //   return a;
+  // return todaysData('${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}');
+  // }
 
   @override
   void initState() {
     super.initState();
-    getDocs().then((value) => setState(() {
+    getHomeDocs().then((value) => setState(() {
       _isloading = value;
     }));
 
@@ -79,7 +76,7 @@ class _HomeLandingState extends State<HomeLanding> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    getNewData();
+    Home a = todaysData('${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}');
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -94,7 +91,7 @@ class _HomeLandingState extends State<HomeLanding> {
                       context: context,
                       initialDate: date,
                       firstDate: DateTime(1990),
-                      lastDate: DateTime(2100));
+                      lastDate: DateTime.now());
               if (newDateOpen == null) return;
 
               setState(() => date = newDateOpen);
@@ -129,9 +126,9 @@ class _HomeLandingState extends State<HomeLanding> {
                         TextButton(onPressed: (){}, child: const Text('View Report'))
                       ],
                     ),
-                    amountdataLoc(totalAccount, totalAmount, 'All'),
-                    amountdataLoc(54, 10000, 'A'),
-                    amountdataLoc(54, 10000, 'B'),
+                    amountdataLoc(a.totalClient, a.totalAmount, 'All'),
+                    amountdataLoc(a.clientA, a.amountA, 'A'),
+                    amountdataLoc(a.clientB, a.amountB, 'B'),
                   ],
                 ),
               ),
@@ -143,18 +140,18 @@ class _HomeLandingState extends State<HomeLanding> {
                     const Text('1st HALF-A'),
                     const SizedBox(height: 20,),
                     const Text('Pending'),
-                    amountdataLoc2(totalAccount, totalAccount, pendingAmount, pendingAccount, 'Accounts', 'Amount', 'Total', 'Remaining'),
+                    amountdataLoc2(a.A['totalAccount'], a.A['pending']['totalAmount'], a.A['pending']['remainingAmount'], a.A["pending"]["remainingAccount"], 'Accounts', 'Amount', 'Total', 'Remaining'),
                     const SizedBox(height: 15,),
                     const Text('Deposited'),
-                    amountdataLoc2(1000, 1000000, 900000, 900, 'Accounts', 'Deposited', 'Total', 'Remaining'),
+                    amountdataLoc2(a.A['totalAccount'], a.A['deposit']['totalDeposited'], a.A['deposit']['remainingDeposited'], a.A["deposit"]["remainingAccount"], 'Accounts', 'Deposited', 'Total', 'Remaining'),
                     const SizedBox(height: 20,),
                     const Text('2nd HALF-B'),
                     const SizedBox(height: 20,),
                     const Text('Pending'),
-                    amountdataLoc2(1000, 1000000, 900000, 900, 'Accounts', 'Amount', 'Total', 'Remaining'),
+                    amountdataLoc2(a.B['totalAccount'], a.B['pending']['totalAmount'], a.B['pending']['remainingAmount'], a.B["pending"]["remainingAccount"], 'Accounts', 'Amount', 'Total', 'Remaining'),
                     const SizedBox(height: 15,),
                     const Text('Deposited'),
-                    amountdataLoc2(1000, 1000000, 900000, 900, 'Accounts', 'Deposited', 'Total', 'Remaining'),
+                    amountdataLoc2(a.B['totalAccount'], a.B['deposit']['totalDeposited'], a.B['deposit']['remainingDeposited'], a.B["deposit"]["remainingAccount"], 'Accounts', 'Deposited', 'Total', 'Remaining'),
                     const SizedBox(height: 20,),
                     const Text('Balance'),
                     Container(
@@ -191,7 +188,7 @@ class _HomeLandingState extends State<HomeLanding> {
                             ),
                             color : Colors.white,
                           ),
-                          child: const Center(child: Text("1200000",style: TextStyle(fontSize: 20),))
+                          child: Center(child: Text('${a.totalBalance}',style: const TextStyle(fontSize: 20),))
                         ),
                       ),
                     ]),),
@@ -199,7 +196,7 @@ class _HomeLandingState extends State<HomeLanding> {
                     const Text('2nd HALF-B'),
                     const SizedBox(height: 20,),
                     const Text('New & Closed Account'),
-                    amountdataLoc2(newAccount, closedAccount, newAmount, closedAmount, 'New', 'Closed', 'Account', 'Amount'),
+                    amountdataLoc2(a.newAccount, a.closedAccount, a.newAmount, a.closedAmount, 'New', 'Closed', 'Account', 'Amount'),
                   ],
                 ),
               ),

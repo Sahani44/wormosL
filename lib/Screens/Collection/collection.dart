@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, camel_case_types, no_logic_in_create_state
+// ignore_for_file: non_constant_identifier_names, camel_case_types, no_logic_in_create_state, must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,41 +20,51 @@ class _collectionState extends State<collection> {
   late int Amount = 0;
   final _firestone = FirebaseFirestore.instance;
   late String Name;
-  int _currentIndex = 0;
-  var _isloading = false;
+  // int _currentIndex = 0;
+  var isloading = true;
   bool sel = true;
   bool notsel = true;
-  final _inactiveColor = const Color(0xff71757A);
-  void strm(String Name) {
-    StreamBuilder(
-        stream: _firestone
-            .collection('new_account')
-            .doc(Name)
-            .collection(Name)
-            .orderBy('Name')
-            .snapshots(),
-        builder: (context, snapshot) {
-          final tiles = snapshot.data!.docs;
-          Count = snapshot.data!.docs.length;
-          for (var tile in tiles) {
-            Amount += int.parse(tile.get('Amount_Remaining'));
-          }
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.lightBlueAccent,
-              ),
-            );
-          }
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Clients:$Count'),
-              Text('Amount Collected:$Amount')
-            ],
-          );
-        });
+  Map data = {};
+ List<Widget> Memberlist = [];
+
+  // final _inactiveColor = const Color(0xff71757A);
+
+  Future<bool> getDocs (Memberlist) async{
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account_d").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_place").get();
+    var tiles1 = querySnapshot1.docs.toList();
+    for(var tile in tiles1) {
+      data.addAll({tile.get('Name'): {
+        'clients' : 0,
+        'amount' : 0,
+        'balance' : 0
+      }});
+    }
+    var tiles2 = querySnapshot.docs.toList();
+    for(var tile in tiles2){
+      var name = tile.get('place');
+      int ac = tile.get('monthly');
+      int ar = tile.get('Amount_Remaining');
+      data.update(name, (value) => 
+        {
+          'clients': (value['clients']+1),
+          'amount': (value['amount']+ac),
+          'balance': (value['balance']+ar),
+        
+      });
+    }
+    for(var tile in tiles1){
+      Memberlist.add(collection_tile(tile.get('Name'), screen, data[tile.get('Name')]));
+    }
+    return false;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDocs(Memberlist).then((value) => setState(() {
+      isloading = value;
+    }));
   }
 
   @override
@@ -83,45 +93,20 @@ class _collectionState extends State<collection> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(children: [
-          SizedBox(
-            height: size.height * 0.005,
-          ),
-          StreamBuilder(
-              stream: _firestone
-                  .collection('new_place')
-                  .orderBy('Name')
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.lightBlueAccent,
-                    ),
-                  );
-                }
-                final tiles = snapshot.data!.docs;
-                List<Widget> Memberlist = [];
-                for (var tile in tiles) {
-                  Name = tile.get('Name');
-                  Memberlist.add(collection_tile(Name, screen));
-                }
-                return _isloading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: size.height,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              )),
-                        ],
-                      );
-              })
-        ]),
+        child:  isloading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Column(
+                      children: [
+                        SizedBox(
+                            height: size.height,
+                            child: ListView.builder(
+                              itemCount: Memberlist.length,
+                              itemBuilder: (context, i) => Memberlist[i],
+                            )),
+                      ],
+                    )
       ),
     );
   }

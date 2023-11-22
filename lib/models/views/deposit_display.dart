@@ -31,7 +31,7 @@ class deposit_data extends StatefulWidget {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
-  List<Map<String,dynamic>> history;
+  Map<String, Map<String,dynamic>> history;
   final int paid_installment;
   final int total_installment;
   final String Location;
@@ -204,7 +204,7 @@ class _deposit_dataState extends State<deposit_data> {
                           alignment: Alignment.center,
                           width: size.width*0.3,
                           height: size.height*0.030,
-                          child: Text('${widget.history[widget.history.length-1]['payment_date'].toDate().day}/${widget.history[widget.history.length-1]['payment_date'].toDate().month}/${widget.history[widget.history.length-1]['payment_date'].toDate().year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
+                          child: Text('${DateTime.parse(widget.history.keys.last).day}/${DateTime.parse(widget.history.keys.last).month}/${DateTime.parse(widget.history.keys.last).year}',style: const TextStyle(color: Colors.red,fontStyle: FontStyle.italic),),
                         )
                       ],
                     ),

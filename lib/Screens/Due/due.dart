@@ -45,6 +45,8 @@ class _dueState extends State<due> {
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
   var tiles =[];
+  var newTiles = [];
+  List results = [];
   List<Widget> Memberlist = [];
   List<Widget> newMemberList =[];
   var totalClient = 0;
@@ -52,9 +54,11 @@ class _dueState extends State<due> {
   var totalBalance = 0;
   late String add;
   late String cif;
+  late var id;
+  final myController = TextEditingController();
 
 
-  void addData(List<Widget> Memberlist,) {
+  void addData() {
     Memberlist.add(
       due_data(
         Member_Name: Member_Name,
@@ -77,6 +81,7 @@ class _dueState extends State<due> {
         cif: cif, 
         add: add, 
         phone: Phone,
+        id:id,
       ),
     );
   }
@@ -85,11 +90,31 @@ class _dueState extends State<due> {
     status = await getFieldValue(Account, 'status');
   }
 
-  Future<bool> getDocs (Memberlist) async {
+  Future<bool> getDocs () async {
+
+    tiles = [];
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
-    for (var tile in tiles) {
+    tiles.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(tiles);
+    return false;
+  
+  }
+
+  void createTiles(List nT) {
+    Memberlist = [];
+    newTiles = [];
+    for (var tile in nT) {
+      newTiles.add(tile);
+      id = tile.id;
       Member_Name = tile.get('Member_Name');
       Phone = tile.get("Phone_No");
       Plan = tile.get('Plan');
@@ -108,16 +133,14 @@ class _dueState extends State<due> {
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');
       place = tile.get('place');
-      addData(Memberlist);
+      addData();
     }
-    return false;
-  
   }
 
   @override
   void initState() {
     super.initState();
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
@@ -125,11 +148,11 @@ class _dueState extends State<due> {
   void getNewMemberList (int currentIndex, int currentIndex2 ) {
     String currentIndexPD = currentIndex == 0 ? 'Paid' : 'Due';
     String currentIndex2AB = currentIndex2 == 0 ? 'A' : 'B';
-    for (int i=0; i<tiles.length; i++) {
-      var status = tiles[i].get('status');
-      var plan = tiles[i].get('Plan');
-      int ac = tiles[i].get('monthly');
-      int ar = tiles[i].get('Amount_Remaining');
+    for (int i=0; i<newTiles.length; i++) {
+      var status = newTiles[i].get('status');
+      var plan = newTiles[i].get('Plan');
+      int ac = newTiles[i].get('monthly');
+      int ar = newTiles[i].get('Amount_Remaining');
       if(status == currentIndexPD && plan == currentIndex2AB){
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
@@ -141,9 +164,32 @@ class _dueState extends State<due> {
 
   callBack() {
       Memberlist = [];
-      getDocs(Memberlist).then((value) => setState(() {
+      getDocs().then((value) => setState(() {
       _isloading = value;
     }));
+  }
+
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    results.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(results);
+    setState(() {
+      
+    });
   }
 
   @override
@@ -176,8 +222,10 @@ class _dueState extends State<due> {
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: myController,
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
@@ -208,6 +256,7 @@ class _dueState extends State<due> {
                     else{
                       dropdownvalue1 = 'Date_of_Opening';
                     }
+                    _runFilter(myController.text);
                   });
                 },
               ),

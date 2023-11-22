@@ -1,17 +1,19 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, must_be_immutable, camel_case_types
 
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection2.dart';
 import 'package:internship2/Screens/Account/Account_Master.dart';
 
 class collection_tile extends StatelessWidget {
-  late int Count = 0;
-  late int Amount = 0;
+  
+  Map data ;
   // final _firestone = FirebaseFirestore.instance;
-  collection_tile(this.Name, this.screen, {super.key});
+  collection_tile(this.Name, this.screen, this.data, {super.key});
   late String Name;
   int screen = 1;
   late Widget path;
+
+
   @override
   Widget build(BuildContext context) {
     if (screen == 0) {
@@ -43,13 +45,17 @@ class collection_tile extends StatelessWidget {
             color: Colors.black,
             ),
           ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Clients:$Count'),
-              Text('Amount Collected:$Amount')
-            ],
+          trailing: SizedBox(
+            width: size.width*0.25,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Clients:${data['clients']}'),
+                Text('Amount:${data['amount']}'),
+                Text('Balance:${data['balance']}')
+              ],
+            ),
           )
         ),
       ],

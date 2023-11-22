@@ -38,9 +38,72 @@ class _userState extends State<user> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-
+  List Memberlist = [];
+  List tiles = [];
+  List results = [];
+  late var id;
   final _firestone = FirebaseFirestore.instance;
-  var _isloading = false;
+  var isloading = true;
+  final myController = TextEditingController();
+
+  Future<bool> getDocs () async {
+    tiles = [];
+    QuerySnapshot<Map<String, dynamic>> querySnapshot = widget.Place == '5 Days' || widget.Place == 'Monthly' ?  await _firestone.collection( 'new_account').where('Type', isEqualTo: Place).get() : await _firestone.collection('new_account_d').where('place', isEqualTo: Place).get();
+    tiles = querySnapshot.docs.toList();
+    tiles.sort((a, b) {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+    },);
+    createTiles(tiles);
+    return false;
+  }
+
+  void createTiles(List nT){
+    Memberlist = [];
+    for (var tile in nT) {
+      id = tile.id;
+      Member_Name = tile.get('Member_Name');
+      Plan = tile.get('Plan');
+      phone = tile.get('Phone_No');
+      cif = tile.get('CIF_No');
+      add = tile.get('Address');
+      paid_installment = tile.get('paid_installment');
+      total_installment = tile.get('total_installment');
+      Amount_Remaining = tile.get('Amount_Remaining');
+      Amount_Collected = tile.get('Amount_Collected');
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      type = tile.get('Type');
+      monthly = tile.get('monthly');
+      Account_No = tile.get('Account_No').toString();
+      date_open = tile.get('Date_of_Opening');
+      date_mature = tile.get('Date_of_Maturity');
+      Memberlist.add(user_tile(Member_Name: Member_Name, Plan: Plan, Account_No: Account_No, date_open: date_open, date_mature: date_mature, Location: widget.Place, type: type, monthly: monthly, Amount_Remaining: Amount_Remaining, Amount_Collected: Amount_Collected, add: add, phone: phone, total_installment: total_installment, paid_installment: paid_installment, cif: cif, history: history,id:id));
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getDocs().then((value) => setState(() {
+      isloading = value;
+    }));
+  }
+
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    
+    createTiles(results);
+    setState(() {
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -54,9 +117,11 @@ class _userState extends State<user> {
           height: size.height * 0.05,
           decoration: BoxDecoration(
               color: Colors.grey, borderRadius: BorderRadius.circular(18)),
-          child: const Center(
+          child: Center(
             child: TextField(
-              decoration: InputDecoration(
+              controller: myController,
+                onChanged: (value) => _runFilter(value),
+              decoration: const InputDecoration(
                   prefixIcon: Icon(
                     Icons.search,
                     color: Colors.white,
@@ -67,116 +132,26 @@ class _userState extends State<user> {
           ),
         ),
       ),
-      body: widget.Place == '5 Days' || widget.Place == 'Monthly' ?
+      body: 
         SingleChildScrollView(
         child: Column(children: [
           SizedBox(
             height: size.height * 0.005,
           ),
-          StreamBuilder(
-              stream: _firestone
-                  .collection('new_account')
-                  .where('Type', isEqualTo: Place)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.lightBlueAccent,
-                    ),
-                  );
-                }
-                final tiles = snapshot.data!.docs;
-                List<Widget> Memberlist = [];
-                for (var tile in tiles) {
-                  Member_Name = tile.get('Member_Name');
-                  Plan = tile.get('Plan');
-                  phone = tile.get('Phone_No');
-                  cif = tile.get('CIF_No');
-                  add = tile.get('Address');
-                  paid_installment = tile.get('paid_installment');
-                  total_installment = tile.get('total_installment');
-                  Amount_Remaining = tile.get('Amount_Remaining');
-                  Amount_Collected = tile.get('Amount_Collected');
-                  history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
-                  type = tile.get('Type');
-                  monthly = tile.get('monthly');
-                  Account_No = tile.get('Account_No').toString();
-                  date_open = tile.get('Date_of_Opening');
-                  date_mature = tile.get('Date_of_Maturity');
-                  Memberlist.add(user_tile(Member_Name: Member_Name, Plan: Plan, Account_No: Account_No, date_open: date_open, date_mature: date_mature, Location: widget.Place, type: type, monthly: monthly, Amount_Remaining: Amount_Remaining, Amount_Collected: Amount_Collected, add: add, phone: phone, total_installment: total_installment, paid_installment: paid_installment, cif: cif, history: history));
-                }
-                return _isloading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: size.height,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              )),
-                        ],
-                      );
-              })
-        ]),
-      )
-      : 
-        SingleChildScrollView(
-        child: Column(children: [
-          SizedBox(
-            height: size.height * 0.005,
-          ),
-          StreamBuilder(
-              stream: _firestone
-                  .collection('new_account_d')
-                  .where('place', isEqualTo: Place)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      backgroundColor: Colors.lightBlueAccent,
-                    ),
-                  );
-                }
-                final tiles = snapshot.data!.docs;
-                List<Widget> Memberlist = [];
-                for (var tile in tiles) {
-                  Member_Name = tile.get('Member_Name');
-                  Plan = tile.get('Plan');
-                  phone = tile.get('Phone_No');
-                  cif = tile.get('CIF_No');
-                  add = tile.get('Address');
-                  paid_installment = tile.get('paid_installment');
-                  total_installment = tile.get('total_installment');
-                  Amount_Remaining = tile.get('Amount_Remaining');
-                  Amount_Collected = tile.get('Amount_Collected');
-                  history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
-                  type = tile.get('Type');
-                  monthly = tile.get('monthly');
-                  Account_No = tile.get('Account_No').toString();
-                  date_open = tile.get('Date_of_Opening');
-                  date_mature = tile.get('Date_of_Maturity');
-                  Memberlist.add(user_tile(Member_Name: Member_Name, Plan: Plan, Account_No: Account_No, date_open: date_open, date_mature: date_mature, Location: widget.Place, type: type, monthly: monthly, Amount_Remaining: Amount_Remaining, Amount_Collected: Amount_Collected, add: add, phone: phone, total_installment: total_installment, paid_installment: paid_installment, cif: cif, history: history));
-                }
-                return _isloading
-                    ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : Column(
-                        children: [
-                          SizedBox(
-                              height: size.height,
-                              child: ListView.builder(
-                                itemCount: Memberlist.length,
-                                itemBuilder: (context, i) => Memberlist[i],
-                              )),
-                        ],
-                      );
-              })
+          isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+                children: [
+                  SizedBox(
+                      height: size.height,
+                      child: ListView.builder(
+                        itemCount: Memberlist.length,
+                        itemBuilder: (context, i) => Memberlist[i],
+                      )),
+                ],
+              )
         ]),
       ),
       floatingActionButton: SizedBox(

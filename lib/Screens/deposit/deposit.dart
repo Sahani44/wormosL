@@ -24,7 +24,7 @@ class _depositState extends State<deposit> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late List<Map<String,dynamic>> history;
+  late Map<String, Map<String,dynamic>> history;
   late int paid_installment;
   late int total_installment;
   late bool deposit_field;
@@ -38,17 +38,20 @@ class _depositState extends State<deposit> {
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
   var tiles =[];
+  var newTiles = [];
   List<Widget> Memberlist = [];
   List<Widget> newMemberList =[];
+  List results = [];
   var totalClient = 0;
   var totalAmount = 0;
   var totalBalance = 0;
   int _currentIndex2 = 0;
   int _currentIndex = 0;
   final _inactiveColor = const Color(0xffEBEBEB);
+  final myController = TextEditingController();
 
   
-  void addData(List<Widget> Memberlist,) {
+  void addData() {
     Memberlist.add(
       deposit_data(
         deposit_field: deposit_field,
@@ -70,11 +73,28 @@ class _depositState extends State<deposit> {
     );
   }
 
-    Future<bool> getDocs (Memberlist) async {
+    Future<bool> getDocs () async {
     QuerySnapshot<Map<String, dynamic>> querySnapshot = await _firestone.collection("new_account").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot1 = await _firestone.collection("new_account_d").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
-    for (var tile in tiles) {
+    tiles.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(tiles);
+    return false;
+  
+  }
+
+  void createTiles(List nT) {
+    Memberlist = [];
+    newTiles = [];
+    for (var tile in nT) {
+      newTiles.add(tile);
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
       deposit_field = tile.get('deposit_field');
@@ -82,32 +102,30 @@ class _depositState extends State<deposit> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = List<Map<String,dynamic>>.from(tile.get('history'));
+      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
       accountType = tile.get('Type') == 'Daily' ? 'new_account_d' : 'new_account';
-      addData(Memberlist);
+      addData();
     }
-    return false;
-  
   }
 
   @override
   void initState() {
     super.initState();
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
 
   void getNewMemberList (int currentIndex2 ,int currentIndex) {
-    for (int i=0; i<tiles.length; i++) {
-      var deposit_field = tiles[i].get('deposit_field');
-      int ac = tiles[i].get('monthly');
-      int ar = tiles[i].get('Amount_Remaining');
-      String plan = tiles[i].get('Plan');
+    for (int i=0; i<newTiles.length; i++) {
+      var deposit_field = newTiles[i].get('deposit_field');
+      int ac = newTiles[i].get('monthly');
+      int ar = newTiles[i].get('Amount_Remaining');
+      String plan = newTiles[i].get('Plan');
       bool currentIndexPD = currentIndex2 == 0 ? false : true;
       String currentIndexAB = currentIndex == 1 ? 'A' : currentIndex == 2 ? 'B' : '';
       if(ac == ar){
@@ -134,7 +152,7 @@ class _depositState extends State<deposit> {
     //   _isloading = true;
     // });
     Memberlist = [];
-    getDocs(Memberlist).then((value) => setState(() {
+    getDocs().then((value) => setState(() {
       _isloading = value;
     }));
   }
@@ -142,6 +160,28 @@ class _depositState extends State<deposit> {
   // void str(String Account) async {
   //   status = await getFieldValue(Account, 'status');
   // }
+  void _runFilter(String enteredKeyword) {
+    results = [];
+    if(enteredKeyword.isEmpty){
+      results = tiles;
+    } else {
+      results = tiles
+                .where((element) => element.get('Member_Name').toLowerCase().contains(enteredKeyword.toLowerCase()))
+                .toList();
+    }
+    results.sort((a, b) {
+      if(dropdownvalue1 == 'Member_Name') {
+       return a.get('Member_Name').compareTo(b.get('Member_Name'));
+      }
+      else {
+       return a.get('Date_of_Opening').compareTo(b.get('Date_of_Opening'));
+      }
+    },);
+    createTiles(results);
+    setState(() {
+      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -176,8 +216,10 @@ class _depositState extends State<deposit> {
               decoration: BoxDecoration(
                   color: const Color(0XFFEBEBEB),
                   borderRadius: BorderRadius.circular(18)),
-              child: const TextField(
-                decoration: InputDecoration(
+              child: TextField(
+                controller: myController,
+                onChanged: (value) => _runFilter(value),
+                decoration: const InputDecoration(
                     prefixIcon: Icon(
                       Icons.search,
                       color: Color(0XFF999999),
@@ -208,6 +250,7 @@ class _depositState extends State<deposit> {
                     else{
                       dropdownvalue1 = 'Date_of_Opening';
                     }
+                    _runFilter(myController.text);
                   });
                 },
               ),
@@ -215,54 +258,56 @@ class _depositState extends State<deposit> {
           ],
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(40),
-              ),
-              border: Border.all(
-                width: 3,
-                color: Colors.white,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: _buildAboveBar2(),
-          ),
-          _buildAboveBar(),
-          /* Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(40),
-              ),
-              border: Border.all(
-                width: 3,
-                color: Colors.grey,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: _buildAboveBar(),
-          ), */
-          amountdata(totalClient, totalAmount, totalBalance, context),
-          _isloading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : Column(
-            children: [
-              SizedBox(
-                  height: size.height * 0.55,
-                  child: ListView.builder(
-                    itemCount: newMemberList.length,
-                    itemBuilder: (context, i) {
-                      return newMemberList[i];
-                    },
-                  )
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(40),
                 ),
-            ],
-          )
-        ],
+                border: Border.all(
+                  width: 3,
+                  color: Colors.white,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: _buildAboveBar2(),
+            ),
+            _buildAboveBar(),
+            /* Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(40),
+                ),
+                border: Border.all(
+                  width: 3,
+                  color: Colors.grey,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: _buildAboveBar(),
+            ), */
+            amountdata(totalClient, totalAmount, totalBalance, context),
+            _isloading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : Column(
+              children: [
+                SizedBox(
+                    height: size.height * 0.55,
+                    child: ListView.builder(
+                      itemCount: newMemberList.length,
+                      itemBuilder: (context, i) {
+                        return newMemberList[i];
+                      },
+                    )
+                  ),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
