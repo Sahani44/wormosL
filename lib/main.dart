@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
 // import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Lapse/lapsescreen.dart';
 import 'package:internship2/Screens/Place/new_member_landing.dart';
@@ -25,6 +26,7 @@ import 'Screens/Maturity/mature_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await getHomeDocs();
   runApp(const MyApp());
 }
 

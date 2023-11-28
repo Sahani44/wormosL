@@ -32,6 +32,7 @@ class _depositState extends State<deposit> {
   late int Amount_Remaining;
   late int Monthly;
   late String accountType;
+  late String id;
   var _isloading = true;
   late final _firestone = FirebaseFirestore.instance;
   String dropdownvalue ='Name';
@@ -68,7 +69,8 @@ class _depositState extends State<deposit> {
         Monthly: Monthly,
         history: history,
         callBack: callBack,
-        accountType: accountType 
+        accountType: accountType,
+        id: id
       ),
     );
   }
@@ -95,6 +97,7 @@ class _depositState extends State<deposit> {
     newTiles = [];
     for (var tile in nT) {
       newTiles.add(tile);
+      id = tile.id;
       Member_Name = tile.get('Member_Name');
       Plan = tile.get('Plan');
       deposit_field = tile.get('deposit_field');
@@ -122,27 +125,41 @@ class _depositState extends State<deposit> {
 
   void getNewMemberList (int currentIndex2 ,int currentIndex) {
     for (int i=0; i<newTiles.length; i++) {
-      var deposit_field = newTiles[i].get('deposit_field');
+      // var deposit_field = newTiles[i].get('deposit_field');
       int ac = newTiles[i].get('monthly');
+      int ta = newTiles[i].get('Amount_Collected');
       int ar = newTiles[i].get('Amount_Remaining');
       String plan = newTiles[i].get('Plan');
-      bool currentIndexPD = currentIndex2 == 0 ? false : true;
+      // bool currentIndexPD = currentIndex2 == 0 ? false : true;
       String currentIndexAB = currentIndex == 1 ? 'A' : currentIndex == 2 ? 'B' : '';
       if(ac == ar){
-          if(deposit_field == currentIndexPD && currentIndexAB == ''){
+          if(currentIndex2 == 0 && currentIndexAB == ''){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
           totalAmount += ac;
           totalBalance += ar;
-        }
-        else {
-          if(deposit_field == currentIndexPD && currentIndexAB == plan){
+        } else {
+          if(currentIndex2 == 0 && currentIndexAB == plan){
             newMemberList.add(Memberlist[i]);
             totalClient += 1;
             totalAmount += ac;
             totalBalance += ar;
           }
-      }
+        }
+      } else if(ar == 0 && ta > 0) {
+        if(currentIndex2 == 1 && currentIndexAB == ''){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        } else {
+          if(currentIndex2 == 1 && currentIndexAB == plan){
+            newMemberList.add(Memberlist[i]);
+            totalClient += 1;
+            totalAmount += ac;
+            totalBalance += ar;
+          }
+        }
       }
     }
   }
@@ -429,4 +446,35 @@ SingleChildScrollView(
                 }),
           ),
 
+*/
+
+
+/*
+  void getNewMemberList (int currentIndex2 ,int currentIndex) {
+    for (int i=0; i<newTiles.length; i++) {
+      var deposit_field = newTiles[i].get('deposit_field');
+      int ac = newTiles[i].get('monthly');
+      int ta = newTiles[i].get('Amount_Collected');
+      int ar = newTiles[i].get('Amount_Remaining');
+      String plan = newTiles[i].get('Plan');
+      bool currentIndexPD = currentIndex2 == 0 ? false : true;
+      String currentIndexAB = currentIndex == 1 ? 'A' : currentIndex == 2 ? 'B' : '';
+      if(ac == ar){
+          if(deposit_field == currentIndexPD && currentIndexAB == ''){
+          newMemberList.add(Memberlist[i]);
+          totalClient += 1;
+          totalAmount += ac;
+          totalBalance += ar;
+        }
+        else {
+          if(deposit_field == currentIndexPD && currentIndexAB == plan){
+            newMemberList.add(Memberlist[i]);
+            totalClient += 1;
+            totalAmount += ac;
+            totalBalance += ar;
+          }
+      }
+      }
+    }
+  }
 */

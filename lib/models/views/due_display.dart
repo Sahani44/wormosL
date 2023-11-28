@@ -110,7 +110,7 @@ class _due_dataState extends State<due_data> {
     }
     if (widget.Type == 'Monthly'){
       money = widget.Monthly - widget.Amount_Remaining;
-      if(money > 0){
+      if(money > 0 || DateTime.fromMillisecondsSinceEpoch(widget.next_due_date.millisecondsSinceEpoch).isBefore(DateTime.now())){
         status = 'Due';
       }
       else {

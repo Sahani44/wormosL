@@ -10,29 +10,23 @@ class Home {
   int clientB = 0;
   int amountB = 0;
   Map<String,dynamic> A = {
-    'totalAccount' : 0,
     'pending': {
-      'remainingAccount' : 0,
-      'totalAmount' : 0,
-      'remainingAmount' : 0
+      'account' : 0,
+      'amount' : 0
     },
     'deposit': {
-      'remainingAccount' : 0,
-      'totalDeposited' : 0,
-      'remainingDeposited' : 0
+      'account' : 0,
+      'amount' : 0
     }
   };
   Map<String,dynamic> B = {
-    'totalAccount' : 0,
     'pending': {
-      'remainingAccount' : 0,
-      'totalAmount' : 0,
-      'remainingAmount' : 0
+      'account' : 0,
+      'amount' : 0
     },
     'deposit': {
-      'remainingAccount' : 0,
-      'totalDeposited' : 0,
-      'remainingDeposited' : 0
+      'account' : 0,
+      'amount' : 0
     }
   };
   int totalBalance = 0 ;

@@ -26,11 +26,11 @@ Future<bool> getHomeDocs () async {
       return Home.fromMap(summaryDates[date]);
     }
     else{
-      return createSummary(date);
+      return _createSummary(date);
     }
   }
 
-Home createSummary (String date) {
+Home _createSummary (String date) {
   List d = summaryDates.keys.toList();
   int prevDateIndex = 0;
   for(int i = d.length-1;i>=0;i--){
@@ -40,6 +40,8 @@ Home createSummary (String date) {
     }
   }
   Home x = Home.fromMap(summaryDates[d[prevDateIndex]]);
+  x.newAccount = 0;x.newAmount = 0;
+  x.closedAccount = 0;x.closedAmount = 0;
   FirebaseFirestore.instance.collection('summary').doc(date).set(x.toMap());
   getHomeDocs();
   return x;
@@ -47,18 +49,84 @@ Home createSummary (String date) {
 
 void updateSummary (String date, var key, var value) {
   if(DateTime.parse(date).compareTo(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day)) == 0 && summaryDates.keys.contains(date)){
-    Map<String,dynamic> nm = summaryDates[date];
-    nm[key] = value;
-    FirebaseFirestore.instance.collection('summary').doc(date).set(nm);
-    getHomeDocs();
+    _updateSummaryHelper(date, key, value);
   }else if(DateTime.parse(date).compareTo(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day)) == 0){
-    createSummary(date);
-    Map<String,dynamic> nm = summaryDates[date];
-    nm[key] = value;
+    _createSummary(date);
+    _updateSummaryHelper(date, key, value);
+  }else{
+    if(!summaryDates.keys.contains(date)){
+      _createSummary(date);
+    }
+    List d = summaryDates.keys.toList();
+    int dateIndex = 0;
+    for(int i = d.length-1;i>=0;i--){
+      dateIndex = i;
+      if(DateTime.parse(date).compareTo(DateTime.parse(d[i]))==0){
+        break;
+      }
+    }
+    for(int i=dateIndex;i<summaryDates.length;i++) {
+        _updateSummaryHelper(d[i], key, value);
+      }
+  }
+}
+
+void _updateSummaryHelper(String date, int key, var value) {
+  Map<String,dynamic> nm = summaryDates[date];
+    switch (key) {
+      case 0 : {
+        nm['A']['deposit']['account'] = nm['A']['deposit']['account']+1;
+        nm['A']['deposit']['amount'] = nm['A']['deposit']['amount']+value;
+        nm['A']['pending']['account'] = nm['A']['pending']['account']-1;
+        nm['A']['pending']['amount'] = nm['A']['pending']['amount']-value;
+        break;
+      }
+      case 1 : {
+        nm['B']['deposit']['account'] = nm['B']['deposit']['account']+1;
+        nm['B']['deposit']['amount'] = nm['B']['deposit']['amount']+value;
+        nm['B']['pending']['account'] = nm['B']['pending']['account']-1;
+        nm['B']['pending']['amount'] = nm['B']['pending']['amount']-value;
+        break;
+      }
+      case 2 : {
+        nm['newAccount'] = nm['newAccount'] + 1;
+        nm['newAmount'] = nm['newAmount'] + value;
+        nm['clientA'] = nm['clientA'] + 1;
+        nm['amountA'] = nm['amountA'] + value;
+        break;
+      }
+      case 3 : {
+        nm['newAccount'] = nm['newAccount'] + 1;
+        nm['newAmount'] = nm['newAmount'] + value;
+        nm['clientB'] = nm['clientB'] + 1;
+        nm['amountB'] = nm['amountB'] + value;
+        break;
+      }
+      case 4 : {
+        nm['closedAccount'] = nm['closedAccount'] + 1;
+        nm['closedAmount'] = nm['closedAmount'] + value;
+        nm['clientA'] = nm['clientA'] - 1;
+        nm['amountA'] = nm['amountA'] - value;
+        break;
+      }
+      case 5 : {
+        nm['closedAccount'] = nm['closedAccount'] + 1;
+        nm['closedAmount'] = nm['closedAmount'] + value;
+        nm['clientB'] = nm['clientB'] - 1;
+        nm['amountB'] = nm['amountB'] - value;
+        break;
+      }
+    } 
     FirebaseFirestore.instance.collection('summary').doc(date).set(nm);
     getHomeDocs();
-  }else{
-    
-  }
-
 }
+
+
+/*
+key = 0 implies money deposited of A
+    = 1           ''               B
+    = 2 implies new account in A
+    = 3           ''           B
+    = 4 implies close account in A
+    = 5           ''             B
+*/

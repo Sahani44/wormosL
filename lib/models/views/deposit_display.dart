@@ -2,8 +2,10 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
 import 'package:internship2/widgets/button.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class deposit_data extends StatefulWidget {
@@ -24,11 +26,13 @@ class deposit_data extends StatefulWidget {
     required this.history,
     required this.accountType,
     required this.callBack,
+    required this.id,
   }) : super(key: key);
 
   final String Member_Name;
   final String Plan;
   final String Account_No;
+  final String id;
   final Timestamp date_open;
   final Timestamp date_mature;
   Map<String, Map<String,dynamic>> history;
@@ -47,8 +51,6 @@ class deposit_data extends StatefulWidget {
 }
 
 class _deposit_dataState extends State<deposit_data> {
-  bool deposit = true;
-  bool deposit_field = true;
   late int money = 0;
   Color colour = const Color(0xffD83F52);
   final _firestone = FirebaseFirestore.instance;
@@ -58,6 +60,13 @@ class _deposit_dataState extends State<deposit_data> {
     Size size = MediaQuery.of(context).size;
     final dateo = widget.date_open.toDate();
     final datem = widget.date_mature.toDate();
+    // int deposit_field = 0;
+    // if(widget.Monthly == widget.Amount_Remaining) {
+    //   deposit_field = 0;
+    // } else if() {
+    //   deposit_field = 1;
+    // }
+
     // DateTime now = DateTime.now();
     // int Daily = (widget.Monthly / 30).floor();
 
@@ -86,19 +95,19 @@ class _deposit_dataState extends State<deposit_data> {
                   ),
                 ],
               ),
-              if (widget.deposit_field)
+              if (widget.Amount_Collected > 0 && widget.Amount_Remaining == 0)
                 MaterialButton(
                   onPressed: () {
                     setState(() {
-                      deposit_field = false;
+                      // deposit_field = false;
                     });
 
-                    _firestone
-                        .collection(widget.accountType)
-                        .doc(widget.Account_No)
-                        .update({
-                      'deposit_field': false,
-                    });
+                    // _firestone
+                    //     .collection(widget.accountType)
+                    //     .doc(widget.Account_No)
+                    //     .update({
+                    //   'deposit_field': false,
+                    // });
                     widget.callBack();
                     // Navigator.pushReplacement(
                     //   context,
@@ -113,19 +122,20 @@ class _deposit_dataState extends State<deposit_data> {
                     color: const Color(0xff353CE5),
                   ),
                 ),
-                if (!widget.deposit_field)
+                if (widget.Monthly == widget.Amount_Remaining)
                 MaterialButton(
                   onPressed: () {
                     setState(() {
-                      deposit_field = true;
+                      // deposit_field = true;
                     });
 
                     _firestone
                         .collection(widget.accountType)
-                        .doc(widget.Account_No)
+                        .doc(widget.id)
                         .update({
-                      'deposit_field': true,
+                      'Amount_Remaining': 0,
                     });
+                    updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?0:1, widget.Amount_Remaining);
                     widget.callBack();
                     // Navigator.pushReplacement(
                     //   context,

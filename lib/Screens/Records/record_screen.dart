@@ -73,10 +73,11 @@ class _Record_PageState extends State<Record_Page> {
     'December'
   ];
 
-  var items = [
-    'Weekly',
+  var items = [    
     'Monthly',
+    '5 Days',
   ];
+
 
   DateTime dateTime1 = DateTime(1900);
   DateTime dateTime2 = DateTime(1900);
@@ -107,8 +108,15 @@ class _Record_PageState extends State<Record_Page> {
         await _firestone.collection("new_account_d").get();
     QuerySnapshot<Map<String, dynamic>> querySnapshot2 =
         await _firestone.collection("records").get();
+    QuerySnapshot<Map<String, dynamic>> querySnapshot3 =
+        await _firestone.collection("new_place").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
     tiles1 = querySnapshot2.docs.toList();
+    var x = querySnapshot3.docs.toList();
+    
+    for (var v in x) {
+      items.add(v.get('Name'));
+    }
 
     for (var tile in tiles1) {
       dates.addAll({tile.id: tile.data()});
@@ -180,14 +188,17 @@ class _Record_PageState extends State<Record_Page> {
           var plan = tiles[i].get('Plan');
           int ac = tiles[i].get('monthly');
           int ar = tiles[i].get('Amount_Remaining');
+          String type = tiles[i].get('Type');
+          String place = tiles[i].get('place');
           String currentIndexAb = _currentIndex == 1 ? 'A' : _currentIndex == 2 ? 'B' : '';
-          if (currentIndexAb == plan) {
+
+          if (currentIndexAb == plan && (dropdownvalue == type || dropdownvalue == place)) {
             newMemberList.add(Memberlist[i]);
             totalClient += 1;
             totalAmount += ac;
             totalBalance += ar;
           }
-          else if(currentIndexAb == ''){
+          else if(currentIndexAb == '' && (dropdownvalue == type || dropdownvalue == place)){
             newMemberList.add(Memberlist[i]);
             totalClient += 1;
             totalAmount += ac;
@@ -273,8 +284,7 @@ class _Record_PageState extends State<Record_Page> {
                               context: context,
                               initialDate: new_payment_date,
                               firstDate: DateTime(1990),
-                              lastDate: DateTime(DateTime.now().year,
-                                  DateTime.now().month, DateTime.now().day));
+                              lastDate: DateTime.now());
                           if (newPaymentDate == null) return;
 
                           setState(() {new_payment_date = newPaymentDate;
@@ -469,13 +479,13 @@ class _Record_PageState extends State<Record_Page> {
                                                   firstDate: DateTime(1950),
                                                   //DateTime.now() - not to allow to choose before today.
                                                   lastDate: DateTime.now());
-                                              print(pickedDate);
+                                              // print(pickedDate);
                                               if (pickedDate != null) {
-                                                print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                // print(pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                 String formattedDate =
                                                     DateFormat('yyyy-MM-dd').format(pickedDate);
 
-                                                print(formattedDate); //formatted date output using intl package =>  2021-03-16
+                                                // print(formattedDate); //formatted date output using intl package =>  2021-03-16
                                                 setState(
                                                   () {
                                                     dateInput.text = formattedDate; //set output date to TextField value.
@@ -507,7 +517,7 @@ class _Record_PageState extends State<Record_Page> {
                                                 ),
                                                 labelText: "To Date",
                                                 labelStyle: const TextStyle(fontSize: 13),
-                                                hintText: "Hello",
+                                                hintText: dateInput2.text,
                                                 enabledBorder: OutlineInputBorder(
                                                   borderSide: const BorderSide(
                                                       width: 3, color: Colors.grey), //<-- SEE HERE
@@ -519,15 +529,15 @@ class _Record_PageState extends State<Record_Page> {
                                               DateTime? pickedDate2 = await showDatePicker(
                                                   context: context,
                                                   initialDate: DateTime.now(),
-                                                  firstDate: DateTime(1950),
+                                                  firstDate: dateTime1,
                                                   //DateTime.now() - not to allow to choose before today.
                                                   lastDate: DateTime.now());
-                                              print(pickedDate2);
+                                              // print(pickedDate2);
                                               if (pickedDate2 != null) {
-                                                print(pickedDate2); //pickedDate2 output format => 2021-03-10 00:00:00.000
+                                                // print(pickedDate2); //pickedDate2 output format => 2021-03-10 00:00:00.000
                                                 String formattedDate2 =
                                                     DateFormat('yyyy-MM-dd').format(pickedDate2);
-                                                print( formattedDate2); //formatted date output using intl package =>  2021-03-16
+                                                // print( formattedDate2); //formatted date output using intl package =>  2021-03-16
                                                 setState(
                                                   () {
                                                     dateInput2.text =
@@ -556,17 +566,19 @@ class _Record_PageState extends State<Record_Page> {
                                               vertical: 8.0), // Button padding
                                         ),
                                         onPressed: () async {
-                                            final Workbook workbook = Workbook();
-                                            final Worksheet sheet = workbook.worksheets[0];
-                                            var excelDataRows = dateFilter();
-                                            sheet.importData(excelDataRows, 1, 1,);
-                                            final List<int> bytes = workbook.saveAsStream();
-                                            workbook.dispose();
-                                            final String path = (await getApplicationSupportDirectory()).path;
-                                            final String fileName = '$path/Record.xlsx';
-                                            final File file = File(fileName);
-                                            await file.writeAsBytes(bytes);
-                                            OpenFile.open(fileName);
+                                            if (dateInput.text != "" && dateInput2.text != "") {
+                                              final Workbook workbook = Workbook();
+                                              final Worksheet sheet = workbook.worksheets[0];
+                                              var excelDataRows = dateFilter();
+                                              sheet.importData(excelDataRows, 1, 1,);
+                                              final List<int> bytes = workbook.saveAsStream();
+                                              workbook.dispose();
+                                              final String path = (await getApplicationSupportDirectory()).path;
+                                              final String fileName = '$path/Record.xlsx';
+                                              final File file = File(fileName);
+                                              await file.writeAsBytes(bytes);
+                                              OpenFile.open(fileName);
+                                          }
                                         },
                                         child: const Text(
                                           'Show',
@@ -595,12 +607,16 @@ class _Record_PageState extends State<Record_Page> {
     if (dateInput.text != "" && dateInput2.text != "") {
       List<ExcelDataCell> cells = [];
       var records = {};
-      
-      cells.add((const ExcelDataCell(columnHeader: 'Acc. No.', value: '' )));
-      dates.forEach((key, value) { cells.add(ExcelDataCell(columnHeader: key, value: ''));});
-      excelDataRows.add(ExcelDataRow(cells: cells));
-
+      var newDates = {};
       dates.forEach((key, value) {
+        if((DateTime.parse(key).isAfter(DateTime.parse(dateInput.text)) || DateTime.parse(key).isAtSameMomentAs(DateTime.parse(dateInput.text))) && (DateTime.parse(key).isBefore(DateTime.parse(dateInput2.text)) || DateTime.parse(key).isAtSameMomentAs(DateTime.parse(dateInput2.text)))){
+          newDates.addAll({key : value});
+        }
+      });
+      cells.add((const ExcelDataCell(columnHeader: 'Acc. No.', value: '' )));
+      newDates.forEach((key, value) { cells.add(ExcelDataCell(columnHeader: key, value: ''));});
+      excelDataRows.add(ExcelDataRow(cells: cells));
+      newDates.forEach((key, value) {
         value.forEach((key1, value1){
           records.update(
             key1, 
@@ -618,7 +634,7 @@ class _Record_PageState extends State<Record_Page> {
       records.forEach((key0, value0) {
         List<ExcelDataCell> cells = [];
         cells.add((ExcelDataCell(columnHeader: 'Acc. No.', value: key0)));
-        dates.forEach((key1, _) {
+        newDates.forEach((key1, _) {
           cells.add((ExcelDataCell(columnHeader: key1, value: value0['$key1'] ?? 0)));
         });
         excelDataRows.add(ExcelDataRow(cells: cells));

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
 // import 'package:internship2/Screens/Home/home.dart';
 
 class newmem extends StatefulWidget {
@@ -655,10 +656,7 @@ class _newmemState extends State<newmem> {
                                     }
                                   }
                                 });
-                                // _firestone
-                                //   .collection('summary')
-                                //   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
-                                //   .set(,SetOptions(merge: true));
+                                updateSummary('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}', Plan == 'A' ? 2 : 3 , int.parse(Amount));
                                 _firestone
                                   .collection('records')
                                   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
