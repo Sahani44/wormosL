@@ -146,14 +146,27 @@ class _dueState extends State<due> {
   }
 
   void getNewMemberList (int currentIndex, int currentIndex2 ) {
-    String currentIndexPD = currentIndex == 0 ? 'Paid' : 'Due';
+    
     String currentIndex2AB = currentIndex2 == 0 ? 'A' : 'B';
     for (int i=0; i<newTiles.length; i++) {
-      var status = newTiles[i].get('status');
+      // var status = newTiles[i].get('status');
       var plan = newTiles[i].get('Plan');
       int ac = newTiles[i].get('monthly');
       int ar = newTiles[i].get('Amount_Remaining');
-      if(status == currentIndexPD && plan == currentIndex2AB){
+      var type = newTiles[i].get('Type');
+      int paidMonthly = ac == ar ? 0 : 1;
+      int paidDW = 0;
+      if(type != 'Monthly') {
+        if(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).isAfter(DateTime.parse(newTiles[i].get('history').keys.last)) &&  (newTiles[i].get('Amount_Collected') >0 && ar !=0) && ac > ar){
+          paidDW = 1;
+        } 
+      }
+      if(type == 'Monthly' && paidMonthly == currentIndex && plan == currentIndex2AB){
+        newMemberList.add(Memberlist[i]);
+        totalClient += 1;
+        totalAmount += ac;
+        totalBalance += ar;
+      } else if (type != 'Monthly' && paidDW == currentIndex && plan == currentIndex2AB) {
         newMemberList.add(Memberlist[i]);
         totalClient += 1;
         totalAmount += ac;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Collection/collection_landing.dart';
+import 'package:internship2/Screens/Home/home.dart';
+import 'package:internship2/Screens/Home/home_charts.dart';
 import 'package:internship2/Screens/Home/home_functions.dart';
 // import 'package:internship2/Screens/Account/account_summary.dart';
 import 'package:internship2/Screens/Lapse/lapsescreen.dart';

@@ -1,6 +1,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Home/home.dart';
+import 'package:internship2/Screens/Home/home_charts.dart';
 
 import 'home_functions.dart';
 
@@ -123,7 +124,12 @@ class _HomeLandingState extends State<HomeLanding> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text('ACCOUNT SUMMARY'),
-                        TextButton(onPressed: (){}, child: const Text('View Report'))
+                        TextButton(onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomeCharts(date: '${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}')),
+                          );
+                        }, child: const Text('View Report'))
                       ],
                     ),
                     amountdataLoc(a.totalClient, a.totalAmount, 'All'),

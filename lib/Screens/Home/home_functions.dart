@@ -116,6 +116,10 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['amountB'] = nm['amountB'] - value;
         break;
       }
+      case 6 : {
+        nm['totalBalance'] = nm['totalBalance'] + value;
+        break;
+      }
     } 
     FirebaseFirestore.instance.collection('summary').doc(date).set(nm);
     getHomeDocs();
@@ -129,4 +133,5 @@ key = 0 implies money deposited of A
     = 3           ''           B
     = 4 implies close account in A
     = 5           ''             B
+    = 6 implies money taken(update total balance)
 */

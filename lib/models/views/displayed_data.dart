@@ -70,13 +70,13 @@ class _displayeddataState extends State<displayeddata> {
     DateTime now = DateTime.now();
 
      if(widget.type == 'Daily') {
-      money = (now.day>30 ? 30*(widget.monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.monthly / 30).floor()-widget.Amount_Remaining);
+      money = (widget.monthly/30).floor();
     }
     if (widget.type == '5 Days'){
-      money = ((widget.monthly / 6).floor()*((now.day-DateTime.parse(widget.history.keys.last).day)%5));
+      money = (widget.monthly / 6).floor();
     }
     if (widget.type == 'widget.monthly'){
-      money = (widget.monthly - widget.Amount_Remaining);
+      money = (widget.monthly);
     } 
     Size size = MediaQuery.of(context).size;
     final dateo =
@@ -384,7 +384,7 @@ class _displayeddataState extends State<displayeddata> {
                           onPressed: () {
                             _firestone
                                 .collection('deleted_accounts')
-                                .doc(widget.Account_No)
+                                .doc(widget.id)
                                 .get()
                                 .then((DocumentSnapshot<Map<String, dynamic>>
                                     documentSnapshot) {
@@ -393,11 +393,11 @@ class _displayeddataState extends State<displayeddata> {
                                 if (data != null) {
                                   _firestone
                                     .collection(widget.accountType)
-                                    .doc(widget.Account_No)
+                                    .doc(widget.id)
                                     .set(data);
                                   _firestone
                                   .collection('deleted_accounts')
-                                  .doc(widget.Account_No)
+                                  .doc(widget.id)
                                   .delete();
                                   widget.callback();
                                 }
@@ -415,7 +415,7 @@ class _displayeddataState extends State<displayeddata> {
                           onPressed: () {
                             _firestone
                                   .collection('deleted_accounts')
-                                  .doc(widget.Account_No)
+                                  .doc(widget.id)
                                   .delete();
                             Navigator.pop(context, 'OK');
                             widget.callback();
@@ -441,7 +441,7 @@ class _displayeddataState extends State<displayeddata> {
                           onPressed: () {
                             _firestone
                                 .collection(widget.accountType)
-                                .doc(widget.Account_No)
+                                .doc(widget.id)
                                 .get()
                                 .then((DocumentSnapshot<Map<String, dynamic>>
                                     documentSnapshot) {
@@ -450,11 +450,11 @@ class _displayeddataState extends State<displayeddata> {
                                 if (data != null) {
                                   _firestone
                                     .collection('deleted_accounts')
-                                    .doc(widget.Account_No)
+                                    .doc(widget.id)
                                     .set(data);
                                   _firestone
                                   .collection(widget.accountType)
-                                  .doc(widget.Account_No)
+                                  .doc(widget.id)
                                   .delete();
                                   widget.callback();
                                 }

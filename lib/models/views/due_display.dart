@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Account/client_dtbase.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
 import 'package:internship2/widgets/button.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
 import 'package:flutter_switch/flutter_switch.dart';
@@ -84,7 +85,7 @@ class _due_dataState extends State<due_data> {
     final yearm = datem.year;
     final monthm = datem.month;
     final daym = datem.day;
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
     // if (now.day-payment_date.toDate().day == 1) {
     //   status = 'Due';
     //   colour = const Color(0xffD83F52);
@@ -93,28 +94,34 @@ class _due_dataState extends State<due_data> {
     // int Daily = (Monthly / 30).floor();
     // int Weekly = (Monthly / 4).floor();
     if(widget.Type == 'Daily') {
+      money = (widget.Monthly/30).floor();
       // if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 1 || now.month-widget.history[widget.history.length-1]['payment_date'].toDate().month >= 1) {
-      status = 'Due';
-      colour = const Color(0xffD83F52);
-      // setState(() {});
-    // }
-      // money = (now.day>30 ? 30*(widget.Monthly / 30).floor()-widget.Amount_Remaining : now.day*(widget.Monthly / 30).floor()-widget.Amount_Remaining);
+      if(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).isAfter(DateTime.parse(widget.history.keys.last)) && (widget.Amount_Collected >0 && widget.Amount_Remaining !=0) && widget.Monthly > widget.Amount_Remaining){
+        status = 'Due';
+        // colour = const Color(0xffD83F52);
+        // setState(() {});
+      } else {
+        status = "Paid";
+      }
     }
     if (widget.Type == '5 Days'){
-      // if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 5) {
-      status = 'Due';
-      colour = const Color(0xffD83F52);
-      // setState(() {});
-    // }
-      // money = (widget.Monthly / 6).floor()*((now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day)%5) as int;
+      // if (now.day-widget.history[widget.history.length-1]['payment_date'].toDate().day >= 1) 
+      if(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day).isAfter(DateTime.parse(widget.history.keys.last)) && (widget.Amount_Collected >0 && widget.Amount_Remaining !=0) && widget.Monthly > widget.Amount_Remaining){
+        status = 'Due';
+        // colour = const Color(0xffD83F52);
+        // setState(() {});
+      } else {
+        status = "Paid";
+      }
+      money = (widget.Monthly / 6).floor();
     }
     if (widget.Type == 'Monthly'){
-      money = widget.Monthly - widget.Amount_Remaining;
-      if(money > 0 || DateTime.fromMillisecondsSinceEpoch(widget.next_due_date.millisecondsSinceEpoch).isBefore(DateTime.now())){
-        status = 'Due';
+      money = widget.Monthly;
+      if(widget.Monthly == widget.Amount_Remaining){
+        status = 'Paid';
       }
       else {
-        status = 'Paid';
+        status = 'Due';
       }
     } 
     return Column(
@@ -157,6 +164,11 @@ class _due_dataState extends State<due_data> {
                       .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
                       .set({widget.Account_No : money}, SetOptions(merge: true));
 
+                     _firestone
+                      .collection('records')
+                      .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
+                      .update({'total' : FieldValue.increment(money)});                      
+
                     if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
                   _firestone
                       .collection(widget.accountType)
@@ -179,7 +191,7 @@ class _due_dataState extends State<due_data> {
                         'paid_installment': widget.paid_installment,
                       });
                   }
-                  widget.callBack();
+                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', 6, money);
                   setState(() {
                     colour = const Color(0xff29756F);
                     // if(Amount_Remaining + money >= Monthly){
@@ -189,6 +201,7 @@ class _due_dataState extends State<due_data> {
                     //   Amount_Remaining += money;
                     // }
                   });
+                  widget.callBack();
                   }
                   else {}
                 },
@@ -577,7 +590,7 @@ class _due_dataState extends State<due_data> {
                           onPressed: () {
                             _firestone
                                 .collection(widget.accountType)
-                                .doc(widget.Account_No)
+                                .doc(widget.id)
                                 .get()
                                 .then((DocumentSnapshot<Map<String, dynamic>>
                                     documentSnapshot) {
@@ -591,7 +604,7 @@ class _due_dataState extends State<due_data> {
 
                                   _firestone
                                   .collection(widget.accountType)
-                                  .doc(widget.Account_No)
+                                  .doc(widget.id)
                                   .delete();
 
                                   widget.callBack();
