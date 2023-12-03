@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:add_2_calendar/add_2_calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:internship2/Screens/Home/home_functions.dart';
+import 'package:internship2/Screens/Place/plaace.dart';
 // import 'package:internship2/Screens/Home/home.dart';
 
 class newmem extends StatefulWidget {
@@ -660,7 +661,13 @@ class _newmemState extends State<newmem> {
                                 _firestone
                                   .collection('records')
                                   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
-                                  .set({Account_No : totalAmountCollected}, SetOptions(merge: true));
+                                  .set({
+                                    Account_No : {
+                                      'coll' : totalAmountCollected,
+                                      'monthly' : int.parse(Amount),
+                                      'place' : widget.place,
+                                      'plan' : Plan
+                                      }}, SetOptions(merge: true));
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Member Created')),

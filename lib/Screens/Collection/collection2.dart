@@ -83,6 +83,7 @@ class _collection2State extends State<collection2> {
         phone: phone,
         callBack: callBack,
         id:id,
+        place:place
       ),
     );
   }

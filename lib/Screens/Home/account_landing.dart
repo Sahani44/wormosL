@@ -127,7 +127,7 @@ class _HomeLandingState extends State<HomeLanding> {
                         TextButton(onPressed: (){
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => HomeCharts(date: '${date.year}-${date.month < 10 ? '0${date.month}' : date.month}-${date.day < 10 ? '0${date.day}' : date.day}')),
+                            MaterialPageRoute(builder: (context) => HomeCharts(date: date)),
                           );
                         }, child: const Text('View Report'))
                       ],

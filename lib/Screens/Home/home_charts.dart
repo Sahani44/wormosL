@@ -1,13 +1,17 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
+import 'package:intl/intl.dart';
 
 class HomeCharts extends StatefulWidget {
   HomeCharts({
-    required String date,
+    required this.date,
     super.key});
   static const id = '/homechart';
-  late String date;
+  late DateTime date;
   @override
   State<HomeCharts> createState() => _HomeChartsState();
 }
@@ -17,12 +21,15 @@ class _HomeChartsState extends State<HomeCharts> {
   late final _firestone = FirebaseFirestore.instance;
   var tiles =[];
   var tiles1 = [];
+  var x =[];
   List<FlSpot> dates = [];
+  var maxY = 0;
   var _isloading = true;
-  var items = [    
-    'Monthly',
-    '5 Days',
-  ];
+  List<Widget> details = [];
+  int catA = 0;
+  int catB = 0;
+  int overAll = 0;
+  var items = {};
 
 
   Future<bool> getDocs () async {
@@ -37,17 +44,83 @@ class _HomeChartsState extends State<HomeCharts> {
         await _firestone.collection("new_place").get();
     tiles = querySnapshot.docs.toList() + querySnapshot1.docs.toList();
     tiles1 = querySnapshot2.docs.toList();
-    var x = querySnapshot3.docs.toList();
-    
-    for (var v in x) {
-      items.add(v.get('Name'));
-    }
+    x = querySnapshot3.docs.toList();
 
-    for (var tile in tiles1) {
-      dates.add(FlSpot(tile.id.toString().substring(8) as double,tile.data()['total'] as double));
-    }
     return false;
   
+  }
+
+
+  void createChart () {
+
+    dates = [];
+    details = [];
+    catA = 0;catB = 0; overAll = 0;
+    items.addAll(
+      {'Monthly' : {
+      'total' : 0,
+      'received' : 0,
+      'trans' : 0
+      },
+      '5 Days' : {
+        'total' : 0,
+        'received' : 0,
+        'trans' : 0
+      }}
+    );
+
+    for (var v in x) {
+      items.addAll({
+        v.get('Name') : {
+          'total' : 0,
+          'received' : 0,
+          'trans' : 0
+        }
+      });
+    }
+    for (var tile in tiles1) {
+      if(widget.date.year == int.parse(tile.id.toString().substring(0,4)) && widget.date.month == int.parse(tile.id.toString().substring(5,7))){
+  
+        int received = 0;
+        tile.data().forEach((key,value){
+          received += value['coll'] as int;
+          String d = DateFormat('yyyy-MM-dd').format(widget.date);
+          if(tile.id == d){
+            items[value['place']]['total'] += value['monthly'] as int;
+            items[value['place']]['received'] += value['coll'] as int;
+            items[value['place']]['trans'] += 1;
+            if(value['plan'] == 'A'){
+              catA += value['coll'] as int;
+            }
+            else{
+              catB += value['coll'] as int;
+            }
+            overAll += value['coll'] as int;
+          }
+        }); 
+        
+        if(received > maxY) {
+          maxY = received;
+          }
+
+        dates.add(FlSpot(double.parse(tile.id.toString().substring(8)), received.toDouble()));
+      }
+    }
+    if(dates.isEmpty) {
+      dates.add(const FlSpot(0, 0));
+    }
+    // String formatedDate = DateFormat('yyyy-MM-dd').format(widget.date);
+    // for(var tile in tiles) {
+    //   if(tile.get('history').keys.contains(formatedDate)) {
+    //     if(tile.get('Plan') == 'A'){
+    //       catA += tile.get('history')[formatedDate]['payment_amount'] as int;
+    //     } else{
+    //       catB += tile.get('history')[formatedDate]['payment_amount'] as int;
+    //     }
+    //     overAll += tile.get('history')[formatedDate]['payment_amount'] as int;
+    //   }
+    // }
+
   }
 
     @override
@@ -61,6 +134,9 @@ class _HomeChartsState extends State<HomeCharts> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    createChart();
+    var itemsKeys = items.keys.toList();
+    var itemsValues = items.values.toList();
     return 
      Scaffold(
       body: _isloading
@@ -81,7 +157,7 @@ class _HomeChartsState extends State<HomeCharts> {
                       borderRadius: BorderRadius.circular(20),
                       color: const Color.fromARGB(255, 50, 148, 141)
                     ),
-                    child: const Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                          Row(
@@ -90,19 +166,62 @@ class _HomeChartsState extends State<HomeCharts> {
                           children: [
                             Column(
                               children: [
-                                Text('Month Collection',style: TextStyle(color: Colors.white),),
-                                Text('10000000',style: TextStyle(color: Colors.white),)
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Text('Month Collection',style: TextStyle(color: Colors.white),),
-                                Text('10000000',style: TextStyle(color: Colors.white),)
+                                const Text('Month Collection',style: TextStyle(color: Colors.white),),
+                                Text('${summaryDates['${widget.date.year}-${widget.date.month}-${widget.date.day}']['totalAmount']}',style: const TextStyle(color: Colors.white),)
                               ],
                             ),
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: 33 * 25,
+                    height: size.height * .35,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: LineChart(
+                          LineChartData(
+                            minX: 1,
+                            maxX: 31,
+                            minY: 0,
+                            maxY: maxY.toDouble(),
+                            lineBarsData: [
+                              LineChartBarData(
+                                spots: dates,
+                                isCurved: false,
+                                color: Colors.blue,
+                                dotData: const FlDotData(show: true)
+                              ),
+                            ],
+                            titlesData: FlTitlesData(
+                              show: true,
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                  getTitlesWidget: bottomTitleWidgets,
+                                ),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                  getTitlesWidget: leftTitleWidgets,
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(
+                              show: true,
+                              border: Border.all(color: const Color(0xff37434d)),
+                            ),
+                            gridData: const FlGridData(show: false),
+                          )
+                        ),
                     ),
                   ),
                 ),
@@ -117,31 +236,31 @@ class _HomeChartsState extends State<HomeCharts> {
                       borderRadius: BorderRadius.circular(20),
                       color: const Color.fromARGB(255, 50, 148, 141)
                     ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(15.0),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text("Today's Collection",style: TextStyle(color: Colors.white)),
+                          Text("${widget.date.day}/${widget.date.month}/${widget.date.year}'s Collection",style: const TextStyle(color: Colors.white)),
                           Row( 
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Overall',style: TextStyle(color: Colors.white)),
-                              Text('50000',style: TextStyle(color: Colors.white))
+                              const Text('Overall',style: TextStyle(color: Colors.white)),
+                              Text('$overAll',style: const TextStyle(color: Colors.white))
                             ],
                           ),
                           Row( 
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Category A',style: TextStyle(color: Colors.white)),
-                              Text('50000',style: TextStyle(color: Colors.white))
+                              const Text('Category A',style: TextStyle(color: Colors.white)),
+                              Text('$catA',style: const TextStyle(color: Colors.white))
                             ],
                           ),
                           Row( 
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Category B',style: TextStyle(color: Colors.white)),
-                              Text('50000',style: TextStyle(color: Colors.white))
+                              const Text('Category B',style: TextStyle(color: Colors.white)),
+                              Text('$catB',style: const TextStyle(color: Colors.white))
                             ],
                           ),
                         ],
@@ -149,30 +268,41 @@ class _HomeChartsState extends State<HomeCharts> {
                     )
                   )
                 )
-              ),
-              Expanded(
-                child: AspectRatio(aspectRatio: 1.5,
-                child: LineChart(
-                  LineChartData(
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: dates,
-                        isCurved: true,
-                        color: Colors.blue,
-                        dotData: const FlDotData(show: false)
-                      ),
-                    ],
-                    titlesData: const FlTitlesData(show: false),
-                    borderData: FlBorderData(show: false),
-                    gridData: const FlGridData(show: false),
-                  )
-                ),
-              )),
+              ),              
               const Padding(
                 padding: EdgeInsets.all(8.0),
                 child:  Text('Details',style: TextStyle(color: Colors.black)),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextButton(
+                          onPressed: () async {
+                DateTime? newDateOpen =
+                    await showDatePicker(
+                        context: context,
+                        initialDate: widget.date,
+                        firstDate: DateTime(1990),
+                        lastDate: DateTime.now());
+                if (newDateOpen == null) return;
               
+                setState(() => widget.date = newDateOpen);
+                          },
+                          child: Text(
+                  style: const TextStyle(
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.left,
+                  '${widget.date.day}/${widget.date.month}/${widget.date.year}')
+                          ),
+              ),
+              ListView.builder(
+                itemCount: itemsKeys.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int i) {
+                  return createRow(itemsKeys[i], itemsValues[i]['trans'], itemsValues[i]['received'], itemsValues[i]['total']);
+                }
+              )
+              // createRow(itemsKeys[0], itemsValues[0]['trans'], itemsValues[0]['received'], itemsValues[0]['total'])
             ],
           ),
         ),
@@ -180,24 +310,80 @@ class _HomeChartsState extends State<HomeCharts> {
     );
   }
 
-  Widget createRow(String roadName, String trans, String received, String total) {
-    return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Column(
+  Widget createRow(String roadName, int trans, int received, int total) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SizedBox(
+        height: 40,
+        child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  Text(roadName ,style: const TextStyle(color: Colors.black)),
-                  Text(trans,style: const TextStyle(color: Colors.black)),
+                  Column(
+                    children: [
+                      Text(roadName ,style: const TextStyle(color: Colors.black)),
+                      Text('$trans',style: const TextStyle(color: Colors.black)),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Text('$received',style: const TextStyle(color: Colors.black)),
+                      Text('$total',style: const TextStyle(color: Colors.black)),
+                    ],
+                  )
                 ],
               ),
-              Column(
-                children: [
-                  Text(received,style: const TextStyle(color: Colors.black)),
-                  Text(total,style: const TextStyle(color: Colors.black)),
-                ],
-              )
-            ],
-          );
+      ),
+    );
+  }
+
+  Widget bottomTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    );
+    Widget text;
+    switch (value.toInt()) {
+      case 2:
+        text = const Text('MAR', style: style);
+        break;
+      case 5:
+        text = const Text('JUN', style: style);
+        break;
+      case 8:
+        text = const Text('SEP', style: style);
+        break;
+      default:
+        text = const Text('', style: style);
+        break;
+    }
+
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      child: text,
+    );
+  }
+
+  Widget leftTitleWidgets(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+    );
+    String text;
+    switch (value.toInt()) {
+      case 1:
+        text = '10K';
+        break;
+      case 3:
+        text = '30k';
+        break;
+      case 5:
+        text = '50k';
+        break;
+      default:
+        return Container();
+    }
+
+    return Text(text, style: style, textAlign: TextAlign.left);
   }
 
 }

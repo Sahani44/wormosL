@@ -79,6 +79,7 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['A']['deposit']['amount'] = nm['A']['deposit']['amount']+value;
         nm['A']['pending']['account'] = nm['A']['pending']['account']-1;
         nm['A']['pending']['amount'] = nm['A']['pending']['amount']-value;
+        nm['totalBalance'] = nm['totalBalance'] - value;
         break;
       }
       case 1 : {
@@ -86,6 +87,7 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['B']['deposit']['amount'] = nm['B']['deposit']['amount']+value;
         nm['B']['pending']['account'] = nm['B']['pending']['account']-1;
         nm['B']['pending']['amount'] = nm['B']['pending']['amount']-value;
+        nm['totalBalance'] = nm['totalBalance'] - value;
         break;
       }
       case 2 : {
@@ -93,6 +95,8 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['newAmount'] = nm['newAmount'] + value;
         nm['clientA'] = nm['clientA'] + 1;
         nm['amountA'] = nm['amountA'] + value;
+        nm['totalClient'] += 1;
+        nm['totalAmount'] += value;
         break;
       }
       case 3 : {
@@ -100,6 +104,8 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['newAmount'] = nm['newAmount'] + value;
         nm['clientB'] = nm['clientB'] + 1;
         nm['amountB'] = nm['amountB'] + value;
+        nm['totalClient'] += 1;
+        nm['totalAmount'] += value;
         break;
       }
       case 4 : {
@@ -107,6 +113,8 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['closedAmount'] = nm['closedAmount'] + value;
         nm['clientA'] = nm['clientA'] - 1;
         nm['amountA'] = nm['amountA'] - value;
+        nm['totalClient'] -= 1;
+        nm['totalAmount'] -= value;
         break;
       }
       case 5 : {
@@ -114,6 +122,8 @@ void _updateSummaryHelper(String date, int key, var value) {
         nm['closedAmount'] = nm['closedAmount'] + value;
         nm['clientB'] = nm['clientB'] - 1;
         nm['amountB'] = nm['amountB'] - value;
+        nm['totalClient'] -= 1;
+        nm['totalAmount'] -= value;
         break;
       }
       case 6 : {

@@ -622,11 +622,11 @@ class _Record_PageState extends State<Record_Page> {
             key1, 
             (v) {
               v.addAll({
-                key : value1 
+                key : value1['coll'] 
               });
               return v;
             },
-            ifAbsent:() => {key : value1},
+            ifAbsent:() => {key : value1['coll']},
           );
         });
        });

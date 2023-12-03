@@ -33,6 +33,7 @@ class _lapseState extends State<lapse> {
   String Location = '';
   late String accountType;
   late String Phone;
+  late String place;
   String Type = 'Daily';
   int value = 0;
   var _isloading = true;
@@ -80,6 +81,7 @@ class _lapseState extends State<lapse> {
         add: add, 
         phone: Phone,
         callBack: callBack,
+        place:place
       ),
     );
   }
@@ -123,6 +125,7 @@ class _lapseState extends State<lapse> {
       total_installment = tile.get('total_installment');
       history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
+      place = tile.get('place');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');

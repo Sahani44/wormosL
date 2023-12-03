@@ -34,6 +34,7 @@ class due_data extends StatefulWidget {
     required this.add, 
     required this.phone,
     required this.id,
+    required this.place
   });
   final String Member_Name;
   final String Plan;
@@ -54,6 +55,7 @@ class due_data extends StatefulWidget {
   final String add;
   final String phone;
   final String cif;
+  final String place;
   var callBack;
   var id;
 
@@ -162,12 +164,12 @@ class _due_dataState extends State<due_data> {
                     _firestone
                       .collection('records')
                       .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
-                      .set({widget.Account_No : money}, SetOptions(merge: true));
-
-                     _firestone
-                      .collection('records')
-                      .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
-                      .update({'total' : FieldValue.increment(money)});                      
+                      .set({widget.Account_No : {
+                        'coll' : money,
+                        'monthly' : widget.Monthly,
+                        'place' : widget.place == '' ? widget.Type : widget.place,
+                        'plan' : widget.Plan
+                      }}, SetOptions(merge: true));                      
 
                     if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
                   _firestone

@@ -82,6 +82,7 @@ class _dueState extends State<due> {
         add: add, 
         phone: Phone,
         id:id,
+        place:place
       ),
     );
   }
