@@ -30,6 +30,7 @@ class _HomeChartsState extends State<HomeCharts> {
   int catB = 0;
   int overAll = 0;
   var items = {};
+  var collected = 0;
 
 
   Future<bool> getDocs () async {
@@ -56,15 +57,22 @@ class _HomeChartsState extends State<HomeCharts> {
     dates = [];
     details = [];
     catA = 0;catB = 0; overAll = 0;
+    String d = DateFormat('yyyy-MM-dd').format(widget.date);
+    if(!summaryDates.containsKey(d)){
+      createSummary(d);
+    }
     items.addAll(
-      {'Monthly' : {
-      'total' : 0,
-      'received' : 0,
-      'trans' : 0
+      {
+      'Monthly' : {
+        'monthlyTotal' : 0,
+        'monthlyReceived' : 0,
+        'dailyReceived' : 0,
+        'trans' : 0
       },
       '5 Days' : {
-        'total' : 0,
-        'received' : 0,
+        'monthlyTotal' : 0,
+        'monthlyReceived' : 0,
+        'dailyReceived' : 0,
         'trans' : 0
       }}
     );
@@ -72,22 +80,31 @@ class _HomeChartsState extends State<HomeCharts> {
     for (var v in x) {
       items.addAll({
         v.get('Name') : {
-          'total' : 0,
-          'received' : 0,
+          'monthlyTotal' : 0,
+          'dailyTotal' : 0,
+          'monthlyReceived' : 0,
+          'dailyReceived' : 0,
           'trans' : 0
         }
       });
     }
+
+    items.forEach((key, value) { 
+      value['monthlyTotal'] = summaryDates[d]['monthlyTotal'][key] ;
+      value['dailyTotal'] = (summaryDates[d]['monthlyTotal'][key]/30).floor();
+    });
+
+    
+
     for (var tile in tiles1) {
+
       if(widget.date.year == int.parse(tile.id.toString().substring(0,4)) && widget.date.month == int.parse(tile.id.toString().substring(5,7))){
-  
         int received = 0;
         tile.data().forEach((key,value){
+          items[value['place']]['monthlyReceived'] += value['coll'] as int;
           received += value['coll'] as int;
-          String d = DateFormat('yyyy-MM-dd').format(widget.date);
-          if(tile.id == d){
-            items[value['place']]['total'] += value['monthly'] as int;
-            items[value['place']]['received'] += value['coll'] as int;
+          if(tile.id == d){ 
+            items[value['place']]['dailyReceived'] += value['coll'] as int;
             items[value['place']]['trans'] += 1;
             if(value['plan'] == 'A'){
               catA += value['coll'] as int;
@@ -97,18 +114,21 @@ class _HomeChartsState extends State<HomeCharts> {
             }
             overAll += value['coll'] as int;
           }
+
         }); 
-        
+        collected += received;
         if(received > maxY) {
           maxY = received;
-          }
+        }
 
         dates.add(FlSpot(double.parse(tile.id.toString().substring(8)), received.toDouble()));
       }
     }
+
     if(dates.isEmpty) {
       dates.add(const FlSpot(0, 0));
     }
+    
     // String formatedDate = DateFormat('yyyy-MM-dd').format(widget.date);
     // for(var tile in tiles) {
     //   if(tile.get('history').keys.contains(formatedDate)) {
@@ -167,7 +187,13 @@ class _HomeChartsState extends State<HomeCharts> {
                             Column(
                               children: [
                                 const Text('Month Collection',style: TextStyle(color: Colors.white),),
-                                Text('${summaryDates['${widget.date.year}-${widget.date.month}-${widget.date.day}']['totalAmount']}',style: const TextStyle(color: Colors.white),)
+                                Text('${summaryDates[DateFormat('yyyy-MM-dd').format(widget.date)]['totalAmount']}',style: const TextStyle(color: Colors.white),)
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                const Text('Collected',style: TextStyle(color: Colors.white),),
+                                Text('$collected',style: const TextStyle(color: Colors.white),)
                               ],
                             ),
                           ],
@@ -295,12 +321,15 @@ class _HomeChartsState extends State<HomeCharts> {
                   '${widget.date.day}/${widget.date.month}/${widget.date.year}')
                           ),
               ),
-              ListView.builder(
-                itemCount: itemsKeys.length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int i) {
-                  return createRow(itemsKeys[i], itemsValues[i]['trans'], itemsValues[i]['received'], itemsValues[i]['total']);
-                }
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  itemCount: itemsKeys.length,
+                  shrinkWrap: true,
+                  itemBuilder: (BuildContext context, int i) {
+                    return createRow(itemsKeys[i], itemsValues[i]['trans'], itemsValues[i]['dailyTotal'], itemsValues[i]['dailyReceived'], itemsValues[i]['monthlyTotal'], itemsValues[i]['monthlyReceived']);
+                  }
+                ),
               )
               // createRow(itemsKeys[0], itemsValues[0]['trans'], itemsValues[0]['received'], itemsValues[0]['total'])
             ],
@@ -310,25 +339,42 @@ class _HomeChartsState extends State<HomeCharts> {
     );
   }
 
-  Widget createRow(String roadName, int trans, int received, int total) {
+  Widget createRow(String roadName, int trans,int dailyTotal, int dailyReceived, int monthlyTotal, int monthlyReceived) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(12.0),
       child: SizedBox(
         height: 40,
         child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    children: [
-                      Text(roadName ,style: const TextStyle(color: Colors.black)),
-                      Text('$trans',style: const TextStyle(color: Colors.black)),
-                    ],
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(roadName ,style: const TextStyle(color: Colors.black)),
+                        Text('$trans',style: const TextStyle(color: Colors.black)),
+                      ],
+                    ),
                   ),
-                  Column(
-                    children: [
-                      Text('$received',style: const TextStyle(color: Colors.black)),
-                      Text('$total',style: const TextStyle(color: Colors.black)),
-                    ],
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Text('$dailyTotal',style: const TextStyle(color: Colors.black)),
+                        Text('$dailyReceived',style: const TextStyle(color: Colors.black)),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex : 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('$monthlyTotal',style: const TextStyle(color: Colors.black)),
+                        Text('$monthlyReceived',style: const TextStyle(color: Colors.black)),
+                      ],
+                    ),
                   )
                 ],
               ),

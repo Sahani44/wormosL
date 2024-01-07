@@ -38,6 +38,7 @@ class _userState extends State<user> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp ndd;
   List Memberlist = [];
   List tiles = [];
   List results = [];
@@ -76,7 +77,8 @@ class _userState extends State<user> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
-      Memberlist.add(user_tile(Member_Name: Member_Name, Plan: Plan, Account_No: Account_No, date_open: date_open, date_mature: date_mature, Location: widget.Place, type: type, monthly: monthly, Amount_Remaining: Amount_Remaining, Amount_Collected: Amount_Collected, add: add, phone: phone, total_installment: total_installment, paid_installment: paid_installment, cif: cif, history: history,id:id));
+      ndd = tile.get('next_due_date');
+      Memberlist.add(user_tile(Member_Name: Member_Name, Plan: Plan, Account_No: Account_No, date_open: date_open, date_mature: date_mature, Location: widget.Place, type: type, monthly: monthly, Amount_Remaining: Amount_Remaining, Amount_Collected: Amount_Collected, add: add, phone: phone, total_installment: total_installment, paid_installment: paid_installment, cif: cif, history: history, id:id, ndd: ndd,));
     }
   }
 

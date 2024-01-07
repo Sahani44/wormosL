@@ -153,63 +153,80 @@ class _due_dataState extends State<due_data> {
               ),
               MaterialButton(
                 onPressed: () {
-                  if(status == 'Due'){
-                    status = 'Paid';
-                    widget.history.addAll({
-                      '${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}' : {
-                        'payment_mode' : mode,
-                        'payment_amount' : money,
-                      }
-                    });
-                    _firestone
-                      .collection('records')
-                      .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
-                      .set({widget.Account_No : {
-                        'coll' : money,
-                        'monthly' : widget.Monthly,
-                        'place' : widget.place == '' ? widget.Type : widget.place,
-                        'plan' : widget.Plan
-                      }}, SetOptions(merge: true));                      
+                  
+                    showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Making Payment?'),
+                      content: Text('Tap on OK to complete payment of $money for ${widget.Member_Name}'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () { 
+                           status = 'Paid';
+                              widget.history.addAll({
+                                '${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}' : {
+                                  'payment_mode' : mode,
+                                  'payment_amount' : money,
+                                }
+                              });
+                              _firestone
+                                .collection('records')
+                                .doc('${new_payment_date.year}-${new_payment_date.month < 10 ? '0${new_payment_date.month}' : new_payment_date.month}-${new_payment_date.day < 10 ? '0${new_payment_date.day}' : new_payment_date.day}')
+                                .set({widget.Account_No : {
+                                  'coll' : money,
+                                  'place' : widget.place == '' ? widget.Type : widget.place,
+                                  'plan' : widget.Plan
+                                }}, SetOptions(merge: true));                      
 
-                    if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
-                  _firestone
-                      .collection(widget.accountType)
-                      .doc(widget.id)
-                      .update({
-                    'history':widget.history,
-                    'status': status,
-                    'Amount_Collected': widget.Amount_Collected + money,
-                    'Amount_Remaining': widget.Amount_Remaining + money,
-                  });
-                  widget.Amount_Collected += money;
-                  widget.Amount_Remaining += money; 
-                  if(widget.Amount_Remaining + money >= widget.Monthly){
-                    widget.paid_installment++;
-                    _firestone
-                      .collection(widget.accountType)
-                      .doc(widget.Account_No)
-                      .update({
-                        'Amount_Remaining': widget.Amount_Remaining + money - widget.Monthly,
-                        'paid_installment': widget.paid_installment,
-                      });
-                  }
-                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', 6, money);
-                  setState(() {
-                    colour = const Color(0xff29756F);
-                    // if(Amount_Remaining + money >= Monthly){
-                    //   Amount_Remaining = Amount_Remaining + money - Monthly;
-                    // }
-                    // else{
-                    //   Amount_Remaining += money;
-                    // }
-                  });
-                  widget.callBack();
-                  }
-                  else {}
+                              if (widget.paid_installment >widget.total_installment) widget.paid_installment = 0;
+                            _firestone
+                                .collection(widget.accountType)
+                                .doc(widget.id)
+                                .update({
+                              'history': widget.history,
+                              'status': status,
+                              'Amount_Remaining': widget.Amount_Remaining + money,
+                            });
+                            // widget.Amount_Remaining += money; 
+                            if(widget.Amount_Remaining + money>= widget.Monthly){
+                              DateTime nndd = DateTime(widget.next_due_date.toDate().year, widget.next_due_date.toDate().month - (widget.Amount_Remaining/widget.Monthly).floor() + ((widget.Amount_Remaining + money)/widget.Monthly).floor(), widget.next_due_date.toDate().day);
+                              widget.paid_installment += (((widget.Amount_Remaining+money)/widget.Monthly).floor() - (widget.Amount_Remaining/widget.Monthly).floor());
+                              _firestone
+                                .collection(widget.accountType)
+                                .doc(widget.id)
+                                .update({
+                                  'paid_installment': widget.paid_installment,
+                                  'Amount_Remaining': widget.Amount_Remaining+money,
+                                  'next_due_date' : nndd,
+                                });
+                            }
+                            updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', 6, money);
+                            setState(() {
+                              colour = const Color(0xff29756F);
+                              // if(Amount_Remaining + money >= Monthly){
+                              //   Amount_Remaining = Amount_Remaining + money - Monthly;
+                              // }
+                              // else{
+                              //   Amount_Remaining += money;
+                              // }
+                            });
+                            widget.callBack();
+                            Navigator.pop(context, 'OK');
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                  
                 },
                 child: button(
                     size: size.width * 0.3,
-                    text: status == 'Due' ? status : '$status/Undo',
+                    text: status,
                     color: status == 'Paid'
                         ? const Color(0xff29756F)
                         : const Color(0xffD83F52)),
@@ -570,7 +587,7 @@ class _due_dataState extends State<due_data> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.Monthly, phone: widget.phone,plan: widget.Plan,id: widget.id,accType: widget.Type,callback: widget.callBack,)),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.Monthly, phone: widget.phone,plan: widget.Plan,id: widget.id,accType: widget.Type,callback: widget.callBack,ndd:widget.next_due_date)),
                   );
                 },
                 size: 20,
@@ -604,6 +621,7 @@ class _due_dataState extends State<due_data> {
                                     .doc(widget.Account_No)
                                     .set(data);
 
+                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.Monthly, type: (widget.Location != '') ? widget.Location : widget.Type, bal: widget.Amount_Remaining);
                                   _firestone
                                   .collection(widget.accountType)
                                   .doc(widget.id)

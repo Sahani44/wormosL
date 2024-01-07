@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:internship2/widgets/bottom_circular_button.dart';
 
 import '../../Screens/Account/client_dtbase.dart';
+import '../../Screens/Home/home_functions.dart';
 
 class displayeddata extends StatefulWidget {
   
@@ -14,6 +15,7 @@ class displayeddata extends StatefulWidget {
   final String Account_No;
   final Timestamp date_open;
   final Timestamp date_mature;
+  final Timestamp ndd;
   final String Location;
   final String type;
   final int monthly;
@@ -51,6 +53,7 @@ class displayeddata extends StatefulWidget {
     required this.phone,
     required this.deleted,
     required this.id,
+    required this.ndd,
     required this.callback,
   }) : super(key: key);
 
@@ -360,7 +363,7 @@ class _displayeddataState extends State<displayeddata> {
                 onpressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: widget.callback,)),
+                    MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: widget.callback,ndd: widget.ndd,)),
                   );
                 },
                 size: 20,
@@ -396,9 +399,11 @@ class _displayeddataState extends State<displayeddata> {
                                     .doc(widget.id)
                                     .set(data);
                                   _firestone
-                                  .collection('deleted_accounts')
-                                  .doc(widget.id)
-                                  .delete();
+                                    .collection('deleted_accounts')
+                                    .doc(widget.id)
+                                    .delete();
+                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?7:8, widget.monthly, type: (widget.Location != '') ? widget.Location : widget.type, bal: widget.Amount_Remaining);
+
                                   widget.callback();
                                 }
                               } else {
@@ -456,6 +461,9 @@ class _displayeddataState extends State<displayeddata> {
                                   .collection(widget.accountType)
                                   .doc(widget.id)
                                   .delete();
+                                  
+                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.monthly, type: (widget.Location != '') ? widget.Location : widget.type, bal: widget.Amount_Remaining);
+
                                   widget.callback();
                                 }
                               } else {

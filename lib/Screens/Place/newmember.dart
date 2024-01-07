@@ -59,7 +59,7 @@ class _newmemState extends State<newmem> {
   }
 
   DateTime date_open = DateTime.now();
-  DateTime date_mature = DateTime(DateTime.now().year + 5, DateTime.now().month, DateTime.now().day);
+  DateTime date_mature = DateTime(DateTime.now().year + 5, DateTime.now().month + 1, DateTime.now().day);
   DateTime payment_date = DateTime.now();
   @override
   Widget build(BuildContext context) {
@@ -373,11 +373,13 @@ class _newmemState extends State<newmem> {
                                                       lastDate: DateTime(2100));
                                               if (newDateOpen == null) return;
                 
-                                              setState(() => date_open = newDateOpen);
-                                              setState(() => date_mature = DateTime(
+                                              setState(() {
+                                                date_open = newDateOpen;
+                                                date_mature = DateTime(
                                                   date_open.year + 5,
-                                                  date_open.month,
-                                                  date_open.day));
+                                                  date_open.month + 1,
+                                                  date_open.day);
+                                              });
                                             },
                                             child: Text(
                                                 style: const TextStyle(
@@ -420,7 +422,7 @@ class _newmemState extends State<newmem> {
                 
                                               setState(() => date_mature = DateTime(
                                                   date_open.year + 5,
-                                                  date_open.month,
+                                                  date_open.month + 1,
                                                   date_open.day));
                                               
                                             },
@@ -625,7 +627,7 @@ class _newmemState extends State<newmem> {
                                 int totalAmountCollected = int.parse(Amount_Collected)+int.parse(Amount_Remaining);
                                 var next_due_date = DateTime(
                                                   date_open.year,
-                                                  date_open.month + (int.parse(Amount_Collected)/int.parse(Amount)).floor() + 1,
+                                                  date_open.month + (totalAmountCollected/int.parse(Amount)).floor() + 1,
                                                   date_open.day);
                                  
                                 _firestone
@@ -636,7 +638,7 @@ class _newmemState extends State<newmem> {
                                   'Plan': Plan,
                                   'Account_No': Account_No,
                                   'Address': Address,
-                                  'Amount_Collected': totalAmountCollected,
+                                  'Amount_Collected': int.parse(Amount_Collected),
                                   'Amount_Remaining': int.parse(Amount_Remaining),
                                   'Phone_No': Phone_No,
                                   'Type': dropdownvalue,
@@ -644,7 +646,7 @@ class _newmemState extends State<newmem> {
                                   'Date_of_Opening': date_open,
                                   'CIF_No': CIF_No,
                                   'monthly': int.parse(Amount),
-                                  'paid_installment': (int.parse(Amount_Collected)/int.parse(Amount)).floor(),
+                                  'paid_installment': (totalAmountCollected/int.parse(Amount)).floor(),
                                   'total_installment': total_installment,
                                   'status': status,
                                   'next_due_date' : next_due_date,
@@ -657,14 +659,13 @@ class _newmemState extends State<newmem> {
                                     }
                                   }
                                 });
-                                updateSummary('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}', Plan == 'A' ? 2 : 3 , int.parse(Amount));
+                                updateSummary('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}', Plan == 'A' ? 2 : 3 , int.parse(Amount), type: widget.place, bal: int.parse(Amount_Remaining) );
                                 _firestone
                                   .collection('records')
                                   .doc('${payment_date.year}-${payment_date.month < 10 ? '0${payment_date.month}' : payment_date.month}-${payment_date.day < 10 ? '0${payment_date.day}' : payment_date.day}')
                                   .set({
                                     Account_No : {
-                                      'coll' : totalAmountCollected,
-                                      'monthly' : int.parse(Amount),
+                                      'coll' : int.parse(Amount_Remaining),
                                       'place' : widget.place,
                                       'plan' : Plan
                                       }}, SetOptions(merge: true));

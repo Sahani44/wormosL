@@ -95,54 +95,89 @@ class _deposit_dataState extends State<deposit_data> {
                   ),
                 ],
               ),
-              if (widget.Amount_Collected > 0 && widget.Amount_Remaining == 0)
+              // if (widget.deposit_field)
+              //   MaterialButton(
+              //     onPressed: () {
+              //       setState(() {
+              //         // deposit_field = false;
+              //       });
+
+              //       // _firestone
+              //       //     .collection(widget.accountType)
+              //       //     .doc(widget.Account_No)
+              //       //     .update({
+              //       //   'deposit_field': false,
+              //       // });
+              //       widget.callBack();
+              //       // Navigator.pushReplacement(
+              //       //   context,
+              //       //   MaterialPageRoute(
+              //       //     builder: (context) => const deposit_screen(),
+              //       //   ),
+              //       // );
+              //     },
+              //     child: button(
+              //       size: size.width * 0.3,
+              //       text: 'Deposited',
+              //       color: const Color(0xff353CE5),
+              //     ),
+              //   ),
+                if (widget.Monthly <= widget.Amount_Remaining)
                 MaterialButton(
                   onPressed: () {
-                    setState(() {
-                      // deposit_field = false;
-                    });
-
-                    // _firestone
-                    //     .collection(widget.accountType)
-                    //     .doc(widget.Account_No)
-                    //     .update({
-                    //   'deposit_field': false,
-                    // });
-                    widget.callBack();
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const deposit_screen(),
-                    //   ),
-                    // );
-                  },
-                  child: button(
-                    size: size.width * 0.3,
-                    text: 'Deposited/Undo',
-                    color: const Color(0xff353CE5),
-                  ),
-                ),
-                if (widget.Monthly == widget.Amount_Remaining)
-                MaterialButton(
-                  onPressed: () {
-                    setState(() {
-                      // deposit_field = true;
-                    });
-
-                    _firestone
-                        .collection(widget.accountType)
-                        .doc(widget.id)
-                        .update({
-                      'Amount_Remaining': 0,
-                    });
-                    updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?0:1, widget.Amount_Remaining);
-                    widget.callBack();
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => const deposit_screen(),
-                    //   ),
-                    // );
+                    int rem = widget.Amount_Remaining%widget.Monthly;
+                    showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      title: const Text('Making Payment?'),
+                      content: money == 0 ? Text('Tap on OK to complete deposit of ${widget.Amount_Remaining-rem} for ${widget.Member_Name}') : Text('Tap on OK to complete deposit of $money for ${widget.Member_Name}'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                            // deposit_field = true;
+                            });
+                            if (money == 0)
+                            {   
+                              _firestone
+                              .collection(widget.accountType)
+                              .doc(widget.id)
+                              .update({
+                                'Amount_Remaining': rem,
+                                'Amount_Collected':widget.Amount_Collected+widget.Amount_Remaining-rem,
+                                'deposit_field': true,
+                              });
+                              updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?0:1, widget.Amount_Remaining-rem);
+                            }
+                            else{
+                              _firestone
+                              .collection(widget.accountType)
+                              .doc(widget.id)
+                              .update({
+                                'Amount_Remaining': widget.Amount_Remaining-money,
+                                'Amount_Collected': widget.Amount_Collected+money,
+                                'deposit_field': true,
+                              });
+                              updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?0:1, money);
+                            }
+                            widget.callBack();
+                            // Navigator.pushReplacement(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const deposit_screen(),
+                            //   ),
+                            // );
+                            Navigator.pop(context, 'OK');
+                          },
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
                   },
                   child: button(
                     size: size.width * 0.3,
@@ -351,9 +386,7 @@ class _deposit_dataState extends State<deposit_data> {
 
                   _firestone
                       .collection('new_account')
-                      .doc(widget.Location)
-                      .collection(widget.Location)
-                      .doc(widget.Account_No)
+                      .doc(widget.id)
                       .get()
                       .then((DocumentSnapshot<Map<String, dynamic>>
                           documentSnapshot) {

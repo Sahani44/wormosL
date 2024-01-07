@@ -21,6 +21,7 @@ class _maturityState extends State<maturity> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp ndd;
   late Map<String, Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
@@ -76,7 +77,8 @@ class _maturityState extends State<maturity> {
         Amount_Collected: Amount_Collected, 
         add: add, 
         phone: phone,
-        id:id
+        id:id,
+        ndd: ndd
       ),
     );
   }
@@ -121,6 +123,7 @@ class _maturityState extends State<maturity> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      ndd = tile.get('next_due_date');
       addData();
     }
   }

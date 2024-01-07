@@ -34,6 +34,7 @@ class Home {
   int newAmount = 0 ;
   int closedAmount = 0 ;
   int closedAccount = 0;
+  Map<String, dynamic> monthlyTotal = {};
   
   Home({
     required this.totalClient,
@@ -49,6 +50,7 @@ class Home {
     required this.newAmount,
     required this.closedAmount,
     required this.closedAccount,
+    required this.monthlyTotal
   });
   
   
@@ -67,6 +69,7 @@ class Home {
     int? newAmount,
     int? closedAmount,
     int? closedAccount,
+    Map<String, dynamic>? monthlyTotal,
   }) {
     return Home(
       totalClient: totalClient ?? this.totalClient,
@@ -81,7 +84,8 @@ class Home {
       closedAmount: closedAmount ?? this.closedAmount,
       closedAccount: closedAccount ?? this.closedAccount, 
       A: A ?? this.A,
-      B: B ?? this.B
+      B: B ?? this.B,
+      monthlyTotal: monthlyTotal?? this.monthlyTotal
     );
   }
 
@@ -100,6 +104,7 @@ class Home {
       'newAmount': newAmount,
       'closedAmount': closedAmount,
       'closedAccount': closedAccount,
+      'monthlyTotal' : monthlyTotal
     };
   }
 
@@ -118,6 +123,7 @@ class Home {
       newAmount: map['newAmount'] as int,
       closedAmount: map['closedAmount'] as int,
       closedAccount: map['closedAccount'] as int, 
+      monthlyTotal: map['monthlyTotal'] as Map<String,dynamic>,
     );
   }
 
@@ -127,7 +133,7 @@ class Home {
 
   @override
   String toString() {
-    return 'Home(totalClient: $totalClient, totalAmount: $totalAmount, clientA: $clientA, amountA: $amountA, clientB: $clientB, amountB: $amountB, A: $A, B: $B, totalBalance: $totalBalance, newAccount: $newAccount, newAmount: $newAmount, closedAmount: $closedAmount, closedAccount: $closedAccount)';
+    return 'Home(totalClient: $totalClient, totalAmount: $totalAmount, clientA: $clientA, amountA: $amountA, clientB: $clientB, amountB: $amountB, A: $A, B: $B, totalBalance: $totalBalance, newAccount: $newAccount, newAmount: $newAmount, closedAmount: $closedAmount, closedAccount: $closedAccount, monthlyToatl: $monthlyTotal)';
   }
 
   @override
@@ -147,6 +153,7 @@ class Home {
       other.newAccount == newAccount &&
       other.newAmount == newAmount &&
       other.closedAmount == closedAmount &&
+      other.monthlyTotal == monthlyTotal &&
       other.closedAccount == closedAccount;
   }
 
@@ -164,6 +171,7 @@ class Home {
       newAccount.hashCode ^
       newAmount.hashCode ^
       closedAmount.hashCode ^
+      monthlyTotal.hashCode ^
       closedAccount.hashCode;
   }
 

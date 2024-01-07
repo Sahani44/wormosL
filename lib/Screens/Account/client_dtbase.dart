@@ -4,12 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Menu.dart';
 
+import '../Home/home_functions.dart';
+
 class Client_dbt extends StatefulWidget {
   late String acc;
   late String memberName;
   late String cif;
   late Timestamp doo;
   late Timestamp dom;
+  late Timestamp ndd;
   late String location;
   late int amtcltd;
   late int amtrmn;
@@ -32,6 +35,7 @@ class Client_dbt extends StatefulWidget {
     required this.location,
     required this.amtcltd,
     required this.amtrmn,
+    required this.ndd,
     required this.add,
     required this.monthly,
     required this.phone, 
@@ -53,6 +57,9 @@ class _Client_dbtState extends State<Client_dbt> {
 
   @override
   Widget build(BuildContext context) {
+    var oldPlan = widget.plan;
+    var oldBal = widget.amtrmn;
+    var oldmonthly = widget.monthly;
     Size size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -192,22 +199,55 @@ class _Client_dbtState extends State<Client_dbt> {
                         ],
                       ),
                       SizedBox(
-                        width: size.width * 0.2,
-                      ),
-                      SizedBox(
                         width: size.width * 0.1,
-                        child: TextButton(
-                          onPressed: () {},
-                          style: const ButtonStyle(
-                              backgroundColor: MaterialStatePropertyAll<Color>(
-                                  Color(0xff42A19A))),
-                          child: Text(
-                            widget.plan,
-                            style: const TextStyle(
-                              color: Colors.black,
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: size.width * 0.1,
+                            child: TextButton(
+                              onPressed: () {
+                                widget.plan = 'A';
+                                setState(() {});
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: widget.plan == 'A'
+                                    ? const MaterialStatePropertyAll<Color>(
+                                        Color(0xff42A19A))
+                                    : const MaterialStatePropertyAll<Color>(
+                                        Color(0xffD9D9D9)),
+                              ),
+                              child: const Text(
+                                'A',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(
+                            width: size.width * 0.1,
+                            child: TextButton(
+                              onPressed: () {
+                                widget.plan = 'B';
+                                setState(() {});
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: widget.plan == 'B'
+                                    ? const MaterialStatePropertyAll<Color>(
+                                        Color(0xff42A19A))
+                                    : const MaterialStatePropertyAll<Color>(
+                                        Color(0xffD9D9D9)),
+                              ),
+                              child: const Text(
+                                'B',
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
                       )
                     ],
                   ),
@@ -290,13 +330,28 @@ class _Client_dbtState extends State<Client_dbt> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              TextButton(
+                                onPressed: () async {
+                                  DateTime? newDateOpen =
+                                      await showDatePicker(
+                                          context: context,
+                                          initialDate: widget.doo.toDate(),
+                                          firstDate: DateTime(1990),
+                                          lastDate: DateTime(2100));
+                                  if (newDateOpen == null) return;
+    
+                                  setState(() {
+                                    widget.doo = Timestamp.fromDate(newDateOpen);
+                                  });
+                                },
+                                child: Text(
                                 '${widget.doo.toDate().day}/${widget.doo.toDate().month}/${widget.doo.toDate().year}',
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   color: Color(0xff545454),
                                   fontWeight: FontWeight.w500,
                                 ),
+                              ),
                               ),
                               const Text(
                                 'Date of Opening',
@@ -325,12 +380,35 @@ class _Client_dbtState extends State<Client_dbt> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              
+                              TextButton(
+                                onPressed: () async {
+                                  DateTime? newDateMature =
+                                      await showDatePicker(
+                                          context: context,
+                                          initialDate: widget.dom.toDate(),
+                                          firstDate: DateTime(1990),
+                                          lastDate: DateTime(2100));
+                                  if (newDateMature == null) return;
+    
+                                  setState(() {
+                                    widget.dom = Timestamp.fromDate(DateTime(
+                                      newDateMature.year,
+                                      newDateMature.month,
+                                      newDateMature.day));
+                                    widget.ndd = Timestamp.fromDate(DateTime(
+                                      widget.ndd.toDate().year,
+                                      widget.ndd.toDate().month,
+                                      newDateMature.day));
+                                  });
+                                },
+                                child: Text(
                                 '${widget.dom.toDate().day}/${widget.dom.toDate().month}/${widget.dom.toDate().year}',
                                 style: const TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   color: Color(0xff545454),
                                   fontWeight: FontWeight.w500,
+                                ),
                                 ),
                               ),
                               const Text(
@@ -502,12 +580,39 @@ class _Client_dbtState extends State<Client_dbt> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        Text(
-                          widget.monthly.toString(),
-                          style: const TextStyle(
-                            fontSize: 18,
-                            color: Color(0xff545454),
-                            fontWeight: FontWeight.w500,
+                        Container(
+                          height: size.height * 0.050,
+                          width: size.width * 0.2,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                          ),
+                          child: TextFormField(
+                            initialValue: widget.monthly.toString(),
+                            keyboardType: TextInputType.number,
+                              style: const TextStyle(
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.left,
+                              onChanged: (value) {
+                                widget.monthly = int.parse(value);
+                              },
+                              validator: ((value) {
+                                if(value == null || value.isEmpty) {
+                                  return 'Please enter correct value';
+                                }
+                                return null;
+                              }),
+                            // decoration: InputDecoration(
+                            //   hintText: widget.amtrmn.toString(),
+                            //   hintStyle:const TextStyle(
+                            //     fontSize: 18,
+                            //     color: Color(0xff545454),
+                            //     fontWeight: FontWeight.w500,
+                            //   )
+                            // )
                           ),
                         ),
                         const Text(
@@ -657,6 +762,12 @@ class _Client_dbtState extends State<Client_dbt> {
                     backgroundColor: const Color(0xff42A19A),
                     onPressed: () => {
                       if (_formKey.currentState!.validate()) {
+                        if(oldmonthly != widget.monthly){
+                          updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', 9, widget.monthly-oldmonthly, plan: widget.plan)
+                        },
+                        if(oldBal != widget.amtrmn){
+                          updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}',6,widget.amtrmn-oldBal)
+                        },
                         _firestone
                         .collection(widget.accType == 'Daily' ? 'new_account_d' : 'new_account')
                         .doc(widget.id)
@@ -667,7 +778,16 @@ class _Client_dbtState extends State<Client_dbt> {
                           'Amount_Remaining' : widget.amtrmn,
                           'Address' : widget.add,
                           'Phone_No' : widget.phone,
-                        },SetOptions(merge: true))
+                          'monthly' : widget.monthly,
+                          'Plan' : widget.plan,
+                          'Date_of_Opening' : widget.doo,
+                          'Date_of_Maturity' : widget.dom,
+                          'next_due_date' : widget.ndd,
+                          'paid_installment' : ((widget.amtcltd+widget.amtrmn)/widget.monthly).floor()
+                        },SetOptions(merge: true)),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Details Updated')),
+                        )
                       },
                       if(widget.callback !=''){
                         widget.callback()

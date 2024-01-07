@@ -145,14 +145,24 @@ class _lapseState extends State<lapse> {
   void getNewMemberList (int currentIndex1, int currentIndex) {
     for (int i=0; i<newTiles.length; i++) {
       String plan = newTiles[i].get('Plan');
-      String p = currentIndex1 == 1 ? 'A' : (currentIndex == 2 ? 'B' : '') ;
+      String p = currentIndex1 == 1 ? 'A' : (currentIndex1 == 2 ? 'B' : '') ;
       DateTime ndd = newTiles[i].get('next_due_date').toDate();
       DateTime now = Timestamp.now().toDate();
       int pm = newTiles[i].get('paid_installment');
-      int em = (now.difference(newTiles[i].get('Date_of_Opening').toDate()).inDays/30).round() ;
+      int em = (now.difference(newTiles[i].get('Date_of_Opening').toDate()).inDays/30).floor() - 1 ;
       int ac = newTiles[i].get('monthly');
       int ar = newTiles[i].get('Amount_Remaining');
-      if(plan == p && ndd.isBefore(now) ){ 
+      DateTime toLapse ;
+      if(plan == 'A'){
+        toLapse = DateTime(ndd.year,ndd.month,15);
+      }else{
+        if(ndd.month == 2){
+          toLapse = DateTime(ndd.year,ndd.month,28);
+        }else {
+          toLapse = DateTime(ndd.year,ndd.month,30);
+        }
+      }
+      if(plan == p && toLapse.isBefore(now) ){ 
         if(currentIndex != 0 && em-pm == currentIndex){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
@@ -166,7 +176,7 @@ class _lapseState extends State<lapse> {
           totalBalance += ar;
         }
        }
-       else if(p == '' && ndd.isBefore(now)){
+       else if(p == '' && toLapse.isBefore(now)){
         if(currentIndex != 0 && em-pm == currentIndex){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;

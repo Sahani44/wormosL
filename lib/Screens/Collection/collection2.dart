@@ -152,6 +152,11 @@ class _collection2State extends State<collection2> {
       String loc = newTiles[i].get('place');
       int ac = newTiles[i].get('monthly');
       int ar = newTiles[i].get('Amount_Remaining');
+      Timestamp ndd = newTiles[i].get('next_due_date');
+      DateTime now = DateTime.now();
+        if(type == 'Monthly' && ndd.toDate().compareTo(DateTime(now.year, now.month+1, 1, 0)) >=0 ) {
+          continue;
+        }
         if( _currentIndex == 0 && Location == type) {
           newMemberList.add(Memberlist[i]);
           totalClient += 1;

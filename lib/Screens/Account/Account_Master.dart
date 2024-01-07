@@ -26,6 +26,7 @@ class _acc_masterState extends State<acc_master> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp ndd;
   late int monthly;
   bool _isloading = true;
   late String type;
@@ -76,7 +77,8 @@ class _acc_masterState extends State<acc_master> {
         Amount_Collected: Amount_Collected, 
         add: add, 
         phone: phone,
-        id: docid
+        id: docid,
+        ndd: ndd
       ),
     );
   }
@@ -121,6 +123,8 @@ class _acc_masterState extends State<acc_master> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      ndd = tile.get('next_due_date');
+      Location = tile.get('place');
       addData();
     }
   }

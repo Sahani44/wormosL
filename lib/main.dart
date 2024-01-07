@@ -36,34 +36,36 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) => MaterialApp(
-                debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                ),
-                home: const CustomNavBar(),
-                routes: {
-                  mature_screen.id: (ctx) => mature_screen(),
-                  lapse_screen.id: (ctx) => lapse_screen(),
-                  due_screen.id: (ctx) => due_screen(),
-                  CollectionLanding.id: (ctx)=> const CollectionLanding(),
-                  collection2.id: (ctx) => collection2(''),
-                  collection.id: (ctx) => collection(1),
-                  maturity.id: (ctx) => const maturity(),
-                  lapse.id: (ctx) => const lapse(),
-                  due.id: (ctx) => const due(),
-                  menu.id: (ctx) => const menu(),
-                  placeedit.id1: (ctx) => const placeedit(),
-                  place.id: (ctx) => const place(),
-                  acc_master.id: (ctx) => acc_master(''),
-                  acc_screen.id: (ctx) => acc_screen(0),
-                  NewMemberLanding.id: (ctx) => const NewMemberLanding(),
-                  // newmem.id: (ctx) => newmem(),
-                  user.id: (ctx) => user(''),
-                  Record_Page.id: (ctx) => const Record_Page(),
-                  record_screen.id: (ctx) => record_screen(),
-                  //AccountSummary.id: (ctx) => AccountSummary(),
-                }));
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) => MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const CustomNavBar(),
+        routes: {
+          mature_screen.id: (ctx) => mature_screen(),
+          lapse_screen.id: (ctx) => lapse_screen(),
+          due_screen.id: (ctx) => due_screen(),
+          CollectionLanding.id: (ctx)=> const CollectionLanding(),
+          collection2.id: (ctx) => collection2(''),
+          collection.id: (ctx) => collection(1),
+          maturity.id: (ctx) => const maturity(),
+          lapse.id: (ctx) => const lapse(),
+          due.id: (ctx) => const due(),
+          menu.id: (ctx) => const menu(),
+          placeedit.id1: (ctx) => const placeedit(),
+          place.id: (ctx) => const place(),
+          acc_master.id: (ctx) => acc_master(''),
+          acc_screen.id: (ctx) => acc_screen(0),
+          NewMemberLanding.id: (ctx) => const NewMemberLanding(),
+          // newmem.id: (ctx) => newmem(),
+          user.id: (ctx) => user(''),
+          Record_Page.id: (ctx) => const Record_Page(),
+          record_screen.id: (ctx) => record_screen(),
+          //AccountSummary.id: (ctx) => AccountSummary(),
+        }
+      )
+    );
   }
 }

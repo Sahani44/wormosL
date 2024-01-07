@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:internship2/Screens/Home/home_functions.dart';
 import 'package:internship2/Screens/Place/newmember.dart';
 import 'package:internship2/models/User_Tile/place_edit_tile.dart';
 import 'package:internship2/widgets/customnavbar.dart';
+import 'package:intl/intl.dart';
 
 class placeedit extends StatefulWidget {
   const placeedit({Key? key}) : super(key: key);
@@ -113,6 +115,7 @@ class _placeeditState extends State<placeedit> {
                                               .add({
                                             'Name': place_posted,
                                           });
+                                          addNewPlace(DateFormat('yyyy-MM-dd').format(DateTime.now()), place_posted);
                                           setState(() {
                                             Navigator.of(context).pop();
                                           });

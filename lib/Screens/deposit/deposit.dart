@@ -5,7 +5,6 @@ import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/widgets/amountdata.dart';
 import 'package:internship2/widgets/customnavbar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:internship2/Providers/getstatus.dart';
 
 import '../../models/views/deposit_display.dart';
 
@@ -127,12 +126,12 @@ class _depositState extends State<deposit> {
     for (int i=0; i<newTiles.length; i++) {
       // var deposit_field = newTiles[i].get('deposit_field');
       int ac = newTiles[i].get('monthly');
-      int ta = newTiles[i].get('Amount_Collected');
       int ar = newTiles[i].get('Amount_Remaining');
+      bool df = newTiles[i].get('deposit_field');
       String plan = newTiles[i].get('Plan');
       // bool currentIndexPD = currentIndex2 == 0 ? false : true;
       String currentIndexAB = currentIndex == 1 ? 'A' : currentIndex == 2 ? 'B' : '';
-      if(ac == ar){
+      if(ac <= ar){
           if(currentIndex2 == 0 && currentIndexAB == ''){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;
@@ -146,7 +145,8 @@ class _depositState extends State<deposit> {
             totalBalance += ar;
           }
         }
-      } else if(ar == 0 && ta > 0) {
+      } 
+      if(df) {
         if(currentIndex2 == 1 && currentIndexAB == ''){
           newMemberList.add(Memberlist[i]);
           totalClient += 1;

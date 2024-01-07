@@ -19,6 +19,7 @@ class _deleted_landingState extends State<deleted_landing> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
+  late Timestamp ndd;
   late int monthly;
   bool _isloading = true;
   late String type;
@@ -68,7 +69,8 @@ class _deleted_landingState extends State<deleted_landing> {
         Amount_Collected: Amount_Collected, 
         add: add, 
         phone: phone,
-        id:id
+        id:id,
+        ndd: ndd
       ),
     );
   }
@@ -111,6 +113,7 @@ class _deleted_landingState extends State<deleted_landing> {
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
+      ndd = tile.get('next_due_date');
       totalClient += 1;
       totalAmount += monthly;
       totalBalance += Amount_Remaining;

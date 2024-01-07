@@ -12,6 +12,7 @@ class user_tile extends StatefulWidget {
   String Account_No;
   Timestamp date_open;
   Timestamp date_mature;
+  Timestamp ndd;
   String Location;
   String type;
   int monthly;
@@ -43,6 +44,7 @@ class user_tile extends StatefulWidget {
     required this.cif,
     required this.history,
     required this.id,
+    required this.ndd
   }) : super(key: key);
   
   @override
@@ -82,7 +84,7 @@ class _user_tileState extends State<user_tile> {
         trailing: IconButton(
             onPressed: () {Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: '',)),
+              MaterialPageRoute(builder: (context) => Client_dbt(memberName: widget.Member_Name, acc: widget.Account_No, cif: widget.cif, doo: widget.date_open, dom: widget.date_mature, location: widget.Location, amtcltd: widget.Amount_Collected, amtrmn: widget.Amount_Remaining, add: widget.add, monthly: widget.monthly, phone: widget.phone, plan: widget.Plan,id:widget.id,accType: widget.type,callback: '',ndd:widget.ndd)),
             );},
             icon: const Icon(
               Icons.expand_circle_down_rounded,
