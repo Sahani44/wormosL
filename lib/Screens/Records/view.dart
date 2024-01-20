@@ -1,8 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 
 class ViewTable extends StatefulWidget {
 
-  final Map<String, Map<String, dynamic>> history;
+  final SplayTreeMap<String, Map<String, dynamic>> history;
   const ViewTable({
       super.key,
       required this.history,
@@ -25,6 +27,16 @@ class _ViewTableState extends State<ViewTable> {
       ],
     ));
   });
+  for (var i = 0 ; i < dr.length/2 ; i++)
+  {
+    // store the current index in a temp variable
+    var temp = dr[i];
+    // add the value from the corresponding index 
+    // from the end to the current index
+    dr[i] = dr[dr.length-1-i];
+    // add the temp value to the ending index
+    dr[dr.length-1-i] = temp;
+  }
 }
 
   @override

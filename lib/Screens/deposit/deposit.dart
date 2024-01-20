@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/widgets/amountdata.dart';
@@ -23,7 +25,7 @@ class _depositState extends State<deposit> {
   late String Account_No;
   late Timestamp date_open;
   late Timestamp date_mature;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late int paid_installment;
   late int total_installment;
   late bool deposit_field;
@@ -104,7 +106,7 @@ class _depositState extends State<deposit> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       Monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
       date_open = tile.get('Date_of_Opening');

@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, no_logic_in_create_state, camel_case_types, must_be_immutable
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import '../../models/views/due_display.dart';
@@ -38,7 +40,7 @@ class _collection2State extends State<collection2> {
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   String accountType = '';
   String Type = '';
   var _isloading = true;
@@ -125,7 +127,7 @@ class _collection2State extends State<collection2> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');

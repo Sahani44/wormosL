@@ -56,6 +56,7 @@ class _HomeChartsState extends State<HomeCharts> {
 
     dates = [];
     details = [];
+    collected = 0;
     catA = 0;catB = 0; overAll = 0;
     String d = DateFormat('yyyy-MM-dd').format(widget.date);
     if(!summaryDates.containsKey(d)){
@@ -101,7 +102,9 @@ class _HomeChartsState extends State<HomeCharts> {
       if(widget.date.year == int.parse(tile.id.toString().substring(0,4)) && widget.date.month == int.parse(tile.id.toString().substring(5,7))){
         int received = 0;
         tile.data().forEach((key,value){
-          items[value['place']]['monthlyReceived'] += value['coll'] as int;
+          if(widget.date.day >= int.parse(tile.id.toString().substring(8))){
+            items[value['place']]['monthlyReceived'] += value['coll'] as int;
+          }
           received += value['coll'] as int;
           if(tile.id == d){ 
             items[value['place']]['dailyReceived'] += value['coll'] as int;

@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:collection';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,7 +39,7 @@ class _Record_PageState extends State<Record_Page> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late Map<String, Map<String, dynamic>> history;
+  late SplayTreeMap<String, Map<String, dynamic>> history;
   late int paid_installment;
   late final _firestone = FirebaseFirestore.instance;
   final _inactiveColor = const Color(0xffEBEBEB);
@@ -134,7 +135,7 @@ class _Record_PageState extends State<Record_Page> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String, dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String, dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       date_open = tile.get('Date_of_Opening');
@@ -159,7 +160,7 @@ class _Record_PageState extends State<Record_Page> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String, dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String, dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       date_open = tile.get('Date_of_Opening');

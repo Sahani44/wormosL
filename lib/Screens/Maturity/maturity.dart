@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
@@ -22,7 +24,7 @@ class _maturityState extends State<maturity> {
   late Timestamp date_open;
   late Timestamp date_mature;
   late Timestamp ndd;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -117,7 +119,7 @@ class _maturityState extends State<maturity> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();

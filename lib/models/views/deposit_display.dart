@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, must_be_immutable, camel_case_types
 
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Home/home_functions.dart';
@@ -35,7 +37,7 @@ class deposit_data extends StatefulWidget {
   final String id;
   final Timestamp date_open;
   final Timestamp date_mature;
-  Map<String, Map<String,dynamic>> history;
+  SplayTreeMap<String, Map<String,dynamic>> history;
   final int paid_installment;
   final int total_installment;
   final String Location;

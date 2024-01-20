@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types, no_logic_in_create_state, must_be_immutable
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import '../../models/views/displayed_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -26,7 +28,7 @@ class _deleted_landingState extends State<deleted_landing> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late int paid_installment;
   late String place;
   late final _firestone = FirebaseFirestore.instance;
@@ -106,7 +108,7 @@ class _deleted_landingState extends State<deleted_landing> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       place = tile.get('place');
       monthly = tile.get('monthly');

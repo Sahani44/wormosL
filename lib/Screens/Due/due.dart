@@ -1,5 +1,7 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names, prefer_final_fields
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
 import 'package:internship2/widgets/amountdata.dart';
@@ -36,7 +38,7 @@ class _dueState extends State<due> {
   late int Amount_Remaining;
   late int Monthly;
   var _isloading = true;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late final _firestone = FirebaseFirestore.instance;
   int _currentIndex = 0;
   int _currentIndex2 = 0;
@@ -128,7 +130,7 @@ class _dueState extends State<due> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');

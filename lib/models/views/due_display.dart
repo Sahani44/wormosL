@@ -1,5 +1,7 @@
 // ignore_for_file: camel_case_types, non_constant_identifier_names, no_logic_in_create_state, avoid_print, must_be_immutable
 
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Account/client_dtbase.dart';
@@ -42,7 +44,7 @@ class due_data extends StatefulWidget {
   final Timestamp date_open;
   final Timestamp date_mature;
   Timestamp next_due_date;
-  final Map<String, Map<String,dynamic>> history;
+  final SplayTreeMap<String, Map<String,dynamic>> history;
   int paid_installment;
   final int total_installment;
   final String status;

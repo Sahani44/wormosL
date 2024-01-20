@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, prefer_final_fields, camel_case_types
 
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:internship2/Providers/scheme_selector.dart';
@@ -22,7 +24,7 @@ class _lapseState extends State<lapse> {
   late Timestamp date_open;
   late Timestamp date_mature;
   late Timestamp next_due_date;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late String mode;
   late int paid_installment;
   late int total_installment;
@@ -123,7 +125,7 @@ class _lapseState extends State<lapse> {
       status = tile.get('status');
       paid_installment = tile.get('paid_installment');
       total_installment = tile.get('total_installment');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       Type = tile.get('Type');
       place = tile.get('place');
       Amount_Remaining = tile.get('Amount_Remaining');

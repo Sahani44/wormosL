@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, camel_case_types
 
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,7 +38,7 @@ class record_data extends StatefulWidget {
   final int Amount_Collected;
   final int Amount_Remaining;
   final int Monthly;
-  final Map<String, Map<String,dynamic>> history; 
+  final SplayTreeMap<String, Map<String,dynamic>> history; 
   final String date;
 
   @override

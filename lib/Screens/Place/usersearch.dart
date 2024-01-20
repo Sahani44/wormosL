@@ -1,5 +1,7 @@
 // ignore_for_file: no_logic_in_create_state, non_constant_identifier_names, camel_case_types, must_be_immutable
 
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:internship2/Screens/Place/newmember.dart';
 import 'package:internship2/models/User_Tile/user_tile.dart';
@@ -33,7 +35,7 @@ class _userState extends State<user> {
   late int total_installment;
   late int Amount_Remaining;
   late int Amount_Collected;
-  late Map<String, Map<String,dynamic>> history;
+  late SplayTreeMap<String, Map<String,dynamic>> history;
   late String type; 
   late String Account_No;
   late Timestamp date_open;
@@ -71,7 +73,7 @@ class _userState extends State<user> {
       total_installment = tile.get('total_installment');
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
-      history = Map<String, Map<String,dynamic>>.from(tile.get('history'));
+      history = SplayTreeMap<String, Map<String,dynamic>>.from(tile.get('history'));
       type = tile.get('Type');
       monthly = tile.get('monthly');
       Account_No = tile.get('Account_No').toString();
