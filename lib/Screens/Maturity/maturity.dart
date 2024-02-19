@@ -55,6 +55,7 @@ class _maturityState extends State<maturity> {
   late String phone;
   late String place;
   late var id;
+  late bool df;
   final myController = TextEditingController();
 
   void addData() {
@@ -80,7 +81,8 @@ class _maturityState extends State<maturity> {
         add: add, 
         phone: phone,
         id:id,
-        ndd: ndd
+        ndd: ndd,
+        df: df
       ),
     );
   }
@@ -126,6 +128,7 @@ class _maturityState extends State<maturity> {
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
       ndd = tile.get('next_due_date');
+      df = tile.get('deposit_field');
       addData();
     }
   }

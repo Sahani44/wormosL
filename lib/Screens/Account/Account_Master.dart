@@ -30,6 +30,7 @@ class _acc_masterState extends State<acc_master> {
   late Timestamp date_mature;
   late Timestamp ndd;
   late int monthly;
+  late bool df;
   bool _isloading = true;
   late String type;
   late int total_installment;
@@ -80,7 +81,8 @@ class _acc_masterState extends State<acc_master> {
         add: add, 
         phone: phone,
         id: docid,
-        ndd: ndd
+        ndd: ndd,
+        df: df
       ),
     );
   }
@@ -127,6 +129,7 @@ class _acc_masterState extends State<acc_master> {
       date_mature = tile.get('Date_of_Maturity');
       ndd = tile.get('next_due_date');
       Location = tile.get('place');
+      df = tile.get('deposit_field');
       addData();
     }
   }

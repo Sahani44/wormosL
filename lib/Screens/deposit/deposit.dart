@@ -49,6 +49,9 @@ class _depositState extends State<deposit> {
   var totalBalance = 0;
   int _currentIndex2 = 0;
   int _currentIndex = 0;
+  var phone;
+  var type;
+  var Location;
   final _inactiveColor = const Color(0xffEBEBEB);
   final myController = TextEditingController();
 
@@ -64,13 +67,15 @@ class _depositState extends State<deposit> {
         date_open: date_open,
         paid_installment: paid_installment,
         total_installment: total_installment,
-        Location: '',
+        Location: Location,
         Amount_Collected: Amount_Collected,
         Amount_Remaining: Amount_Remaining,
         Monthly: Monthly,
         history: history,
         callBack: callBack,
         accountType: accountType,
+        phone: phone,
+        Type: type,
         id: id
       ),
     );
@@ -112,6 +117,9 @@ class _depositState extends State<deposit> {
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
       accountType = tile.get('Type') == 'Daily' ? 'new_account_d' : 'new_account';
+      phone = tile.get('Phone_No');
+      type = tile.get('Type');
+      Location = tile.get('place');
       addData();
     }
   }

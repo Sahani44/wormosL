@@ -36,6 +36,7 @@ class _lapseState extends State<lapse> {
   late String accountType;
   late String Phone;
   late String place;
+  late bool df;
   String Type = 'Daily';
   int value = 0;
   var _isloading = true;
@@ -83,7 +84,8 @@ class _lapseState extends State<lapse> {
         add: add, 
         phone: Phone,
         callBack: callBack,
-        place:place
+        place:place,
+        df: df,
       ),
     );
   }
@@ -131,6 +133,7 @@ class _lapseState extends State<lapse> {
       Amount_Remaining = tile.get('Amount_Remaining');
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');
+      df = tile.get('deposit_field');
       if(Type == '5 Days'){
         accountType = 'new_account';
       }

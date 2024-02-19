@@ -36,7 +36,8 @@ class due_data extends StatefulWidget {
     required this.add, 
     required this.phone,
     required this.id,
-    required this.place
+    required this.place,
+    required this.df
   });
   final String Member_Name;
   final String Plan;
@@ -58,6 +59,7 @@ class due_data extends StatefulWidget {
   final String phone;
   final String cif;
   final String place;
+  final bool df;
   var callBack;
   var id;
 
@@ -620,10 +622,10 @@ class _due_dataState extends State<due_data> {
                                 if (data != null) {
                                   _firestone
                                     .collection('deleted_accounts')
-                                    .doc(widget.Account_No)
+                                    .doc(widget.id)
                                     .set(data);
 
-                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.Monthly, type: (widget.Location != '') ? widget.Location : widget.Type, bal: widget.Amount_Remaining);
+                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.Monthly, type: (widget.Location != '') ? widget.Location : widget.Type, bal: widget.Amount_Remaining, df: widget.df);
                                   _firestone
                                   .collection(widget.accountType)
                                   .doc(widget.id)

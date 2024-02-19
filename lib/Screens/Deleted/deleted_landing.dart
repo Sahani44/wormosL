@@ -44,6 +44,7 @@ class _deleted_landingState extends State<deleted_landing> {
   var totalAmount = 0;
   var totalBalance = 0;
   late String add;
+  late bool df;
   late String phone;
   late String cif;
   late var id;
@@ -72,7 +73,8 @@ class _deleted_landingState extends State<deleted_landing> {
         add: add, 
         phone: phone,
         id:id,
-        ndd: ndd
+        ndd: ndd,
+        df: df
       ),
     );
   }
@@ -116,6 +118,7 @@ class _deleted_landingState extends State<deleted_landing> {
       date_open = tile.get('Date_of_Opening');
       date_mature = tile.get('Date_of_Maturity');
       ndd = tile.get('next_due_date');
+      df = tile.get('deposit_field');
       totalClient += 1;
       totalAmount += monthly;
       totalBalance += Amount_Remaining;

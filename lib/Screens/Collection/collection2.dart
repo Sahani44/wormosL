@@ -37,6 +37,7 @@ class _collection2State extends State<collection2> {
   late int Amount_Remaining;
   late int Monthly;
   late String place;
+  late bool df;
   String dropdownvalue ='Name';
   String dropdownvalue1 = 'Member_Name';
   var items = ['Name' ,'DOE'];
@@ -85,7 +86,8 @@ class _collection2State extends State<collection2> {
         phone: phone,
         callBack: callBack,
         id:id,
-        place:place
+        place:place,
+        df: df
       ),
     );
   }
@@ -133,6 +135,7 @@ class _collection2State extends State<collection2> {
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');
       place = tile.get('place');
+      df = tile.get('deposit_field');
       addData();
     }
   }

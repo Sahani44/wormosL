@@ -56,6 +56,7 @@ class _dueState extends State<due> {
   var totalBalance = 0;
   late String add;
   late String cif;
+  late bool df;
   late var id;
   final myController = TextEditingController();
 
@@ -84,7 +85,8 @@ class _dueState extends State<due> {
         add: add, 
         phone: Phone,
         id:id,
-        place:place
+        place:place,
+        df: df
       ),
     );
   }
@@ -136,6 +138,7 @@ class _dueState extends State<due> {
       Amount_Collected = tile.get('Amount_Collected');
       Monthly = tile.get('monthly');
       place = tile.get('place');
+      df = tile.get('deposit_field');
       addData();
     }
   }

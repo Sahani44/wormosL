@@ -28,6 +28,7 @@ class displayeddata extends StatefulWidget {
   final int paid_installment;
   final String cif;
   final bool deleted;
+  final bool df;
   final id;
   final Map<String, Map<String,dynamic>> history;
   var callback;
@@ -55,6 +56,7 @@ class displayeddata extends StatefulWidget {
     required this.id,
     required this.ndd,
     required this.callback,
+    required this.df
   }) : super(key: key);
 
   @override
@@ -462,7 +464,7 @@ class _displayeddataState extends State<displayeddata> {
                                   .doc(widget.id)
                                   .delete();
                                   
-                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.monthly, type: (widget.Location != '') ? widget.Location : widget.type, bal: widget.Amount_Remaining);
+                                  updateSummary('${DateTime.now().year}-${DateTime.now().month < 10 ? '0${DateTime.now().month}' : DateTime.now().month}-${DateTime.now().day < 10 ? '0${DateTime.now().day}' : DateTime.now().day}', widget.Plan == 'A'?4:5, widget.monthly, type: (widget.Location != '') ? widget.Location : widget.type, bal: widget.Amount_Remaining, df: widget.df);
 
                                   widget.callback();
                                 }

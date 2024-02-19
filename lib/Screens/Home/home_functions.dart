@@ -101,12 +101,12 @@ Home createSummary (String date) {
   return x;
 }
 
-void updateSummary (String date, var key, var value, {String type = '', String plan = 'A', var bal = 0}) {
+void updateSummary (String date, var key, var value, {String type = '', String plan = 'A', var bal = 0, df = false}) {
   if(DateTime.parse(date).compareTo(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day)) == 0 && summaryDates.keys.contains(date)){
-    _updateSummaryHelper(date, key, value, type, plan, bal);
+    _updateSummaryHelper(date, key, value, type, plan, bal, df);
   }else if(DateTime.parse(date).compareTo(DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day)) == 0){
     createSummary(date);
-    _updateSummaryHelper(date, key, value, type, plan, bal);
+    _updateSummaryHelper(date, key, value, type, plan, bal, df);
   }else{
     if(!summaryDates.keys.contains(date)){
       createSummary(date);
@@ -120,12 +120,12 @@ void updateSummary (String date, var key, var value, {String type = '', String p
       }
     }
     for(int i=dateIndex;i<summaryDates.length;i++) {
-        _updateSummaryHelper(d[i], key, value, type, plan, bal);
+        _updateSummaryHelper(d[i], key, value, type, plan, bal, df);
       }
   }
 }
 
-void _updateSummaryHelper(String date, int key, int value, String type,String plan, bal) {
+void _updateSummaryHelper(String date, int key, int value, String type,String plan, bal, bool df) {
   Map<String,dynamic> nm = summaryDates[date];
     switch (key) {
       case 0 : {
@@ -179,8 +179,15 @@ void _updateSummaryHelper(String date, int key, int value, String type,String pl
         nm['totalClient'] -= 1;
         nm['totalAmount'] -= value;
         nm['totalBalance'] -= bal;
-        nm['A']['pending']['account'] = nm['A']['pending']['account']-1;
-        nm['A']['pending']['amount'] = nm['A']['pending']['amount']-value;
+        if(df == false)
+        {
+          nm['A']['pending']['account'] = nm['A']['pending']['account']-1;
+          nm['A']['pending']['amount'] = nm['A']['pending']['amount']-value;
+        }
+        else{
+          nm['A']['deposit']['account'] = nm['A']['deposit']['account']-1;
+          nm['A']['deposit']['amount'] = nm['A']['deposit']['amount']-value;
+        }
         break;
       }
       case 5 : {
@@ -192,8 +199,14 @@ void _updateSummaryHelper(String date, int key, int value, String type,String pl
         nm['totalClient'] -= 1;
         nm['totalAmount'] -= value;
         nm['totalBalance'] -= bal;
-        nm['B']['pending']['account'] = nm['B']['pending']['account']-1;
-        nm['B']['pending']['amount'] = nm['B']['pending']['amount']-value;
+        if(df == false){
+          nm['B']['pending']['account'] = nm['B']['pending']['account']-1;
+          nm['B']['pending']['amount'] = nm['B']['pending']['amount']-value;
+        }
+        else{
+          nm['B']['deposit']['account'] = nm['B']['deposit']['account']-1;
+          nm['B']['deposit']['amount'] = nm['B']['deposit']['amount']-value;
+        }
         break;
       }
       case 6 : {
@@ -225,6 +238,12 @@ void _updateSummaryHelper(String date, int key, int value, String type,String pl
       case 9 : {
         nm['totalAmount'] += value;
         nm['amount$plan'] += value;
+        if(df == false){
+          nm[plan]['pending']['amount'] = nm['B']['pending']['amount']+value;
+        }
+        else{
+          nm[plan]['deposit']['amount'] = nm['B']['deposit']['amount']+value;
+        }
       }
     } 
     FirebaseFirestore.instance.collection('summary').doc(date).set(nm);
