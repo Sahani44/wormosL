@@ -46,7 +46,7 @@ class collection_tile extends StatelessWidget {
             ),
           ),
           trailing: SizedBox(
-            width: size.width*0.25,
+            width: size.width*0.33,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
